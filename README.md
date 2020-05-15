@@ -11,7 +11,7 @@ Therefore, in all forms of receiving, a visitation into a similar pattern fillin
 
 ## Clockability
 
-![Clockability](https://github.com/exbuddha/Solar/doc/img/Clockability-1.png)
+![Clockability](https://github.com/exbuddha/Solar/blob/master/doc/img/Clockability-1.png)
 
 **Clockability:** Scientific apparatus for measurements in human perception of memory and the inter-relations it creates by expansion in the way nature intends. This is the most natural language for music theory and analysis.
 
@@ -27,13 +27,13 @@ Regressors are the well-known progressors that are closed in their effect with t
 
 Templators are the most complex of the three. They extend progressor units to cover all change forms in progressive detection as complex as memory/thought units or visual vectorized units that can aid a robot in detecting perspective among objects in vision. They intend to have no limits in definition of their units, therefore are the best subjects for mathematical formulation in infinitely large continuum or fields. Musical octaves are an example of what a templator can represent.
 
-![Axes of Musical Analysis](https://github.com/exbuddha/Solar/doc/img/Clockability-2.png)
+![Axes of Musical Analysis](https://github.com/exbuddha/Solar/blob/master/doc/img/Clockability-2.png)
 
 It is important to remember that the definitions of Regressor, Progressor, and Templator are all respectively set on the scope of their elements within specific functionality. So, an element can be a Templator in its main/immediate scope and be a different one (Regressor or Progressor) in another scope. This explains, in essence, the purpose for the statement of "setting one's analytic mind on the right angle" at the beginning of this paper.
 
 Below, I will recapture the knowledge of the system of music progression, as shown in the Java interface Clockable<T> in the included source code.
 
-![Clockable System](https://github.com/exbuddha/Solar/doc/img/Clockability-3.png)
+![Clockable System](https://github.com/exbuddha/Solar/blob/master/doc/img/Clockability-3.png)
 
 **Element:** the most basic unit of data in the domain of clockable systems.
 
