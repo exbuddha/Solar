@@ -31,7 +31,7 @@ Templators are the most complex of the three. They extend progressor units to co
 
 It is important to remember that the definitions of Regressor, Progressor, and Templator are all respectively set on the scope of their elements within specific functionality. So, an element can be a Templator in its main/immediate scope and be a different one (Regressor or Progressor) in another scope. This explains, in essence, the purpose for the statement of "setting one's analytic mind on the right angle" at the beginning of this paper.
 
-Below, I will recapture the knowledge of the system of music progression, as shown in the Java interface [Clockable<T>](https://github.com/exbuddha/Solar/blob/master/java/music/system/data/Clockable.java) in the included source code.
+Below, I will recapture the knowledge of the system of music progression, as shown in the Java interface [Clockable&lt;T&gt;](https://github.com/exbuddha/Solar/blob/master/java/music/system/data/Clockable.java) in the included source code.
 
 ![Clockable System](https://github.com/exbuddha/Solar/blob/master/doc/img/Clockability-3.png)
 
