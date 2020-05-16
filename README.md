@@ -4,7 +4,7 @@
 ---
 ---
 
-  > I dedicate this work to my family, my father, my mother, and my brother, for giving me unconditional love and support throughout all my efforts, to Sir David Gilmour and his loving family for being an example of excellence and for brining so much joy in my life with their music and poetry, to all my music teachers for enlightening me, to all my friends for believing in my words, and to every being who enchant me with beauty.
+  > I dedicate this work to my family, my father, my mother, and my brother, for giving me unconditional love and support throughout all my efforts, to Sir David Gilmour and his loving family for being an example of excellence and for brining so much joy in my life with their music and poetry, to all my music teachers for enlightening me, to all my friends for believing in my words, and to every being who enchants me with beauty.
 
 ---
 ---
