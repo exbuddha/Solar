@@ -1,15 +1,24 @@
 # Solar
-### A Complete Paper On Music Analysis and the Nature of Human Cognition
+## A Complete Paper On Music Analysis and the Nature of Human Cognition
+
+---
+---
 
   > I dedicate this work to my family, my father, my mother, and my brother, for giving me unconditional love and support throughout all my efforts, to Sir David Gilmour and his loving family for being an example of excellence and for brining so much joy in my life with their music and poetry, to all my music teachers for enlightening me, to all my friends for believing in my words, and to every being who enchant me with beauty.
 
 ---
+---
+
+### Preamble
 
 At some level of influence during listening, musical changes only elicit rises and falls. Then, comes forth memory. As music is the most powerful form of experience available in our plane of existence taking us to heights traversable only in dream states, and because in our most natural form of understanding we are, or tend to be, as freely perceptive as we are when we listen to music, it can be derived that the fluid nature of human cognition is infused by the work of our memory totally and unconditionally.
 
 Therefore, in all forms of receiving, a visitation into a similar pattern filling up our mind is sensed and required in turn. For this reason, I propose by guidance a method of analysis which I call in this paper 'Clock-ability' that answers almost all questions originating in and from the memory if one sets one's analytic mind on the right angle of view while inquiring into layers of knowing.
 
-## Clockability
+---
+---
+
+### Clockability
 
 ![Clockability](https://github.com/exbuddha/Solar/blob/master/doc/img/Clockability-1.png)
 
@@ -92,6 +101,7 @@ Below, I will recapture the knowledge of the system of music progression, as sho
   * All interfaces defined above, specially the templative functionals, are designed to reduce all complex operations into sets of well-defined one-way (normalized) tabular conversions that aid in organizing any system of relative inter-related knowledge, such as music theory and any other scientific system, with the aim of opening doorways to formulate and study them.
   * Remember that both TemplativeProgression and TemplativeRegression reflect or describe a space with functional ordering where the first generic type is for the items in the space, the second is an amount, and the third is a known unit.
 
+---
 ---
 
 In the following chapter, I will include excerpts that depict a large-scale view consisting of scales, intervals, tones, and forms which will aid the mind in understanding and explaining the most fundamental underlying thought forms during listening to and exposing oneself to music. These high-level concepts will help you in understanding your hearing process and in paving a defined path to the formulaic approach for the design of an ultimate music analysis system.
