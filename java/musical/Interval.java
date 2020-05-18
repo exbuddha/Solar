@@ -370,8 +370,8 @@ implements
     public
     interface Sequence
     {
-    	public
-    	Interval[] getIntervals();
+        public
+        Interval[] getIntervals();
     }
 
     /**
