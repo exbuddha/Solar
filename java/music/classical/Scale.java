@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import musical.Constant;
 import musical.Interval;
@@ -13,6 +12,11 @@ import musical.Standardized;
 
 /**
  * {@code Scale} represents the classical scale.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class Scale
@@ -23,210 +27,193 @@ implements
 {
     /** The chromatic scale. */
     public static final
-    Scale Chromatic;
+    Scale Chromatic
+    = new Standard(
+        Constant.Scale.ChromaticName,
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond,  // S
+        MinorSecond   // S
+        );
 
     /** The major scale. */
     public static final
-    Scale Major;
+    Scale Major
+    = new Standard(
+        Constant.Scale.MajorName,
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond   // S
+        );
 
     /** The dorian scale. */
     public static final
-    Scale Dorian;
+    Scale Dorian
+    = new Standard(
+        Constant.Scale.DorianName,
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond   // T
+        );
 
     /** The phrygian scale. */
     public static final
-    Scale Phrygian;
+    Scale Phrygian
+    = new Standard(
+        Constant.Scale.PhrygianName,
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond   // T
+        );
 
     /** The lydian scale. */
     public static final
-    Scale Lydian;
+    Scale Lydian
+    = new Standard(
+        Constant.Scale.LydianName,
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond   // S
+        );
 
     /** The mixolydian scale. */
     public static final
-    Scale Mixolydian;
+    Scale Mixolydian
+    = new Standard(
+        Constant.Scale.MixolydianName,
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond   // T
+        );
 
     /** The minor scale. */
     public static final
-    Scale Minor;
+    Scale Minor
+    = new Standard(
+        Constant.Scale.MinorName,
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond   // T
+        );
 
     /** The locrian scale. */
     public static final
-    Scale Locrian;
+    Scale Locrian
+    = new Standard(
+        Constant.Scale.LocrianName,
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorSecond,  // S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond   // T
+        );
 
     /** The whole tone scale. */
     public static final
-    Scale WholeTone;
+    Scale WholeTone
+    = new Standard(
+        Constant.Scale.WholeToneName,
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MajorSecond   // T
+        );
 
     /** The major pentatonic scale. */
     public static final
-    Scale MajorPentatonic;
+    Scale MajorPentatonic
+    = new Standard(
+        Constant.Scale.MajorPentatonicName,
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MinorThird    // T + S
+        );
 
     /** The minor pentatonic scale. */
     public static final
-    Scale MinorPentatonic;
+    Scale MinorPentatonic
+    = new Standard(
+        Constant.Scale.MinorPentatonicName,
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond   // T
+        );
 
     /** The egyptian scale. */
     public static final
-    Scale Egyptian;
+    Scale Egyptian
+    = new Standard(
+        Constant.Scale.EgyptianName,
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond   // T
+        );
 
     /** The blues major scale. */
     public static final
-    Scale BluesMajor;
+    Scale BluesMajor
+    = new Standard(
+        Constant.Scale.BluesMajorName,
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MajorSecond,  // T
+        MinorThird    // T + S
+        );
 
     /** The blues minor scale. */
     public static final
-    Scale BluesMinor;
-
-    static
-    {
-        Chromatic = new Standard(
-            Constant.Scale.Chromatic,
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond,  // S
-            MinorSecond   // S
-            );
-
-        Major = new Standard(
-            Constant.Scale.Major,
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond   // S
-            );
-
-        Dorian = new Standard(
-            Constant.Scale.Dorian,
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond   // T
-            );
-
-        Phrygian = new Standard(
-            Constant.Scale.Phrygian,
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond   // T
-            );
-
-        Lydian = new Standard(
-            Constant.Scale.Lydian,
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond   // S
-            );
-
-        Mixolydian = new Standard(
-            Constant.Scale.Mixolydian,
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond   // T
-            );
-
-        Minor = new Standard(
-            Constant.Scale.Minor,
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond   // T
-            );
-
-        Locrian = new Standard(
-            Constant.Scale.Locrian,
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorSecond,  // S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond   // T
-            );
-
-        WholeTone = new Standard(
-            Constant.Scale.WholeTone,
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MajorSecond   // T
-            );
-
-        MajorPentatonic = new Standard(
-            Constant.Scale.MajorPentatonic,
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MinorThird    // T + S
-            );
-
-        MinorPentatonic = new Standard(
-            Constant.Scale.MinorPentatonic,
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond   // T
-            );
-
-        Egyptian = new Standard(
-            Constant.Scale.Egyptian,
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond   // T
-            );
-
-        BluesMajor = new Standard(
-            Constant.Scale.BluesMajor,
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MajorSecond,  // T
-            MinorThird    // T + S
-            );
-
-        BluesMinor = new Standard(
-            Constant.Scale.BluesMinor,
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MinorThird,   // T + S
-            MajorSecond,  // T
-            MajorSecond   // T
-            );
-    }
+    Scale BluesMinor
+    = new Standard(
+        Constant.Scale.BluesMinorName,
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MinorThird,   // T + S
+        MajorSecond,  // T
+        MajorSecond   // T
+        );
 
     /** The scale symbol. */
     protected
@@ -601,6 +588,11 @@ implements
 
     /**
      * {@code Standard} represents all standard classical scales.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected static
     class Standard
@@ -658,7 +650,6 @@ implements
         /**
          * Creates a standard scale with the specified root note and intervals; and adjusts the scale.
          *
-         * @param symbol the scale symbol.
          * @param root the root note.
          * @param intervals the intervals array.
          */
@@ -676,7 +667,7 @@ implements
          * This implementation return null.
          */
         @Override
-        public Stream<? extends Range> apply(musical.Range r1, musical.Range r2) { return null; }
+        public Iterable<? extends Range> apply(musical.Range r1, musical.Range r2) { return null; }
 
         @Override
         public Standard clone() {
@@ -688,13 +679,18 @@ implements
 
     /**
      * {@code Systematic} represents all systematic classical scales.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected static abstract
     class Systematic
     extends Scale
     implements
         BiConsumer<Range, Number>,
-        BiFunction<musical.Range, musical.Range, Stream<? extends Range>>,
+        BiFunction<musical.Range, musical.Range, Iterable<? extends Range>>,
         Consumer<Range>
     {
         /**
@@ -792,15 +788,15 @@ implements
             ) {}
 
         /**
-         * Given the two specified musical ranges, returns an stream of scale ranges correlating the two.
+         * Given the two specified musical ranges, returns an iterable of scale ranges correlating the two.
          *
          * @param r1 the first range.
          * @param r2 the second range.
-         * @return the stream of related ranges.
+         * @return the iterable of related ranges.
          */
         @Override
         public abstract
-        Stream<? extends Range> apply(
+        Iterable<? extends Range> apply(
             musical.Range r1,
             musical.Range r2
             );

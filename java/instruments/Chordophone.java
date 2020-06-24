@@ -3,14 +3,24 @@ package instruments;
 import musical.Note;
 
 /**
- * {@code Chordophone} classifies instruments in which sound is primarily produced by the vibration of a string, or strings, stretched between fixed points.
+ * {@code Chordophone} represents instruments in which sound is primarily produced by the vibration of a string, or strings, stretched between fixed points.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Chordophone
 extends MusicalInstrument
 {
     /**
-     * {@code String} classifies a vibrating string in musical instruments that is fixed at both ends with a specific tuning.
+     * {@code String} represents a vibrating string in musical instruments that is fixed at both ends with a specific tuning.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Chordophone.class)
     protected abstract
@@ -35,7 +45,7 @@ extends MusicalInstrument
         }
 
         @Override
-        public boolean is(final system.Type<Part> type) {
+        public boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof String;
         }
 
@@ -50,7 +60,12 @@ extends MusicalInstrument
         }
 
         /**
-         * {@code Point} classifies an interaction point on a chordophone string with a specific distance from an end point, conventionally the nut.
+         * {@code Point} represents an interaction point on a chordophone string with a specific distance from an end point, conventionally the nut.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         protected abstract
@@ -82,7 +97,7 @@ extends MusicalInstrument
             }
 
             @Override
-            public boolean is(final system.Type<Part> type) {
+            public boolean is(final system.data.Type<? extends Part> type) {
                 return type instanceof Point;
             }
 

@@ -22,6 +22,11 @@ import performance.system.Type;
  * For example, the piano player and the mbira player are both categorized as board players but the dulcimer player is considered to be an string player because of the immediate connection that exists between the strings and the performer fingers during performance for the former two.
  * This class also support all electronic instruments that cannot clearly be given a category from the available hub classes in the package.
  * For such instruments, a wrapping functionality, named {@link #initialize()}, creates the electronic instrument with a known hub class type as an interface for accessing the features of the subject instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Player

@@ -4,6 +4,11 @@ import musical.Note;
 
 /**
  * {@code Organ} classifies the most common form of the organ instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Organ
@@ -12,6 +17,11 @@ implements Keyboard
 {
     /**
      * {@code Key} represents the organ key.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Organ.class)
     protected abstract
@@ -23,6 +33,7 @@ implements Keyboard
          *
          * @param tune the tuning note.
          */
+        @Categorized(parameters = "tune")
         protected
         Key(
             final Note tune
@@ -32,10 +43,16 @@ implements Keyboard
     }
 
     /**
-     * {@code Keys} represents the organ keys.
+     * {@code Keys} represents all of the organ keys.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Organ.class)
-    @Category(types = Key.class, instances = "music.Note")
+    @Category
+    @Category.Instance(type = Key.class, values = "tune -> firstKeyTune ** numOfKeys")
     protected abstract
     class Keys
     extends MusicalInstrument.Keys
@@ -46,6 +63,7 @@ implements Keyboard
          * @param firstKeyTune the first key note.
          * @param numOfKeys the number of keys.
          */
+        @Categorized(parameters = { "firstKeyTune", "numOfKeys" })
         public
         Keys(
             final Note firstKeyTune,
@@ -54,7 +72,7 @@ implements Keyboard
             super();
 
             final PartCreator<Key> keyCreator
-            = createPart(getDefaultConcreteSubclass(Key.class))
+            = createPart(Key.class)
             .withConstructor(Note.class)
             .withParameterRanges(numOfKeys.intValue());
 
@@ -67,6 +85,11 @@ implements Keyboard
 
     /**
      * {@code Pedal} represents the organ pedal.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Organ.class)
     protected abstract
@@ -128,6 +151,11 @@ implements Keyboard
 
     /**
      * {@code Pedalboard} represents the organ pedalboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Organ.class)
     protected abstract

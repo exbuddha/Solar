@@ -7,6 +7,11 @@ import performance.Instance;
  * {@code WindPlayer} is the base class for all performer types that deal with instruments that are performed by interacting with air in order to generate music.
  * <p>
  * Unless the subject instrument is an electronic one, this classification refers to instruments for which a resonating tubular part is attached to the mouth piece, or that part that moves air, that amplifies and projects sound.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class WindPlayer

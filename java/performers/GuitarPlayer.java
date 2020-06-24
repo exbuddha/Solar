@@ -21,6 +21,11 @@ import performance.Interaction.Physical.Repetitive;
 
 /**
  * {@code GuitarPlayer} is a representation of a guitar player.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class GuitarPlayer<I extends Guitar>
@@ -60,12 +65,22 @@ extends LutePlayer<I>
 
     /**
      * Groups both-oriented interaction classes for all guitar players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Both
     {
         /**
          * {@code HammerOn} represents hammering a finger on a fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = HammerOnName,
@@ -110,6 +125,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Mute} represents touching a string lightly to stop the vibration.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = MuteName,
@@ -150,6 +170,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Pluck} represents plucking the string with a finger or the pick.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PluckName,
@@ -194,6 +219,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Position} represents moving a hand to a new position.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PositionName,
@@ -234,6 +264,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Press} represents pressing a fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PressName,
@@ -275,6 +310,11 @@ extends LutePlayer<I>
 
         /**
          * {@code PullOff} represents pulling a finger off of a fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PullOffName,
@@ -318,6 +358,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Release} represents quietly releasing a finger off of a fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = ReleaseName,
@@ -360,6 +405,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Slide} represents gliding a finger that is pressing a fret point to another fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = SlideName,
@@ -403,6 +453,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Trill} represents hammering on and pulling off of a fret point repetitively with a finger.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = TrillName,
@@ -447,6 +502,11 @@ extends LutePlayer<I>
 
         /**
          * {@code Vibrato} represents vibrating a finger that is pressing a fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = VibratoName,
@@ -491,6 +551,11 @@ extends LutePlayer<I>
 
     /**
      * {@code ChangeGraph} is a representation of guitar player's performance knowledge.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class ChangeGraph
@@ -499,12 +564,22 @@ extends LutePlayer<I>
 
     /**
      * Groups left-oriented interaction classes for all guitar players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Left
     {
         /**
          * Bar represents the bar technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BarName,
@@ -546,6 +621,11 @@ extends LutePlayer<I>
 
         /**
          * BarRelease represents quietly releasing the bar or the slide off of the strings.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BarReleaseName,
@@ -589,6 +669,11 @@ extends LutePlayer<I>
 
         /**
          * BarSlide represents moving the bar or the slide from a fret point to another fret point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BarSlideName,
@@ -632,6 +717,11 @@ extends LutePlayer<I>
 
         /**
          * BarVibrato represents vibrating the bar or the slide on the strings.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BarVibratoName,
@@ -675,6 +765,11 @@ extends LutePlayer<I>
 
         /**
          * Bend represents the bend technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BendName,
@@ -719,6 +814,11 @@ extends LutePlayer<I>
 
         /**
          * BendRelease represents the bend release technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = BendReleaseName,
@@ -763,6 +863,11 @@ extends LutePlayer<I>
 
         /**
          * Harmonic represents lightly touching a node point for the natural or artificial harmonic technique with a finger or the bar.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = HarmonicName,
@@ -805,6 +910,11 @@ extends LutePlayer<I>
 
         /**
          * SlideTap represents lightly touching the string with the slide to make it vibrate.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = SlideTapName,
@@ -847,6 +957,11 @@ extends LutePlayer<I>
 
         /**
          * SlideTouch represents lightly touching the strings with the slide.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = SlideTouchName,
@@ -889,6 +1004,11 @@ extends LutePlayer<I>
 
     /**
      * Groups right-oriented interaction classes for all guitar players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Right
@@ -896,6 +1016,11 @@ extends LutePlayer<I>
     {
         /**
          * PalmMute represents the palm mute technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PalmMuteName,
@@ -937,6 +1062,11 @@ extends LutePlayer<I>
 
         /**
          * PalmRelease represents releasing the palm from the strings.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PalmReleaseName,
@@ -977,6 +1107,11 @@ extends LutePlayer<I>
 
         /**
          * Pick represents plucking the string with the pick.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PickName,
@@ -1021,6 +1156,11 @@ extends LutePlayer<I>
 
         /**
          * PickSlide represents the pick slide technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PickSlideName,
@@ -1066,6 +1206,11 @@ extends LutePlayer<I>
 
         /**
          * PinchHarmonic represents plucking the string and immediately touching a node point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PinchHarmonicName,
@@ -1112,6 +1257,11 @@ extends LutePlayer<I>
 
         /**
          * TapHarmonic represents the tap harmonic technique.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = TapHarmonicName,
@@ -1155,6 +1305,11 @@ extends LutePlayer<I>
 
         /**
          * Tremolo represents repetitively plucking a string with the pick.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = TremoloName,

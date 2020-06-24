@@ -1,5 +1,7 @@
 package instruments;
 
+import static performance.Constant.Piano.*;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,7 +10,12 @@ import musical.Note;
 /**
  * {@code Piano} classifies the most common form of the piano instrument.
  * <p>
- * It also acts as the superclass for all other derivatives of that instrument.
+ * This class is the superclass for all other derivatives of that instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Piano
@@ -17,7 +24,7 @@ implements Keyboard
 {
     /** The default first key note. */
     private static final
-    Note DefaultFirstKeyNote = Note.Table.A0;
+    Note DefaultFirstKeyNote = Note.A0;
 
     /** The default number of keys. */
     private static final
@@ -26,14 +33,14 @@ implements Keyboard
     /** The default pedal types. */
     private static final
     List<String> DefaultPedalTypes = Arrays.asList(
-        performance.Constant.Piano.SustainPedal,
-        performance.Constant.Piano.SostenutoPedal,
-        performance.Constant.Piano.SoftPedal
+        SustainPedalName,
+        SostenutoPedalName,
+        SoftPedalName
         );
 
     /** The minimum lowest note. */
     private static final
-    Note MinLowestNote = Note.Table.A0;
+    Note MinLowestNote = Note.A0;
 
     /** The minimum number of keys. */
     private static final
@@ -41,7 +48,7 @@ implements Keyboard
 
     /** The maximum lowest note. */
     private static final
-    Note MaxLowestNote = Note.Table.C1;
+    Note MaxLowestNote = Note.C1;
 
     /** The maximum number of keys. */
     private static final
@@ -260,6 +267,11 @@ implements Keyboard
 
     /**
      * {@code Key} represents the piano key.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Piano.class)
     protected abstract
@@ -271,6 +283,7 @@ implements Keyboard
          *
          * @param tune the tuning note.
          */
+        @Categorized(parameters = "tune")
         protected
         Key(
             final Note tune
@@ -280,10 +293,16 @@ implements Keyboard
     }
 
     /**
-     * {@code Keys} represents the piano keys.
+     * {@code Keys} represents all of the piano keys.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Piano.class)
-    @Category(types = Key.class, instances = "music.Note")
+    @Category
+    @Category.Instance(type = Key.class, values = "tune -> firstKeyTune ** numOfKeys")
     protected abstract
     class Keys
     extends MusicalInstrument.Keys
@@ -315,6 +334,11 @@ implements Keyboard
 
     /**
      * {@code Pedal} represents the piano pedal of type: sustain, sostenuto, soft, or practice.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Piano.class)
     protected abstract
@@ -340,6 +364,7 @@ implements Keyboard
          *
          * @param name the pedal name.
          */
+        @Categorized(parameters = "name")
         public
         Pedal(
             final String name
@@ -349,10 +374,16 @@ implements Keyboard
     }
 
     /**
-     * {@code Pedals} represents the piano pedals.
+     * {@code Pedals} represents all of the piano pedals.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Piano.class)
-    @Category(types = Pedal.class, instances = "java.lang.String[]")
+    @Category
+    @Category.Instance(type = Pedal.class, values = "name -> names")
     protected abstract
     class Pedals
     extends MusicalInstrument.Pedals
@@ -364,7 +395,7 @@ implements Keyboard
             super();
 
             final PartCreator<Pedal> pedalCreator
-            = createPart(getDefaultConcreteSubclass(Pedal.class))
+            = createPart(Pedal.class)
             .withConstructor(String.class)
             .withParameterRanges(DefaultPedalTypes.size());
 

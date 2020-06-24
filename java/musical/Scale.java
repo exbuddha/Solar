@@ -4,15 +4,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import music.system.data.Clockable;
-import music.system.data.Clockable.TemplativeProgression;
 import music.system.data.Convertible;
+import music.system.data.Clockable.TemplativeProgression;
 import music.system.data.Visualized;
 import musical.Note;
 import musical.Note.Pitch;
+import system.data.Reversible;
+import system.data.Symbolized;
 
 /**
  * {@code Scale} represents a musical scale.
  * <p>
+ * The instances of this class must satisfy the conditions below in order to benefit from all the functionality presented in this class:
  * <ul>
  * <li>If a scale has a null root, it is considered to be a scale template, evaluating to scale intervals, and are used to create defined scales.
  * <li>By convention, a scale can't have null intervals array or array elements.
@@ -25,6 +28,11 @@ import musical.Note.Pitch;
  * <li>A scale must be either ascending or descending for all the comparison methods to work correctly, or ascending and descending in rare cases, for which some comparisons might still fail.
  * <p>
  * </ul>
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Scale
@@ -38,7 +46,7 @@ implements
     Localizable,
     Predicate<Scale>,
     Range,
-    Readjusting<Scale>,
+    Reversible,
     Symbolized<String>,
     TemplativeProgression<Clockable<Note>, Note.Octave, Chord.Progress<?>>
 {
@@ -1002,20 +1010,21 @@ implements
     }
 
     /**
-     * Returns true if the specified interval type is a scale and has equal root and intervals as this scale.
+     * Returns true if the specified type is a scale and has equal root and intervals as this scale.
      * <p>
      * This implementation calls {@link #hasEqualIntervals(Scale)} internally.
      *
-     * @param type the interval type.
+     * @param type the other interval type.
+     *
      * @return true if interval type has equal root and intervals as this scale.
      */
     @Override
-    public boolean is(final system.Type<Interval> type) {
+    public boolean is(final system.data.Type<? extends IntervalType> type) {
         return type instanceof Scale &&
                (this == type ||
-               ((getRoot() == null && ((Scale) type).getRoot() == null) ||
-               getRoot().compareTo(((Scale) type).getRoot()) == 0) &&
-               hasEqualIntervals((Scale) type));
+                ((getRoot() == null && ((Scale) type).getRoot() == null) ||
+                 getRoot().compareTo(((Scale) type).getRoot()) == 0) &&
+                hasEqualIntervals((Scale) type));
     }
 
     @Override
@@ -1026,7 +1035,7 @@ implements
     /**
      * Returns true if this scale is completely contained by the specified scale, or false if a full match is not found.
      *
-     * @param the larger scale.
+     * @param scale the larger scale.
      * @return true if this scale is within the larger scale, and false otherwise.
      */
     @Override
@@ -1046,8 +1055,13 @@ implements
 
     /**
      * {@code Accidental} represents a scale note accidental.
+     * <p>
+     * This class implementation is in progress.
      *
      * @see Note.Accidental
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static
     class Accidental
@@ -1055,34 +1069,32 @@ implements
     {
         /** The double-flat accidental. */
         public static final
-        Note.Accidental DoubleFlat = new Standard(Constant.Note.Accidental.DoubleFlat, (byte) -2, (short) -200);
+        Note.Accidental DoubleFlat = new Standard(Constant.Note.Accidental.DoubleFlatSym, (short) -200);
 
         /** The natural-flat accidental. */
         public static final
-        Note.Accidental NaturalFlat = new Standard(Constant.Note.Accidental.NaturalFlat, (byte) -1, (short) -100);
+        Note.Accidental NaturalFlat = new Standard(Constant.Note.Accidental.NaturalFlatSym, (short) -100);
 
         /** The double-sharp accidental. */
         public static final
-        Note.Accidental DoubleSharp = new Standard(Constant.Note.Accidental.DoubleSharp, (byte) 2, (short) 200);
+        Note.Accidental DoubleSharp = new Standard(Constant.Note.Accidental.DoubleSharpSym, (short) 200);
 
         /** The natural-sharp accidental. */
         public static final
-        Note.Accidental NaturalSharp = new Standard(Constant.Note.Accidental.NaturalSharp, (byte) 1, (short) 100);
+        Note.Accidental NaturalSharp = new Standard(Constant.Note.Accidental.NaturalSharpSym, (short) 100);
 
         /**
          * Creates a scale note accidental with the specified symbol, semitones, and cents.
          *
          * @param symbol the symbol.
-         * @param semitones the semitones.
          * @param cents the cents.
          */
         protected
         Accidental(
             final String symbol,
-            final byte semitones,
             final short cents
             ) {
-            super(symbol, semitones, cents);
+            super(symbol, cents);
         }
 
         /**
@@ -1121,11 +1133,16 @@ implements
         public Accidental clone() {
             return isStandard(this)
                    ? ((Standard) this).clone()
-                   : new Accidental(symbol, semitones, cents);
+                   : new Accidental(symbol, cents);
         }
 
         /**
          * {@code Standard} represents all standard scale accidentals.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         protected static
         class Standard
@@ -1135,16 +1152,14 @@ implements
              * Creates a standard scale accidental with the specified symbol, semitones, and cents.
              *
              * @param symbol the symbol.
-             * @param semitones the semitones.
              * @param cents the cents.
              */
             protected
             Standard(
                 final String symbol,
-                final byte semitones,
                 final short cents
                 ) {
-                super(symbol, semitones, cents);
+                super(symbol, cents);
             }
 
             @Override
@@ -1155,13 +1170,18 @@ implements
                        this == DoubleSharp ||
                        this == DoubleFlat
                        ? this
-                       : new Standard(symbol, semitones, cents);
+                       : new Standard(symbol, cents);
             }
         }
     }
 
     /**
      * {@code Backward} represents a scale range visited reversely to its naturally growing order.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Backward
@@ -1171,6 +1191,11 @@ implements
 
     /**
      * {@code Chord} represents a scale range consisting of notes that are categorized in music theory as chords.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Chord
@@ -1203,6 +1228,14 @@ implements
             super(note.octave, note.pitch, note.accidental, note.adjustment);
         }
 
+        /**
+         * {@code Progress} represents a single instance of chord progression.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public abstract
         class Progress
         extends musical.Chord.Progress<Number>
@@ -1217,6 +1250,14 @@ implements
         }
     }
 
+    /**
+     * {@code Fall} classifies all musical falls in scales.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Fall
     extends
@@ -1227,6 +1268,11 @@ implements
 
     /**
      * {@code Forward} represents a scale range visited in its naturally growing order.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Forward
@@ -1236,6 +1282,11 @@ implements
 
     /**
      * {@code Note} represents the musical scale note with a certain octave, pitch, and accidental.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     class Note
@@ -1289,11 +1340,7 @@ implements
         }
 
         /**
-         * Adjusts this note by calling the superclass adjustment function followed by this note's adjustment function if it exists, and returns the this note.
-         * <p>
-         * This implementation calls the super method.
-         *
-         * @return the adjusted note.
+         * Adjusts the note.
          */
         @Override
         public void adjust() {
@@ -1305,12 +1352,25 @@ implements
      * {@code Phrase} represents simple to complex sequences consisting of expressive scale ranges.
      * <p>
      * Phrases contain some form of time information while ranges do not.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Phrase
     extends Range
     implements musical.Phrase
     {
+        /**
+         * {@code Motive} categorizes the human perceptive motives in musical listening.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         enum Motive
         implements Perception
@@ -1343,8 +1403,16 @@ implements
             Uplifting;
 
             @Override
-            public boolean is(system.Type<Perception> type) { return false; }
+            public boolean is(system.data.Type<? extends Perception> type) { return false; }
 
+            /**
+             * {@code Degree} categorizes the relative degrees in human perception of musical motives.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
             public
             enum Degree
             implements Perception
@@ -1356,7 +1424,7 @@ implements
                 Subtle;
 
                 @Override
-                public boolean is(system.Type<Perception> type) { return false; }
+                public boolean is(system.data.Type<? extends Perception> type) { return false; }
             }
         }
     }
@@ -1366,6 +1434,11 @@ implements
      * <p>
      * This is the superclass for all musical expressions within a scale: individual notes or degrees, harmonies, and their relative order of occurrence.
      * It facilitates a methodical approach to formulating movements in music scores.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Range
@@ -1444,6 +1517,11 @@ implements
 
     /**
      * {@code Rest} represents the musical rest.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Rest
@@ -1453,6 +1531,15 @@ implements
         Rest() {}
     }
 
+
+    /**
+     * {@code Rise} classifies all musical rises in a scale.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Rise
     extends
@@ -1469,6 +1556,11 @@ implements
      * The visualized variable can, but necessarily has to, represent an ordered value.
      * The free-form variable, defined as templator, creates the range of known theoretical music elements that have significance in the knowledge base of the scale.
      * Together, or singly if the design implies so, the last two variables cover a hypothetical two-dimensional space for the scale system.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface System
@@ -1478,6 +1570,11 @@ implements
     {
         /**
          * {@code Conversion} classifies all forms of conversions among scale systems.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Conversion
@@ -1498,8 +1595,13 @@ implements
 
     /**
      * {@code Systematic} classifies scales that are connected to a scientifically well-defined musical system of knowledge.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the scale type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Systematic<T extends Scale>
@@ -1519,6 +1621,11 @@ implements
          * {@code Truth} classifies arbitrarily defined data types that make up all musical creations.
          * <p>
          * The aim of this interface is to provide means to formulating song writing as well-defined systematic truths or artistic preferences.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Truth

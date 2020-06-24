@@ -2,6 +2,9 @@ package performance;
 
 /**
  * {@code Effect} categorizes the types of effects that changes, and their interactions, can produce in the aural field.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 enum Effect
@@ -65,7 +68,7 @@ implements
 
     /** The effect type. */
     private final
-    system.Type<Effect> type;
+    system.data.Type<Effect> type;
 
     /**
      * Creates an effect of the specified type.
@@ -95,7 +98,7 @@ implements
      * @return true if the specified effect type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final system.Type<Effect> type) {
+    public boolean is(final system.data.Type<? extends Effect> type) {
         if (type == null)
             return false;
 
@@ -111,7 +114,7 @@ implements
      * @return the effect type.
      */
     public
-    system.Type<Effect> getType() {
+    system.data.Type<Effect> getType() {
         return type;
     }
 }

@@ -1,15 +1,21 @@
 package musical;
 
-import system.Type;
+import system.data.Symbolized;
+import system.data.Type;
 
 /**
  * {@code Clef} represents a standard musical clef.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 enum Clef
 implements
     Symbolized<String>,
-    Type<Clef>
+    Type<Enum<Clef>>
 {
     /** The standard clef. */
     Standard(),
@@ -75,7 +81,7 @@ implements
     }
 
     @Override
-    public boolean is(final Type<Clef> type) {
+    public boolean is(final Type<? extends Enum<Clef>> type) {
         if (type == null)
             return false;
 

@@ -8,6 +8,11 @@ import musical.Note;
 
 /**
  * {@code Violin} represents the most common form of the violin instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Violin
@@ -36,11 +41,10 @@ extends Lute
     static
     {
         StandardTuning = new ArrayList<Note>();
-
-        StandardTuning.add(Note.Table.G3);
-        StandardTuning.add(Note.Table.D3);
-        StandardTuning.add(Note.Table.A2);
-        StandardTuning.add(Note.Table.E2);
+        StandardTuning.add(Note.G3);
+        StandardTuning.add(Note.D3);
+        StandardTuning.add(Note.A2);
+        StandardTuning.add(Note.E2);
     }
 
     /** The number of strings. */
@@ -159,45 +163,95 @@ extends Lute
 
     /**
      * {@code Accessory} classifies a violin accessory.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Accessory
     extends Lute.Accessory
     {
         @Override
-        public boolean is(final system.Type<Part> type) {
+        public boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof Accessory;
         }
     }
 
     /**
      * {@code Bow} represents the violin bow.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Bow
     extends Lute.Bow
     {}
 
+    /**
+     * {@code Fingerboard} represents the violin fingerboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Fingerboard
     extends PartGroup
     {}
 
+    /**
+     * {@code Holes} represents the violin f-shaped holes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Holes
     extends PartGroup
     {}
 
+    /**
+     * {@code Resonator} represents the violin resonator.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Resonator
     extends AtomicPart
     {}
 
+    /**
+     * {@code Peg} represents the violin peg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Peg
     extends PartGroup
     {}
 
+    /**
+     * {@code Neck} represents the violin neck.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Neck
     extends PartGroup
@@ -205,6 +259,11 @@ extends Lute
 
     /**
      * {@code String} represents the violin string.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Violin.class)
     public abstract
@@ -235,6 +294,11 @@ extends Lute
 
         /**
          * {@code Point} represents the violin string point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         public abstract
@@ -255,6 +319,14 @@ extends Lute
         }
     }
 
+    /**
+     * {@code Soundboard} represents the violin soundboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Soundboard
     extends AtomicPart

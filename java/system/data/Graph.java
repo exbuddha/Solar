@@ -6,6 +6,14 @@ import java.util.Set;
 
 /**
  * {@code Graph} classifies the graph data structure as a group of interconnected vertices and edges.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @param <V> the vertex type.
+ * @param <E> the edge type.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Graph<V, E>
@@ -69,12 +77,17 @@ class Graph<V, E>
 
     /**
      * {@code Edge} classifies an edge in graph data structure that connects vertices and carries a data object.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the data object type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Edge<T>
-    implements system.Type<Edge<?>>
+    implements system.data.Type<Edge<?>>
     {
         /** The connected vertex. */
         protected
@@ -153,9 +166,14 @@ class Graph<V, E>
 
     /**
      * {@code Edge} classifies entries of the graph as {@link Map.Entry} types.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <V> the vertex type.
      * @param <E> the edge type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Entry<V, E>
@@ -180,12 +198,17 @@ class Graph<V, E>
 
     /**
      * {@code Vertex} classifies a vertex in graph data structure with an attached object.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the object type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Vertex<T>
-    implements system.Type<Vertex<?>>
+    implements system.data.Type<Vertex<?>>
     {
         /** The object. */
         protected

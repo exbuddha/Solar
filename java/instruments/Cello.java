@@ -7,7 +7,12 @@ import musical.Note;
 import musical.Note.Pitch;
 
 /**
- * {@code Cello} classifies the most common form of the cello instrument.
+ * {@code Cello} represents the most common form of the cello instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Cello
@@ -36,7 +41,6 @@ extends Violin
     static
     {
         StandardTuning = new ArrayList<Note>();
-
         StandardTuning.add(new Note((byte) 3, Pitch.G));
         StandardTuning.add(new Note((byte) 3, Pitch.D));
         StandardTuning.add(new Note((byte) 2, Pitch.A));
@@ -89,33 +93,78 @@ extends Violin
     }
 
     /**
-     * {@code Bow} represents the violin bow.
+     * {@code Bow} represents the cello bow.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Bow
     extends Violin.Bow
     {}
 
+    /**
+     * {@code Fingerboard} represents the cello fingerboard section.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Fingerboard
     extends PartGroup
     {}
 
+    /**
+     * {@code Holes} represents the cello f-shaped holes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Holes
     extends PartGroup
     {}
 
+    /**
+     * {@code Resonator} represents the cello resonator.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Resonator
     extends AtomicPart
     {}
 
+    /**
+     * {@code Peg} represents the cello peg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Peg
     extends PartGroup
     {}
 
+    /**
+     * {@code Neck} represents the cello neck.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Neck
     extends PartGroup
@@ -123,6 +172,11 @@ extends Violin
 
     /**
      * {@code String} represents the cello string.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Cello.class)
     public abstract
@@ -153,6 +207,11 @@ extends Violin
 
         /**
          * {@code Point} represents the cello string point.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         public abstract
@@ -173,6 +232,14 @@ extends Violin
         }
     }
 
+    /**
+     * {@code Soundboard} represents the cello soundboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Soundboard
     extends AtomicPart

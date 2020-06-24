@@ -1,200 +1,343 @@
 package musical;
 
+import static musical.Constant.Duration.*;
+import static system.data.Constant.NegativeDuration;
+import static system.data.Constant.NullAdjustment;
+import static system.data.Constant.OperationImpossible;
+import static system.data.Constant.StandardObjectInoperable;
+
+import java.time.temporal.TemporalAmount;
+import java.util.Comparator;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
+import system.data.Constant;
 import system.data.Fraction;
+import system.data.Lambda;
+import system.data.Symbolized;
 
 /**
- * {@code Duration} represents a time interval in music relative to the quarter note time value.
+ * {@code Duration} represents a time interval in music relative to the whole note time value.
+ * Musical durations are made up of beats and beat units.
+ * Beats is the numerator value of the fraction that represents the duration and beat units is the denominator value.
+ * Duration values cannot be negative.
+ * The standard duration types provide adjustment coefficients representing the dotted notes, triplets, etc.
+ * The standard whole note has the beats amount of 1 and the beat units amount of 1, constituting the unit of duration equal to the amount of 1.
+ * <p>
+ * This class defines the well-known stem types in classical music that are statically present as standard durations.
+ * These static durations are called singletons.
+ * <p>
+ * The standard durations, that all singletons are types of, are special forms of durations that behave differently from the regular duration types.
+ * There are specialized methods re-implemented for standard durations for which the results are treated differently than the base implementations of those methods.
+ * These methods are named {@code plus}, {@code minus}, {@code times}, {@code by}, {@code inverted}, and {@code adjusted}.
+ * Calling these methods on non-static standard durations (non-singletons), as well as regular duration objects, is equivalent to calling {@code add}, {@code subtract}, {@code multiply}, {@code divide}, {@code invert}, and {@code adjust}.
+ * If a standard duration is added to, subtracted from, divided, multiplied, or inverted through these special methods, the result will always be a standard type also.
+ * If the standard duration, however, is a singleton a copy of that singleton will be created and returned as the result of the operation.
+ * Operating on standard durations only affects the numerator and denominator while the adjustment remains unchanged, except in cases where the {@code adjust} or {@code adjusted} methods are used explicitly for which both the numerator and denominator values and the adjustment value are changed.
+ * <p>
+ * Furthermore, if a standard duration, operated upon by the methods mentioned above, matches the value of a statically defined standard type then that static type is returned.
+ * This way operating on standard durations will always return values from the domain of statically defined types or singletons, when one is available, or will return the same standard type that can automatically transform into a static one at any point in code.
+ * <p>
+ * Methods in this class implementation are not thread-safe.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class Duration
 extends Fraction
 implements
-    Cloneable,
+    Adjustable,
+    Adjusting<Duration, Fraction>,
+    Function<Tempo, TemporalAmount>,
     Symbolized<String>,
-    music.system.Type<Duration>
+    music.system.Type<Duration>,
+    Unit
 {
+    /** A constant holding the maximum value a {@code Duration} can have, 2<sup>31</sup>-1. */
     public static final
-    Duration Immediate;
+    int MAX_VALUE = Integer.MAX_VALUE;
+
+    /** A constant holding the minimum value a {@code Duration} can have, 0. */
+    public static final
+    int MIN_VALUE = 0;
+
+    /** The {@code Class} instance representing the type {@code Duration}. */
+    public static final
+    Class<Duration> TYPE = Duration.class;
 
     /** The octuple whole note. */
     public static final
-    Duration OctupleWhole;
+    Singleton OctupleWhole = new Singleton(OctupleWholeSym, 8, (short) 1, (short) 1);
 
     /** The quadruple whole note. */
     public static final
-    Duration QuadrupleWhole;
+    Singleton QuadrupleWhole = new Singleton(QuadrupleWholeSym, 4, (short) 1, (short) 1);
 
     /** The double whole note. */
     public static final
-    Duration DoubleWhole;
+    Singleton DoubleWhole = new Singleton(DoubleWholeSym, 2, (short) 1, (short) 1);
 
     /** The whole note. */
     public static final
-    Duration Whole;
+    Singleton Whole = new Singleton(WholeSym, 1, (short) 1, (short) 1);
 
     /** The half note. */
     public static final
-    Duration Half;
+    Singleton Half = new Singleton(HalfSym, 1, (short) 2, (short) 2);
 
     /** The quarter note. */
     public static final
-    Duration Quarter;
+    Singleton Quarter = new Singleton(QuarterSym, 1, (short) 4, (short) 4);
 
     /** The eighth note. */
     public static final
-    Duration Eighth;
+    Singleton Eighth = new Singleton(EighthSym, 1, (short) 8, (short) 8);
 
     /** The sixteenth note. */
     public static final
-    Duration Sixteenth;
+    Singleton Sixteenth = new Singleton(SixteenthSym, 1, (short) 16, (short) 16);
 
     /** The thirty-second note. */
     public static final
-    Duration ThirtySecond;
+    Singleton ThirtySecond = new Singleton(ThirtySecondSym, 1, (short) 32, (short) 32);
 
     /** The sixty-fourth note. */
     public static final
-    Duration SixtyFourth;
+    Singleton SixtyFourth = new Singleton(SixtyFourthSym, 1, (short) 64, (short) 64);
 
     /** The hundred twenty-eighth note. */
     public static final
-    Duration HundredTwentyEighth;
+    Singleton HundredTwentyEighth = new Singleton(HundredTwentyEighthSym, 1, (short) 128, (short) 128);
 
     /** The two hundred fifty-sixth note. */
     public static final
-    Duration TwoHundredFiftySixth;
+    Singleton TwoHundredFiftySixth = new Singleton(TwoHundredFiftySixthSym, 1, (short) 256, (short) 256);
 
-    /** The dotted note. */
+    /** Grace note. (instantanous) */
     public static final
-    Duration Dotted;
+    Singleton Grace = new Singleton(GraceSym, 0, (short) 8);
 
-    /** The double-dotted note. */
+    /** The unit. (adjustment) */
     public static final
-    Duration DoubleDotted;
+    Fraction Unit = new Fraction.Singleton(UnitSym, 1);
+
+    /** The dotted note. (adjustment) */
+    public static final
+    Fraction.Singleton Dotted = new Fraction.Singleton(DottedSym, 3, (short) 2);
+
+    /** The double-dotted note. (adjustment) */
+    public static final
+    Fraction.Singleton DoubleDotted = new Fraction.Singleton(DoubleDottedSym, 7, (short) 4);
+
+    /** The triple-dotted note. (adjustment) */
+    public static final
+    Fraction.Singleton TripleDotted = new Fraction.Singleton(TripleDottedSym, 15, (short) 8);
+
+    /** The triplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Triplet = new Fraction.Singleton(TripletSym, 1, (short) 3);
+
+    /** The quintuplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Quintuplet = new Fraction.Singleton(QuintupletSym, 1, (short) 5);
+
+    /** The sextuplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Sextuplet = new Fraction.Singleton(SextupletSym, 1, (short) 6);
+
+    /** The septuplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Septuplet = new Fraction.Singleton(SeptupletSym, 1, (short) 7);
+
+    /** The duplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Duplet = new Fraction.Singleton(DupletSym, 3, (short) 2);
+
+    /** The quadruplet note. (adjustment) */
+    public static final
+    Fraction.Singleton Quadruplet = new Fraction.Singleton(QuadrupletSym, 3, (short) 4);
+
+    /** The dotted octuple whole note. */
+    public static final
+    Singleton DottedOctupleWhole = new Singleton(DottedOctupleWholeSym, OctupleWhole, (short) 1, Dotted);
+
+    /** The double-dotted octuple whole note. */
+    public static final
+    Singleton DoubleDottedOctupleWhole = new Singleton(DoubleDottedOctupleWholeSym, OctupleWhole, (short) 1, DoubleDotted);
+
+    /** The triple-dotted octuple whole note. */
+    public static final
+    Singleton TripleDottedOctupleWhole = new Singleton(TripleDottedOctupleWholeSym, OctupleWhole, (short) 1, TripleDotted);
+
+    /** The dotted quadruple whole note. */
+    public static final
+    Singleton DottedQuadrupleWhole = new Singleton(DottedQuadrupleWholeSym, QuadrupleWhole, (short) 1, Dotted);
+
+    /** The double-dotted quadruple whole note. */
+    public static final
+    Singleton DoubleDottedQuadrupleWhole = new Singleton(DoubleDottedQuadrupleWholeSym, QuadrupleWhole, (short) 1, DoubleDotted);
+
+    /** The triple-dotted quadruple whole note. */
+    public static final
+    Singleton TripleDottedQuadrupleWhole = new Singleton(TripleDottedQuadrupleWholeSym, QuadrupleWhole, (short) 2, TripleDotted);
+
+    /** The dotted double whole note. */
+    public static final
+    Singleton DottedDoubleWhole = new Singleton(DottedDoubleWholeSym, DoubleWhole, (short) 1, Dotted);
+
+    /** The double-dotted double whole note. */
+    public static final
+    Singleton DoubleDottedDoubleWhole = new Singleton(DoubleDottedDoubleWholeSym, DoubleWhole, (short) 2, DoubleDotted);
+
+    /** The triple-dotted double whole note. */
+    public static final
+    Singleton TripleDottedDoubleWhole = new Singleton(TripleDottedDoubleWholeSym, DoubleWhole, (short) 4, TripleDotted);
 
     /** The dotted whole note. */
     public static final
-    Duration DottedWhole;
+    Singleton DottedWhole = new Singleton(DottedWholeSym, Whole, (short) 2, Dotted);
 
     /** The double-dotted whole note. */
     public static final
-    Duration DoubleDottedWhole;
+    Singleton DoubleDottedWhole = new Singleton(DoubleDottedWholeSym, Whole, (short) 4, DoubleDotted);
+
+    /** The triple-dotted whole note. */
+    public static final
+    Singleton TripleDottedWhole = new Singleton(TripleDottedWholeSym, Whole, (short) 8, TripleDotted);
 
     /** The dotted half note. */
     public static final
-    Duration DottedHalf;
+    Singleton DottedHalf = new Singleton(DottedHalfSym, Half, (short) 4, Dotted);
 
     /** The double-dotted half note. */
     public static final
-    Duration DoubleDottedHalf;
+    Singleton DoubleDottedHalf = new Singleton(DoubleDottedHalfSym, Half, (short) 8, DoubleDotted);
+
+    /** The triple-dotted half note. */
+    public static final
+    Singleton TripleDottedHalf = new Singleton(TripleDottedHalfSym, Half, (short) 16, TripleDotted);
 
     /** The dotted quarter note. */
     public static final
-    Duration DottedQuarter;
+    Singleton DottedQuarter = new Singleton(DottedQuarterSym, Quarter, (short) 8, Dotted);
 
     /** The double-dotted quarter note. */
     public static final
-    Duration DoubleDottedQuarter;
+    Singleton DoubleDottedQuarter = new Singleton(DoubleDottedQuarterSym, Quarter, (short) 16, DoubleDotted);
+
+    /** The triple-dotted quarter note. */
+    public static final
+    Singleton TripleDottedQuarter = new Singleton(TripleDottedQuarterSym, Quarter, (short) 32, TripleDotted);
 
     /** The dotted eighth note. */
     public static final
-    Duration DottedEighth;
+    Singleton DottedEighth = new Singleton(DottedEighthSym, Eighth, (short) 16, Dotted);
 
     /** The double-dotted eighth note. */
     public static final
-    Duration DoubleDottedEighth;
+    Singleton DoubleDottedEighth = new Singleton(DoubleDottedEighthSym, Eighth, (short) 32, DoubleDotted);
+
+    /** The triple-dotted eighth note. */
+    public static final
+    Singleton TripleDottedEighth = new Singleton(TripleDottedEighthSym, Eighth, (short) 64, TripleDotted);
 
     /** The dotted sixteenth note. */
     public static final
-    Duration DottedSixteenth;
+    Singleton DottedSixteenth = new Singleton(DottedSixteenthSym, Sixteenth, (short) 32, Dotted);
 
     /** The double-dotted sixteenth note. */
     public static final
-    Duration DoubleDottedSixteenth;
+    Singleton DoubleDottedSixteenth = new Singleton(DoubleDottedSixteenthSym, Sixteenth, (short) 64, DoubleDotted);
+
+    /** The triple-dotted sixteenth note. */
+    public static final
+    Singleton TripleDottedSixteenth = new Singleton(TripleDottedSixteenthSym, Sixteenth, (short) 128, TripleDotted);
 
     /** The dotted thirty-second note. */
     public static final
-    Duration DottedThirtySecond;
+    Singleton DottedThirtySecond = new Singleton(DottedThirtySecondSym, ThirtySecond, (short) 64, Dotted);
+
+    /** The double-dotted thirty-second note. */
+    public static final
+    Singleton DoubleDottedThirtySecond = new Singleton(DoubleDottedThirtySecondSym, ThirtySecond, (short) 128, DoubleDotted);
+
+    /** The triple-dotted thirty-second note. */
+    public static final
+    Singleton TripleDottedThirtySecond = new Singleton(TripleDottedThirtySecondSym, ThirtySecond, (short) 256, TripleDotted);
 
     /** The dotted sixty-fourth note. */
     public static final
-    Duration DottedSixtyFourth;
+    Singleton DottedSixtyFourth = new Singleton(DottedSixtyFourthSym, SixtyFourth, (short) 128, Dotted);
 
-    static
-    {
-        Immediate = new Standard("", 0, (short) 1);
+    /** The double-dotted sixty-fourth note. */
+    public static final
+    Singleton DoubleDottedSixtyFourth = new Singleton(DoubleDottedSixtyFourthSym, SixtyFourth, (short) 256, DoubleDotted);
 
-        OctupleWhole = new Standard(Constant.Duration.OctupleWhole, 32, (short) 1);
+    /** The triple-dotted sixty-fourth note. */
+    public static final
+    Singleton TripleDottedSixtyFourth = new Singleton(TripleDottedSixtyFourthSym, SixtyFourth, (short) 512, TripleDotted);
 
-        QuadrupleWhole = new Standard(Constant.Duration.QuadrupleWhole, 16, (short) 1);
+    /** The dotted hundred twenty-eighth note. */
+    public static final
+    Singleton DottedHundredTwentyEighth = new Singleton(DottedHundredTwentyEighthSym, HundredTwentyEighth, (short) 256, Dotted);
 
-        DoubleWhole = new Standard(Constant.Duration.DoubleWhole, 8, (short) 1);
+    /** The double-dotted hundred twenty-eighth note. */
+    public static final
+    Singleton DoubleDottedHundredTwentyEighth = new Singleton(DoubleDottedHundredTwentyEighthSym, HundredTwentyEighth, (short) 512, DoubleDotted);
 
-        Whole = new Standard(Constant.Duration.Whole, 4, (short) 1);
+    /** The triple-dotted hundred twenty-eighth note. */
+    public static final
+    Singleton TripleDottedHundredTwentyEighth = new Singleton(TripleDottedHundredTwentyEighthSym, HundredTwentyEighth, (short) 1024, TripleDotted);
 
-        Half = new Standard(Constant.Duration.Half, 2, (short) 1);
+    /** The dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DottedTwoHundredFiftySixth = new Singleton(DottedTwoHundredFiftySixthSym, TwoHundredFiftySixth, (short) 512, Dotted);
 
-        Quarter = new Standard(Constant.Duration.Quarter, 1, (short) 1);
+    /** The double-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DoubleDottedTwoHundredFiftySixth = new Singleton(DoubleDottedTwoHundredFiftySixthSym, TwoHundredFiftySixth, (short) 1024, DoubleDotted);
 
-        Eighth = new Standard(Constant.Duration.Eighth, 1, (short) 2);
-
-        Sixteenth = new Standard(Constant.Duration.Sixteenth, 1, (short) 4);
-
-        ThirtySecond = new Standard(Constant.Duration.ThirtySecond, 1, (short) 8);
-
-        SixtyFourth = new Standard(Constant.Duration.SixtyFourth, 1, (short) 16);
-
-        HundredTwentyEighth = new Standard(Constant.Duration.HundredTwentyEighth, 1, (short) 32);
-
-        TwoHundredFiftySixth = new Standard(Constant.Duration.TwoHundredFiftySixth, 1, (short) 64);
-
-        Dotted = new Standard(Constant.Duration.Dotted, 3, (short) 2);
-
-        DoubleDotted = new Standard(Constant.Duration.DoubleDotted, 7, (short) 4);
-
-        DottedWhole = new Standard(Constant.Duration.DottedWhole, 4, (short) 1, Dotted);
-
-        DoubleDottedWhole = new Standard(Constant.Duration.DoubleDottedWhole, 4, (short) 1, DoubleDotted);
-
-        DottedHalf = new Standard(Constant.Duration.DottedHalf, 2, (short) 1, Dotted);
-
-        DoubleDottedHalf = new Standard(Constant.Duration.DoubleDottedHalf, 2, (short) 1, DoubleDotted);
-
-        DottedQuarter = new Standard(Constant.Duration.DottedWhole, 1, (short) 1, Dotted);
-
-        DoubleDottedQuarter = new Standard(Constant.Duration.DoubleDottedWhole, 1, (short) 1, DoubleDotted);
-
-        DottedEighth = new Standard(Constant.Duration.DottedWhole, 1, (short) 2, Dotted);
-
-        DoubleDottedEighth = new Standard(Constant.Duration.DoubleDottedWhole, 1, (short) 2, DoubleDotted);
-
-        DottedSixteenth = new Standard(Constant.Duration.DottedWhole, 1, (short) 4, Dotted);
-
-        DoubleDottedSixteenth = new Standard(Constant.Duration.DoubleDottedWhole, 1, (short) 4, DoubleDotted);
-
-        DottedThirtySecond = new Standard(Constant.Duration.DottedWhole, 1, (short) 8, Dotted);
-
-        DottedSixtyFourth = new Standard(Constant.Duration.DottedWhole, 1, (short) 16, Dotted);
-    }
+    /** The triple-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton TripleDottedTwoHundredFiftySixth = new Singleton(TripleDottedTwoHundredFiftySixthSym, TwoHundredFiftySixth, (short) 2048, TripleDotted);
 
     /** The duration symbol. */
     protected
     String symbol;
 
-    /** The number of beats. */
-    protected final
-    int beats;
-
-    /** The beat units. */
-    protected final
-    short units;
+    /**
+     * Creates a duration, as a fraction, with the specified symbol, beats, units, and default denominator.
+     *
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     * @param defaultDenominator the default denominator.
+     *
+     * @throws IllegalArgumentException if the units is zero.
+     * @throws IllegalStateException if the duration value is negative.
+     */
+    public
+    Duration(
+       final String symbol,
+       final int beats,
+       final short units,
+       final Short defaultDenominator
+       ) {
+       super(beats, units, defaultDenominator);
+       validateNonNegative();
+       this.symbol = symbol;
+    }
 
     /**
      * Creates a duration, as a fraction, with the specified symbol, beats, and units.
      *
      * @param symbol the symbol.
-     * @param beats the number of beat units.
+     * @param beats the number of beats.
      * @param units the number of units in a beat.
+     *
+     * @throws IllegalArgumentException if the units is zero.
+     * @throws IllegalStateException if the duration value is negative.
      */
     public
     Duration(
@@ -203,16 +346,49 @@ implements
         final short units
         ) {
         super(beats, units);
+        validateNonNegative();
         this.symbol = symbol;
-        this.beats = beats;
-        this.units = units;
     }
 
     /**
-     * Creates a duration, as a fraction, with the specified beats and units.
+     * Creates a duration, as a fraction, with the specified symbol and beats and 1 for units.
      *
-     * @param beats the number of beat units.
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     */
+    public
+    Duration(
+        final String symbol,
+        final int beats
+        ) {
+        this(symbol, beats, (short) 1);
+    }
+
+    /**
+     * Creates a duration, as a fraction, with the specified beats, units, default denominator, and null symbol.
+     *
+     * @param beats the number of beats.
      * @param units the number of units in a beat.
+     * @param defaultDenominator the default denominator.
+     *
+     * @throws IllegalArgumentException if the units is zero.
+     */
+    public
+    Duration(
+       final int beats,
+       final short units,
+       final Short defaultDenominator
+       ) {
+       this(null, beats, units, defaultDenominator);
+    }
+
+    /**
+     * Creates a duration, as a fraction, with the specified beats, units, and null symbol.
+     *
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     *
+     * @throws IllegalArgumentException if the units is zero.
      */
     public
     Duration(
@@ -223,9 +399,93 @@ implements
     }
 
     /**
+     * Creates a duration, as a fraction, with the specified beats, 1 for units, and null symbol.
+     *
+     * @param beats the number of beats.
+     */
+    public
+    Duration(
+        final int beats
+        ) {
+        this(null, beats, (short) 1);
+    }
+
+    /**
+     * Creates a duration, as a fraction, with 1 for beats and units, and null symbol.
+     */
+    public
+    Duration() {
+        this(null, 1, (short) 1);
+    }
+
+    /**
+     * Creates a duration, as a fraction, with the specified symbol and from the specified string value.
+     * <p>
+     * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+     * The numerator and denominator parts are parsed as {@code double} values.
+     * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+     * <p>
+     * The simplification flag is set to off.
+     *
+     * @param symbol the symbol.
+     * @param value the value.
+     *
+     * @throws NullPointerException if the value is null.
+     * @throws NumberFormatException if the numerator or denominator part does not contain a parsable {@code double}.
+     * @throws IllegalArgumentException if the denominator part value is zero.
+     * @throws IllegalStateException if the duration value is negative.
+     */
+    public
+    Duration(
+        final String symbol,
+        final String value
+        ) {
+        super(value);
+        validateNonNegative();
+        this.symbol = symbol;
+    }
+
+    /**
+     * Creates a duration, as a fraction, from the specified string value and with a symbol equal to the same value.
+     * <p>
+     * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+     * The numerator and denominator parts are parsed as {@code double} values.
+     * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+     * <p>
+     * The simplification flag is set to off.
+     *
+     * @param value the symbol and value.
+     *
+     * @throws NullPointerException if the value is null.
+     * @throws NumberFormatException if the numerator or denominator part does not contain a parsable {@code double}.
+     * @throws IllegalArgumentException if the denominator part value is zero.
+     */
+    public
+    Duration(
+        final String value
+        ) {
+        this(value, value);
+    }
+
+    /**
+     * Returns true if the specified duration is a statically defined instance (singleton); otherwise returns false.
+     *
+     * @param duration the duration.
+     *
+     * @return true if the duration is a singleton, and false otherwise.
+     */
+    public static
+    boolean isSingleton(
+        final Duration duration
+        ) {
+        return duration instanceof Singleton;
+    }
+
+    /**
      * Returns true if the specified duration is standard, and false otherwise.
      *
      * @param duration the duration.
+     *
      * @return true if duration is standard, and false otherwise.
      */
     public static
@@ -235,24 +495,693 @@ implements
         return duration instanceof Standard;
     }
 
-    @Override
-    public Duration clone() {
-        return isStandard(this)
-               ? ((Standard) this).clone()
-               : new Duration(symbol, beats, units);
+    /**
+     * Returns the specified singleton if it is not null; otherwise returns the specified fallback duration.
+     *
+     * @param singleton the singleton.
+     * @param fallback the fallback.
+     *
+     * @return the singleton, if it is not null, or the fallback.
+     */
+    private static
+    Duration singleton(
+        final Standard singleton,
+        final Duration fallback
+        ) {
+        return singleton == null
+               ? fallback
+               : singleton;
     }
 
+    /**
+     * Creates a new standard with the specified symbol, beats and units of the duration, default denominator, and adjustment.
+     *
+     * @param symbol the symbol.
+     * @param duration the duration.
+     * @param defaultDenominator the default denominator.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration or adjustment is null.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final Duration duration,
+        final Short defaultDenominator,
+        final Fraction adjustment
+        ) {
+        return new Standard(symbol, duration, defaultDenominator, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats and units of the duration, default denominator, and the unit adjustment.
+     *
+     * @param symbol the symbol.
+     * @param duration the duration.
+     * @param defaultDenominator the default denominator.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration is null.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final Duration duration,
+        final Short defaultDenominator
+        ) {
+        return new Standard(symbol, duration, defaultDenominator);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats and units of the duration, and adjustment.
+     *
+     * @param symbol the symbol.
+     * @param duration the duration.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration or adjustment is null.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final Duration duration,
+        final Fraction adjustment
+        ) {
+        return new Standard(symbol, duration, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats and units of the duration, and the unit adjustment.
+     *
+     * @param symbol the symbol.
+     * @param duration the duration.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration is null.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final Duration duration
+        ) {
+        return new Standard(symbol, duration);
+    }
+
+    /**
+     * Creates a new standard duration with beats and units of the specified duration, default denominator, adjustment, and null symbol.
+     *
+     * @param duration the duration.
+     * @param defaultDenominator the default denominator.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration or adjustment is null.
+     */
+    public static
+    Standard standard(
+        final Duration duration,
+        final Short defaultDenominator,
+        final Fraction adjustment
+        ) {
+        return new Standard(duration, defaultDenominator, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with beats and units of the specified duration, default denominator, the unit adjustment, and null symbol.
+     *
+     * @param duration the duration.
+     * @param defaultDenominator the default denominator.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration is null.
+     */
+    public static
+    Standard standard(
+        final Duration duration,
+        final Short defaultDenominator
+        ) {
+        return new Standard(duration, defaultDenominator);
+    }
+
+    /**
+     * Creates a new standard duration with beats and units of the specified duration, adjustment, and null symbol.
+     *
+     * @param duration the duration.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration or adjustment is null.
+     */
+    public static
+    Standard standard(
+        final Duration duration,
+        final Fraction adjustment
+        ) {
+        return new Standard(duration, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with beats and units of the specified duration, the unit adjustment, and null symbol.
+     *
+     * @param duration the duration.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the duration is null.
+     */
+    public static
+    Standard standard(
+        final Duration duration
+        ) {
+        return new Standard(duration);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats, units, default denominator, and adjustment.
+     *
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     * @param defaultDenominator the default denominator.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the adjustment is null.
+     * @throws IllegalArgumentException if the units is zero.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final int beats,
+        final short units,
+        final Short defaultDenominator,
+        final Fraction adjustment
+        ) {
+        return new Standard(symbol, beats, units, defaultDenominator, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats, units, default denominator, and the unit adjustment.
+     *
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     * @param defaultDenominator the default denominator.
+     *
+     * @return the standard duration.
+     *
+     * @throws IllegalArgumentException if the units is zero.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final int beats,
+        final short units,
+        final Short defaultDenominator
+        ) {
+        return new Standard(symbol, beats, units, defaultDenominator);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats, units, and adjustment.
+     *
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     * @param adjustment the adjustment.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the adjustment is null.
+     * @throws IllegalArgumentException if the units is zero.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final int beats,
+        final short units,
+        final Fraction adjustment
+        ) {
+        return new Standard(symbol, beats, units, adjustment);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol, beats, units, and the unit adjustment.
+     *
+     * @param symbol the symbol.
+     * @param beats the number of beats.
+     * @param units the number of units in a beat.
+     *
+     * @return the standard duration.
+     *
+     * @throws IllegalArgumentException if the units is zero.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final int beats,
+        final short units
+        ) {
+        return new Standard(symbol, beats, units);
+    }
+
+    /**
+     * Creates a new standard duration with the specified symbol and from the specified string value.
+     * <p>
+     * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+     * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
+     * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+     * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link musical.Constant.Duration#MultiplierSym}.
+     * <p>
+     * The simplification flag is set to off.
+     *
+     * @param symbol the symbol.
+     * @param value the value.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the value is null.
+     * @throws NumberFormatException if the value string does not contain a parsable {@code double}.
+     * @throws IllegalArgumentException if the denominator or the adjustment denominator part value is zero.
+     */
+    public static
+    Standard standard(
+        final String symbol,
+        final String value
+        ) {
+        return new Standard(symbol, value);
+    }
+
+    /**
+     * Creates a standard duration from the specified string value with a symbol equal to the same value.
+     * <p>
+     * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+     * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
+     * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+     * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link musical.Constant.Duration#MultiplierSym}.
+     * <p>
+     * The simplification flag is set to off.
+     *
+     * @param value the symbol and value.
+     *
+     * @return the standard duration.
+     *
+     * @throws NullPointerException if the value is null.
+     * @throws NumberFormatException if the value string does not contain a parsable {@code double}.
+     * @throws IllegalArgumentException if the denominator or the adjustment denominator part value is zero.
+     */
+    public static
+    Standard standard(
+        final String value
+        ) {
+        return new Standard(value);
+    }
+
+    /**
+     * Returns the singleton equivalent to this duration using the specified comparator, or itself if none is found.
+     * <p>
+     * This implementation calls {@link Comparator#compare(Object, Object)} with this duration as the first argument and the singletons as second arguments of that method.
+     *
+     * @param comparator the comparator.
+     *
+     * @return the equivalent singleton or this duration.
+     */
+    public
+    Duration distinct(
+        final Comparator<Fraction> comparator
+        ) {
+        return singleton((Standard) Lambda.sortedFind(this, Singleton.Order, comparator), this);
+    }
+
+    /**
+     * Returns the singleton equivalent to this duration using the specified preferred adjustments, or itself if none is found.
+     *
+     * @param adjustments the preferred adjustments.
+     *
+     * @return the equivalent singleton or this duration.
+     *
+     * @see #distinct(Comparator)
+     */
+    public
+    Duration distinct(
+        final Fraction... adjustments
+        ) {
+        return distinct(new Comparator<Fraction>() {
+            @Override
+            public int compare(final Fraction f1, final Fraction f2) {
+                return f1.compareTo(f2) == 0 && Lambda.findFirst(((Standard) f2).getAdjustment(), adjustments) != null
+                       ? 0
+                       : 1;
+            }
+        });
+    }
+
+    /**
+     * Returns the singleton equivalent to this duration or itself if none is found.
+     *
+     * @return the equivalent singleton or this duration.
+     */
+    public
+    Duration distinct() {
+        return singleton((Standard) Lambda.sortedFind(this, Singleton.Order), this);
+    }
+
+    /**
+     * Validates the duration value is non-negative; otherwise throws an {@code IllegalStateException}.
+     *
+     * @throws IllegalStateException if the duration value is negative.
+     */
+    protected
+    void validateNonNegative() {
+        if (numerator < 0 || (isStandard(this) && ((Standard) this).adjustment.getNumerator() < 0))
+            throw new IllegalStateException(NegativeDuration);
+    }
+
+    /**
+     * Adds the specified fraction to this duration.
+     *
+     * @param fraction the fraction.
+     *
+     * @throws NullPointerException if the specified fraction is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the fraction is not equal to zero.
+     */
+    @Override
+    public void add(final Fraction fraction) {
+        super.add(fraction);
+        validateNonNegative();
+    }
+
+    /**
+     * Adds the specified number to this duration.
+     *
+     * @param n the number.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the number is not equal to zero.
+     */
+    @Override
+    public void add(final Number n) {
+        super.add(n);
+        validateNonNegative();
+    }
+
+    /**
+     * Adjusts the duration by performing simplification.
+     */
+    @Override
+    public void adjust() {
+        simplify();
+    }
+
+    /**
+     * Adjusts the duration with the specified adjustment fractions and returns the adjusted duration.
+     * <p>
+     * This implementation, unlike its standard type override, operates on the duration numerator and denominator values.
+     * If this is a standard duration, the adjustments will be applied to the standard duration adjustment.
+     * <p>
+     * If this is a standard duration with an equivalent singleton, the singleton is returned.
+     *
+     * @param adjustments the adjustment fractions.
+     *
+     * @return the adjusted duration.
+     *
+     * @throws IllegalStateException if a specified adjustment value is negative.
+     */
+    @Override
+    public Duration adjusted(final Fraction... adjustments) {
+        for (final Fraction adjustment : adjustments)
+            if (adjustment != null)
+                multiply(adjustment);
+
+        adjust();
+        return this;
+    }
+
+    /**
+     * Returns the milliseconds in this duration for the specified tempo.
+     * <p>
+     * This implementation returns a {@link java.time.Duration}.
+     *
+     * @param tempo the tempo.
+     *
+     * @return the milliseconds amount.
+     */
+    @Override
+    public TemporalAmount apply(final Tempo tempo) {
+        return java.time.Duration.ofMillis((long) (60000. / tempo.bpm() / tempo.beat().doubleValue() * doubleValue()));
+    }
+
+    /**
+     * Divides this duration by the specified number and returns this duration.
+     * <p>
+     * If this is a standard duration the equivalent singleton will be returned, when one exists.
+     *
+     * @param n the number.
+     *
+     * @return the divided duration or its equivalent singleton if this is a standard type.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     */
+    @Override
+    public Duration by(final Number n) {
+        divide(n);
+        return this;
+    }
+
+    /**
+     * Creates and returns a copy of this duration.
+     *
+     * @return the copy of duration.
+     */
+    @Override
+    public Duration clone() {
+        final Duration duration = new Duration(symbol, numerator, denominator, defaultDenominator);
+        duration.setSimplification(simplification);
+        return duration;
+    }
+
+    /**
+     * Divides this duration by the specified fraction.
+     *
+     * @param fraction the fraction.
+     *
+     * @throws NullPointerException if the specified fraction is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the fraction is not equal to 1.
+     */
+    @Override
+    public void divide(final Fraction fraction) {
+        super.divide(fraction);
+        validateNonNegative();
+    }
+
+    /**
+     * Divides this duration by the specified number.
+     *
+     * @param n the number.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the number is not equal to 1.
+     */
+    @Override
+    public void divide(final Number n) {
+        super.divide(n);
+        validateNonNegative();
+    }
+
+    /**
+     * Inverts and returns this duration.
+     * <p>
+     * If this is a standard duration the equivalent singleton will be returned, when one exists.
+     *
+     * @return the inverted duration or its equivalent singleton if this is a standard type.
+     *
+     * @throws IllegalStateException if the numerator is zero.
+     */
+    @Override
+    public Duration inverted() {
+        invert();
+        return this;
+    }
+
+    /**
+     * Returns true if this duration is the same runtime instance of the specified type; otherwise returns false.
+     *
+     * @param type the other duration type.
+     *
+     * @return true if the runtime instances are the same, or false otherwise.
+     */
+    @Override
+    public boolean is(final system.data.Type<? extends Duration> type) {
+        // Durations are not associated with a different duration type
+        return this == type;
+    }
+
+    /**
+     * Subtracts the specified number from this duration and returns this duration.
+     * <p>
+     * If this is a standard duration the equivalent singleton will be returned, when one exists.
+     *
+     * @param n the number.
+     *
+     * @return the subtracted duration or its equivalent singleton if this is a standard type.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     */
+    @Override
+    public Duration minus(final Number n) {
+        subtract(n);
+        return this;
+    }
+
+    /**
+     * Multiplies this duration by the specified fraction.
+     *
+     * @param fraction the fraction.
+     *
+     * @throws NullPointerException if the specified fraction is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the fraction is not equal to 1.
+     */
+    @Override
+    public void multiply(final Fraction fraction) {
+        super.multiply(fraction);
+        validateNonNegative();
+    }
+
+    /**
+     * Multiplies this duration by the specified number.
+     *
+     * @param n the number.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the number is not equal to 1.
+     */
+    @Override
+    public void multiply(final Number n) {
+        super.multiply(n);
+        validateNonNegative();
+    }
+
+    /**
+     * Adds the specified number to this duration and returns this duration.
+     * <p>
+     * If this is a standard duration the equivalent singleton will be returned, when one exists.
+     *
+     * @param n the number.
+     *
+     * @return the added duration or its equivalent singleton if this is a standard type.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     */
+    @Override
+    public Duration plus(final Number n) {
+        add(n);
+        return this;
+    }
+
+    /**
+     * This implementation throws an {@code UnsupportedOperationException}.
+     */
+    @Override
+    public void reverse() {
+        // Durations are not reversible as there is no negative time in music
+        throw new UnsupportedOperationException(OperationImpossible);
+    }
+
+    /**
+     * This implementation throws an {@code UnsupportedOperationException}.
+     */
+    @Override
+    public Duration reversed() {
+        // Durations are not reversible as there is no negative time in music
+        throw new UnsupportedOperationException(OperationImpossible);
+    }
+
+    /**
+     * Subtracts the specified fraction from this duration.
+     *
+     * @param fraction the fraction.
+     *
+     * @throws NullPointerException if the specified fraction is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the fraction is not equal to zero.
+     */
+    @Override
+    public void subtract(final Fraction fraction) {
+        super.subtract(fraction);
+        validateNonNegative();
+    }
+
+    /**
+     * Subtracts the specified number from this duration.
+     *
+     * @param n the number.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     * @throws UnsupportedOperationException if this duration is a singleton and the number is not equal to zero.
+     */
+    @Override
+    public void subtract(final Number n) {
+        super.subtract(n);
+        validateNonNegative();
+    }
+
+    /**
+     * Multiplies this duration by the specified number and returns this duration.
+     * <p>
+     * If this is a standard duration the equivalent singleton will be returned, when one exists.
+     *
+     * @param n the number.
+     *
+     * @return the multiplied duration or its equivalent singleton if this is a standard type.
+     *
+     * @throws NullPointerException if the number is null.
+     * @throws IllegalStateException if the result is negative.
+     */
+    @Override
+    public Duration times(final Number n) {
+        multiply(n);
+        return this;
+    }
+
+    /**
+     * Returns the symbol of the duration.
+     *
+     * @return the symbol.
+     */
     @Override
     public String getSymbol() {
         return symbol;
     }
 
-    @Override
-    public boolean is(final system.Type<Duration> type) {
-        // Durations are not associated with a different duration type
-        return false;
-    }
-
+    /**
+     * Sets the symbol of the duration.
+     *
+     * @param symbol the symbol.
+     *
+     * @throws UnsupportedOperationException if this is a singleton and the specified symbol is not equal to the singleton symbol.
+     *
+     * @see Symbolized.Singleton#setSymbol(Object)
+     */
     @Override
     public void setSymbol(final String symbol) {
         this.symbol = symbol;
@@ -265,7 +1194,7 @@ implements
      */
     public
     int getBeats() {
-        return beats;
+        return numerator;
     }
 
     /**
@@ -275,45 +1204,671 @@ implements
      */
     public
     short getUnits() {
-        return units;
+        return denominator;
     }
 
     /**
-     * {@code Standard} represents all standard durations.
+     * {@code Singleton} represents all standard stem types in classical music.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    private static final
+    class Singleton
+    extends Standard
+    implements Symbolized.Singleton<String>
+    {
+        /** A constant holding the maximum value a {@code Singleton} can have, 15. */
+        public static final
+        float MAX_VALUE = 15F;
+
+        /** A constant holding the minimum value a {@code Singleton} can have, 0. */
+        public static final
+        float MIN_VALUE = 0F;
+
+        /** The {@code Class} instance representing the type {@code Singleton}. */
+        public static final
+        Class<Duration.Singleton> TYPE = Duration.Singleton.class;
+
+        /** The array of duration singletons. (descending) */
+        public static final
+        Duration.Singleton[] Order
+        = new Duration.Singleton[] {
+            TripleDottedOctupleWhole,
+            DoubleDottedOctupleWhole,
+            DottedOctupleWhole,
+            OctupleWhole,
+            TripleDottedQuadrupleWhole,
+            DoubleDottedQuadrupleWhole,
+            DottedQuadrupleWhole,
+            QuadrupleWhole,
+            TripleDottedDoubleWhole,
+            DoubleDottedDoubleWhole,
+            DottedDoubleWhole,
+            DoubleWhole,
+            TripleDottedWhole,
+            DoubleDottedWhole,
+            DottedWhole,
+            Whole,
+            TripleDottedHalf,
+            DoubleDottedHalf,
+            DottedHalf,
+            Half,
+            TripleDottedQuarter,
+            DoubleDottedQuarter,
+            DottedQuarter,
+            Quarter,
+            TripleDottedEighth,
+            DoubleDottedEighth,
+            DottedEighth,
+            Eighth,
+            TripleDottedSixteenth,
+            DoubleDottedSixteenth,
+            DottedSixteenth,
+            Sixteenth,
+            TripleDottedThirtySecond,
+            DoubleDottedThirtySecond,
+            DottedThirtySecond,
+            ThirtySecond,
+            TripleDottedSixtyFourth,
+            DoubleDottedSixtyFourth,
+            DottedSixtyFourth,
+            SixtyFourth,
+            TripleDottedHundredTwentyEighth,
+            DoubleDottedHundredTwentyEighth,
+            DottedHundredTwentyEighth,
+            HundredTwentyEighth,
+            TripleDottedTwoHundredFiftySixth,
+            DoubleDottedTwoHundredFiftySixth,
+            DottedTwoHundredFiftySixth,
+            TwoHundredFiftySixth,
+
+            Grace
+        };
+
+        /**
+         * Creates a singleton duration with the specified symbol, beats and units of the duration, default denominator, and adjustment.
+         *
+         * @param symbol the symbol.
+         * @param duration the duration.
+         * @param defaultDenominator the default denominator.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the duration or adjustment is null.
+         */
+        private
+        Singleton(
+            final String symbol,
+            final Duration duration,
+            final Short defaultDenominator,
+            final Fraction adjustment
+            ) {
+            super(symbol, duration.numerator * adjustment.getNumerator(), (short) (duration.denominator * adjustment.getDenominator()), defaultDenominator, adjustment);
+        }
+
+        /**
+         * Creates a singleton duration with the specified symbol, beats, units, default denominator, and the unit adjustment.
+         *
+         * @param symbol the symbol.
+         * @param beats the number of beats.
+         * @param units the number of units in a beat.
+         * @param defaultDenominator the default denominator.
+         *
+         * @throws IllegalArgumentException if the units is zero.
+         */
+        private
+        Singleton(
+            final String symbol,
+            final int beats,
+            final short units,
+            final Short defaultDenominator
+            ) {
+            super(symbol, beats, units, defaultDenominator);
+        }
+
+        /**
+         * Creates a singleton duration with the specified symbol, beats, units, and the unit adjustment.
+         *
+         * @param symbol the symbol.
+         * @param beats the number of beats.
+         * @param units the number of units in a beat.
+         *
+         * @throws IllegalArgumentException if the units is zero.
+         */
+        private
+        Singleton(
+            final String symbol,
+            final int beats,
+            final short units
+            ) {
+            super(symbol, beats, units);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the fraction is equal to zero.
+         *
+         * @param fraction the fraction.
+         *
+         * @throws NullPointerException if the specified fraction is null.
+         * @throws UnsupportedOperationException if the fraction is not equal to zero.
+         */
+        @Override
+        public void add(final Fraction fraction) {
+            if (fraction.getNumerator() != 0)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to zero.
+         *
+         * @param n the number.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws UnsupportedOperationException if the number is not equal to zero.
+         */
+        @Override
+        public void add(final Number n) {
+            if (!n.equals(0))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * Clones this singleton and adjusts the copy with the specified adjustment fractions and returns it or the equivalent singleton if one exists.
+         *
+         * @param adjustments the adjustment fractions.
+         *
+         * @return the adjusted standard duration or its equivalent singleton.
+         *
+         * @throws IllegalStateException if a specified adjustment value is negative.
+         */
+        @Override
+        public Standard adjusted(final Fraction... adjustments) {
+            return clone().adjusted(adjustments);
+        }
+
+        /**
+         * Clones this singleton and divides the copy by the specified number and returns it or the equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the divided standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard by(final Number n) {
+            return clone().by(n);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the fraction is equal to 1.
+         *
+         * @param fraction the fraction.
+         *
+         * @throws NullPointerException if the specified fraction is null.
+         * @throws UnsupportedOperationException if the fraction is not equal to 1.
+         */
+        @Override
+        public void divide(final Fraction fraction) {
+            if (fraction.floatValue() != 1F)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
+         *
+         * @param n the number.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws UnsupportedOperationException if the number is not equal to 1.
+         */
+        @Override
+        public void divide(final Number n) {
+            if (!n.equals(1))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the singleton is a whole note.
+         *
+         * @throws UnsupportedOperationException if the singleton is other than the whole note.
+         */
+        @Override
+        public void invert() {
+            if (this != Duration.Singleton.Whole)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * Clones this singleton and inverts the copy and returns it or the equivalent singleton if one exists.
+         *
+         * @return the inverted standard duration or its equivalent singleton.
+         *
+         * @throws IllegalStateException if the numerator is zero.
+         */
+        @Override
+        public Standard inverted() {
+            return clone().inverted();
+        }
+
+        /**
+         * Clones this singleton and subtracts the specified number from the copy and returns it or the equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the subtracted standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard minus(final Number n) {
+            return clone().minus(n);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the fraction is equal to 1.
+         *
+         * @param fraction the fraction.
+         *
+         * @throws NullPointerException if the specified fraction is null.
+         * @throws UnsupportedOperationException if the fraction is not equal to 1.
+         */
+        @Override
+        public void multiply(final Fraction fraction) {
+            if (fraction.floatValue() != 1F)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
+         *
+         * @param n the number.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws UnsupportedOperationException if the number is not equal to 1.
+         */
+        @Override
+        public void multiply(final Number n) {
+            if (!n.equals(1))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * Clones this singleton and adds the specified number to the copy and returns it or the equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the added standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard plus(final Number n) {
+            return clone().plus(n);
+        }
+
+        /**
+         * This implementation returns the singleton.
+         */
+        @Override
+        public Duration.Singleton simplified(short defaultDenominator) {
+            return this;
+        }
+
+        /**
+         * This implementation returns the singleton.
+         */
+        @Override
+        public Duration.Singleton simplified() {
+            return this;
+        }
+
+        /**
+         * This implementation is empty.
+         */
+        @Override
+        public void simplify(short defaultDenominator) {}
+
+        /**
+         * This implementation is empty.
+         */
+        @Override
+        public void simplify() {}
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the fraction is equal to zero.
+         *
+         * @param fraction the fraction.
+         *
+         * @throws NullPointerException if the specified fraction is null.
+         * @throws UnsupportedOperationException if the fraction is not equal to zero.
+         */
+        @Override
+        public void subtract(final Fraction fraction) {
+            if (fraction.getNumerator() != 0)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to zero.
+         *
+         * @param n the number.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws UnsupportedOperationException if the number is not equal to zero.
+         */
+        @Override
+        public void subtract(final Number n) {
+            if (!n.equals(0))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * Clones this singleton and multiplies the copy by the specified number and returns it or the equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the multiplied standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard times(final Number n) {
+            return clone().times(n);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the specified adjustment is equal to the singleton adjustment.
+         *
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the specified adjustment is null.
+         * @throws UnsupportedOperationException if the specified adjustment is not equal to the singleton adjustment.
+         */
+        @Override
+        public void setAdjustment(final Fraction adjustment) {
+            if (!this.adjustment.equals(adjustment))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation is empty.
+         */
+        @Override
+        public void setDefaultDenominator(short defaultDenominator) {}
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the specified denominator is equal to the singleton denominator.
+         *
+         * @param denominator the denominator.
+         *
+         * @throws NullPointerException if the specified denominator is null.
+         * @throws UnsupportedOperationException if the specified denominator is not equal to the singleton denominator.
+         */
+        @Override
+        public void setDenominator(final short denominator) {
+            if (denominator != this.denominator)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation throws an {@code UnsupportedOperationException} unless the specified numerator is equal to the singleton numerator.
+         *
+         * @param numerator the numerator.
+         *
+         * @throws NullPointerException if the specified numerator is null.
+         * @throws UnsupportedOperationException if the specified numerator is not equal to the singleton numerator.
+         */
+        @Override
+        public void setNumerator(final int numerator) {
+            if (numerator != this.numerator)
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * This implementation is empty.
+         */
+        @Override
+        public void setSimplification(BooleanSupplier simplification) {}
+    }
+
+    /**
+     * {@code Standard} represents all standard musical durations.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected static
     class Standard
     extends Duration
     {
+        /** The {@code Class} instance representing the type {@code Standard}. */
+        public static final
+        Class<Standard> TYPE = Standard.class;
+
         /** The adjustment coefficient. */
-        protected final
-        Duration adjustment;
+        protected
+        Fraction adjustment;
 
         /**
-         * Creates a standard duration with the specified symbol, beats, units, and adjustment.
+         * Creates a standard duration with the specified symbol, beats and units of the duration, default denominator, and adjustment.
          *
          * @param symbol the symbol.
-         * @param beats the number of beat units.
+         * @param duration the duration.
+         * @param defaultDenominator the default denominator.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the duration or adjustment is null.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final Duration duration,
+            final Short defaultDenominator,
+            final Fraction adjustment
+            ) {
+            super(symbol, duration.numerator * adjustment.getNumerator(), (short) (duration.denominator * adjustment.getDenominator()), defaultDenominator);
+            this.adjustment = adjustment;
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats and units of the duration, default denominator, and the unit adjustment.
+         *
+         * @param symbol the symbol.
+         * @param duration the duration.
+         * @param defaultDenominator the default denominator.
+         *
+         * @throws NullPointerException if the duration is null.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final Duration duration,
+            final Short defaultDenominator
+            ) {
+            this(symbol, duration.numerator, duration.denominator, defaultDenominator, Singleton.Unit);
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats and units of the duration, and adjustment.
+         *
+         * @param symbol the symbol.
+         * @param duration the duration.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the duration or adjustment is null.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final Duration duration,
+            final Fraction adjustment
+            ) {
+            this(symbol, duration.numerator, duration.denominator, duration.defaultDenominator, adjustment);
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats and units of the duration, and the unit adjustment.
+         *
+         * @param symbol the symbol.
+         * @param duration the duration.
+         *
+         * @throws NullPointerException if the duration is null.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final Duration duration
+            ) {
+            this(symbol, duration.numerator, duration.denominator, duration.defaultDenominator);
+        }
+
+        /**
+         * Creates a standard duration with beats and units of the specified duration, default denominator, adjustment, and null symbol.
+         *
+         * @param duration the duration.
+         * @param defaultDenominator the default denominator.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the duration or adjustment is null.
+         */
+        protected
+        Standard(
+            final Duration duration,
+            final Short defaultDenominator,
+            final Fraction adjustment
+            ) {
+            this(duration.symbol, duration.numerator * adjustment.getNumerator(), (short) (duration.denominator * adjustment.getDenominator()), defaultDenominator, adjustment);
+        }
+
+        /**
+         * Creates a standard duration with beats and units of the specified duration, default denominator, the unit adjustment, and null symbol.
+         *
+         * @param duration the duration.
+         * @param defaultDenominator the default denominator.
+         *
+         * @throws NullPointerException if the duration is null.
+         */
+        protected
+        Standard(
+            final Duration duration,
+            final Short defaultDenominator
+            ) {
+            this(duration.symbol, duration.numerator, duration.denominator, defaultDenominator);
+        }
+
+        /**
+         * Creates a standard duration with beats and units of the specified duration, adjustment, and null symbol.
+         *
+         * @param duration the duration.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the duration or adjustment is null.
+         */
+        protected
+        Standard(
+            final Duration duration,
+            final Fraction adjustment
+            ) {
+            this(duration.symbol, duration.numerator, duration.denominator, duration.defaultDenominator, adjustment);
+        }
+
+        /**
+         * Creates a standard duration with beats and units of the specified duration, the unit adjustment, and null symbol.
+         *
+         * @param duration the duration.
+         *
+         * @throws NullPointerException if the duration is null.
+         */
+        protected
+        Standard(
+            final Duration duration
+            ) {
+            this(duration.symbol, duration.numerator, duration.denominator, duration.defaultDenominator);
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats, units, default denominator, and adjustment.
+         *
+         * @param symbol the symbol.
+         * @param beats the number of beats.
          * @param units the number of units in a beat.
-         * @param adjustment the adjustment duration.
+         * @param defaultDenominator the default denominator.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the adjustment is null.
+         * @throws IllegalArgumentException if the units is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
          */
         protected
         Standard(
             final String symbol,
             final int beats,
             final short units,
-            final Duration adjustment
+            final Short defaultDenominator,
+            final Fraction adjustment
             ) {
-            super(symbol, beats * adjustment.beats, (short) (units * adjustment.units));
+            super(symbol, beats * adjustment.getNumerator(), (short) (units * adjustment.getDenominator()), defaultDenominator);
             this.adjustment = adjustment;
         }
 
         /**
-         * Creates a standard duration with the specified symbol, beats, and units.
+         * Creates a standard duration with the specified symbol, beats, units, default denominator, and the unit adjustment.
          *
          * @param symbol the symbol.
-         * @param beats the number of beat units.
+         * @param beats the number of beats.
          * @param units the number of units in a beat.
+         * @param defaultDenominator the default denominator.
+         *
+         * @throws IllegalArgumentException if the units is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final int beats,
+            final short units,
+            final Short defaultDenominator
+            ) {
+            this(symbol, beats, units, defaultDenominator, Singleton.Unit);
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats, units, and adjustment.
+         *
+         * @param symbol the symbol.
+         * @param beats the number of beats.
+         * @param units the number of units in a beat.
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the adjustment is null.
+         * @throws IllegalArgumentException if the units is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
+         */
+        protected
+        Standard(
+            final String symbol,
+            final int beats,
+            final short units,
+            final Fraction adjustment
+            ) {
+            super(symbol, beats * adjustment.getNumerator(), (short) (units * adjustment.getDenominator()));
+            this.adjustment = adjustment;
+        }
+
+        /**
+         * Creates a standard duration with the specified symbol, beats, units, and the unit adjustment.
+         *
+         * @param symbol the symbol.
+         * @param beats the number of beats.
+         * @param units the number of units in a beat.
+         *
+         * @throws IllegalArgumentException if the units is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
          */
         protected
         Standard(
@@ -321,38 +1876,251 @@ implements
             final int beats,
             final short units
             ) {
-            this(symbol, beats, units, new Duration(1, (short) 1));
+            this(symbol, beats, units, Singleton.Unit);
         }
 
+        /**
+         * Creates a standard duration with the specified symbol and from the specified string value.
+         * <p>
+         * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+         * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
+         * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link Constant.Duration#MultiplierSym}.
+         * <p>
+         * The simplification flag is set to off.
+         *
+         * @param symbol the symbol.
+         * @param value the value.
+         *
+         * @throws NullPointerException if the value is null.
+         * @throws NumberFormatException if the any part of the value string does not contain a parsable {@code double}.
+         * @throws IllegalArgumentException if the denominator or the adjustment denominator part value is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
+         */
+        public
+        Standard(
+            final String symbol,
+            final String value
+            ) {
+            super();
+
+            final int mulIndex = value.indexOf(MultiplierSym);
+            if (mulIndex == -1)
+                set(this, value);
+            else {
+                set(this, value.substring(0, mulIndex));
+                set(adjustment, value.substring(mulIndex + MultiplierSym.length()));
+            }
+
+            validateNonNegative();
+        }
+
+        /**
+         * Creates a standard duration from the specified string value with a symbol equal to the same value.
+         * <p>
+         * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
+         * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
+         * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
+         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link Constant.Duration#MultiplierSym}.
+         * <p>
+         * The simplification flag is set to off.
+         *
+         * @param value the symbol and value.
+         *
+         * @throws NullPointerException if the value is null.
+         * @throws NumberFormatException if the any part of the value string does not contain a parsable {@code double}.
+         * @throws IllegalArgumentException if the denominator or the adjustment denominator part value is zero.
+         * @throws IllegalStateException if the standard duration value is negative.
+         */
+        public
+        Standard(
+            final String value
+            ) {
+            this(value, value);
+        }
+
+        /**
+         * Validates the specified adjustment is not null; otherwise throws a {@code NullPointerException}.
+         *
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the specified adjustment is null.
+         */
+        protected static
+        void validateAdjustment(
+            final Fraction adjustment
+            ) {
+            if (adjustment == null)
+                throw new NullPointerException(NullAdjustment);
+        }
+
+        /**
+         * Validates the specified standard duration is not a singleton; otherwise throws an {@code UnsupportedOperationException}.
+         *
+         * @param duration the standard duration.
+         *
+         * @throws UnsupportedOperationException if the standard duration is a singleton.
+         */
+        protected static
+        void validateNonSingleton(
+            final Standard duration
+            ) {
+            if (isSingleton(duration))
+                throw new UnsupportedOperationException(StandardObjectInoperable);
+        }
+
+        /**
+         * Adjusts this standard duration with the specified adjustment fractions and returns this standard duration or the equivalent singleton if one exists.
+         *
+         * @param adjustments the adjustment fractions.
+         *
+         * @return the adjusted standard duration or its equivalent singleton.
+         *
+         * @throws IllegalStateException if a specified adjustment value is negative.
+         */
+        @Override
+        public Standard adjusted(final Fraction... adjustments) {
+            final Fraction adj = getAdjustment();
+            for (final Fraction adjustment : adjustments)
+                if (adjustment != null) {
+                    multiply(adjustment);
+                    adj.multiply(adjustment);
+                }
+
+            adjust();
+            return (Standard) distinct();
+        }
+
+        /**
+         * Divides this standard duration by the specified number and returns this standard duration or its equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the divided standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard by(final Number n) {
+            divide(n);
+            return (Standard) distinct();
+        }
+
+        /**
+         * Creates and returns a copy of this standard duration.
+         *
+         * @return the copy of standard duration.
+         */
+        @Override
         public Standard clone() {
-            return this == Quarter ||
-                   this == Eighth ||
-                   this == Sixteenth ||
-                   this == Half ||
-                   this == Whole ||
-                   this == ThirtySecond ||
-                   this == SixtyFourth ||
-                   this == DottedQuarter ||
-                   this == DottedEighth ||
-                   this == DottedSixteenth ||
-                   this == DottedHalf ||
-                   this == DottedWhole ||
-                   this == HundredTwentyEighth ||
-                   this == TwoHundredFiftySixth ||
-                   this == DoubleWhole ||
-                   this == QuadrupleWhole ||
-                   this == OctupleWhole ||
-                   this == DottedThirtySecond ||
-                   this == DottedSixtyFourth ||
-                   this == DoubleDottedWhole ||
-                   this == DoubleDottedHalf ||
-                   this == DoubleDottedQuarter ||
-                   this == DoubleDottedEighth ||
-                   this == DoubleDottedSixteenth ||
-                   this == Dotted ||
-                   this == DoubleDotted
-                   ? this
-                   : new Standard(symbol, beats, units);
+            final Standard standard = new Standard(symbol, numerator, denominator, defaultDenominator, adjustment.clone());
+            standard.setSimplification(simplification);
+            return standard;
+        }
+
+        /**
+         * Returns true if the standard duration value is equal to the value of the specified numeric object; and false otherwise.
+         * <p>
+         * If the specified object is a standard duration type, the adjustments are also compared.
+         *
+         * @param obj the object.
+         *
+         * @return true if the standard duration value is equal to the object value; and false otherwise.
+         */
+        @Override
+        public boolean equals(final Object obj) {
+            return super.equals(obj) &&
+                   !(obj instanceof Standard && getAdjustment().compareTo(((Standard) obj).getAdjustment()) == 0);
+        }
+
+        /**
+         * Inverts and returns this standard duration or its equivalent singleton if one exists.
+         *
+         * @return the inverted standard duration or its equivalent singleton.
+         *
+         * @throws IllegalStateException if the numerator is zero.
+         */
+        @Override
+        public Standard inverted() {
+            invert();
+            return (Standard) distinct();
+        }
+
+        /**
+         * Subtracts the specified number from this standard duration and returns this standard duration or its equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the subtracted standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard minus(final Number n) {
+            subtract(n);
+            return (Standard) distinct();
+        }
+
+        /**
+         * Adds the specified number to this standard duration and returns this standard duration or its equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the added standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard plus(final Number n) {
+            add(n);
+            return (Standard) distinct();
+        }
+
+        /**
+         * Multiplies this standard duration by the specified number and returns this standard duration or its equivalent singleton if one exists.
+         *
+         * @param n the number.
+         *
+         * @return the multiplied standard duration or its equivalent singleton.
+         *
+         * @throws NullPointerException if the number is null.
+         * @throws IllegalStateException if the result is negative.
+         */
+        @Override
+        public Standard times(final Number n) {
+            multiply(n);
+            return (Standard) distinct();
+        }
+
+        /**
+         * Returns the adjustment.
+         *
+         * @return the adjustment.
+         */
+        public
+        Fraction getAdjustment() {
+            return adjustment;
+        }
+
+        /**
+         * Sets the adjustment.
+         *
+         * @param adjustment the adjustment.
+         *
+         * @throws NullPointerException if the specified adjustment is null.
+         * @throws IllegalStateException if the specified adjustment value is negative.
+         */
+        public
+        void setAdjustment(
+            final Fraction adjustment
+            ) {
+            validateAdjustment(adjustment);
+            super.divide(this.adjustment);
+            super.multiply(adjustment);
+            this.adjustment = adjustment;
         }
     }
 }

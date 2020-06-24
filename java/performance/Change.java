@@ -15,6 +15,9 @@ import java.lang.annotation.Target;
  * A group of {@code Snapshot} subclasses can be attached to the target.
  * Coordination classes set functionality for configuring the target within the change graph.
  * An intelligent algorithm can choose from the encapsulated data in {@code Change} targets that an instrument performer can produce to discern specific attributes governed by the needs of the score, ultimately by expanding (permuting) the target interactions in order to reduce to a collection of available and possible interactions for performing a specific instance in the score.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 @Retention(RUNTIME)
 @Target(TYPE)
@@ -59,6 +62,9 @@ public
 
     /**
      * {@code Classification} identifies changes by a classified name.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Retention(RUNTIME)
     @Target(TYPE)

@@ -2,31 +2,34 @@ package exceptions;
 
 import org.xml.sax.SAXException;
 
-import music.system.data.MusicXML;
+import music.system.data.MusicXML.Validation;
 
 /**
  * Signals that an exception occurred when parsing a MusicXML file, converting a document from partwise to timewise format, or processing the music data in the document.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class InvalidMusicXMLException
 extends SAXException
 {
-    /** The validation object. */
+    /** The validation. */
     protected final
-    MusicXML.Validation validation;
+    Validation validation;
 
     /**
-     * Constructs an {@code InvalidMusicXMLException} with the specified detail message and original exception.
+     * Constructs an {@code InvalidMusicXMLException} with the specified detail message and cause.
      *
      * @param message the message.
-     * @param e the original exception.
+     * @param cause the cause.
      */
     public
     InvalidMusicXMLException(
         final String message,
-        final Exception e
+        final Exception cause
         ) {
-        super(message, e);
+        super(message, cause);
         validation = null;
     }
 
@@ -44,27 +47,43 @@ extends SAXException
     }
 
     /**
-     * Constructs an {@code InvalidMusicXMLException} with the specified detail message and validation object.
+     * Constructs an {@code InvalidMusicXMLException} with the specified detail message, cause, and validation.
      *
      * @param message the message.
-     * @param validation the validation object.
+     * @param cause the cause.
+     * @param validation the validation.
      */
     public
     InvalidMusicXMLException(
         final String message,
-        final MusicXML.Validation validation
+        final Exception cause,
+        final Validation validation
         ) {
-        super(message);
+        super(message, cause);
         this.validation = validation;
     }
 
     /**
-     * Returns the validation object.
+     * Constructs an {@code InvalidMusicXMLException} with the specified detail message and validation.
      *
-     * @return the validation object.
+     * @param message the message.
+     * @param validation the validation.
      */
     public
-    MusicXML.Validation getValidation() {
+    InvalidMusicXMLException(
+        final String message,
+        final Validation validation
+        ) {
+        this(message, null, validation);
+    }
+
+    /**
+     * Returns the validation.
+     *
+     * @return the validation.
+     */
+    public
+    Validation getValidation() {
         return validation;
     }
 }

@@ -1,16 +1,16 @@
 package musical;
 
 /**
- * {@code Adjustable} classifies the entity that accepts adjustment for routine calculations.
+ * {@code Adjustable} classifies musical data types that can accept in-place adjustment.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Adjustable
 {
     /**
      * Performs adjustment.
-     * <p>
-     * The default implementation is empty.
      */
-    public default
-    void adjust() {}
+    void adjust();
 }

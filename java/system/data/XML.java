@@ -24,8 +24,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -34,19 +35,29 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import system.Data.Hierarchical;
-import system.Data.Interpretable;
+import system.data.Format.Hierarchical;
+import system.data.Format.Interpretable;
 
 /**
- * {@code XML} represents an XML document with defined handler.
+ * {@code XML} represents an XML document.
  * <p>
- * It also holds static members for generating XML documents from an input stream, writing documents to output streams, and traversing them.
- * The static methods in this class are thread-safe.
+ * This class defines static members for generating XML documents or elements from an input stream, writing documents to output streams, and traversing them.
+ * It provides two forms of data elements: one uses the traditional {@code org.w3c.dom} object definitions, and the other wraps those objects around additional interfaces.
+ * The second approach is useful for extending the functionality of the traditional objects and converting them into special data types, while the first approach is better geared for raw string .
+ * <p>
+ * The static methods in this class implementation are thread-safe.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class XML
 extends Interpretable.Document
-implements Hierarchical
+implements
+    Hierarchical,
+    XMLDocument
 {
     /** The document builder factory. */
     private static
@@ -65,46 +76,63 @@ implements Hierarchical
     CharSequence string;
 
     /** The document handler. */
-    protected final
-    DefaultHandler handler;
+    protected
+    Document.Handler handler;
 
     /**
      * Creates an XML document with the specified handler.
      *
-     * @param handler the handler.
+     * @param handler the document handler.
      */
-    protected
+    public
     XML(
-        final DefaultHandler handler
+        final Document.Handler handler
         ) {
+        super();
         this.handler = handler;
     }
 
     /**
-     * Creates an empty XML document using the basic implementation of {@link Handler}.
+     * Creates an empty XML document using the standard implementation of {@link DocumentHandler}.
      */
     public
     XML() {
-        this(Handler.basic(null));
+        this(DocumentHandler.standard());
+        ((DocumentHandler) handler).setDocument(newDocumentBuilder().newDocument());
     }
 
     /**
-     * Returns an intermediary object for performing simple searches on the specified node.
+     * Creates an XML document from the specified document using the standard implementation of {@link DocumentHandler}.
      *
-     * @param node the node.
+     * @param document the document.
+     */
+    public
+    XML(
+        final org.w3c.dom.Document document
+        ) {
+        this(DocumentHandler.standard());
+        ((DocumentHandler) handler).setDocument(document);
+    }
+
+    /**
+     * Returns an intermediary object for performing simple searches on the specified element.
+     *
+     * @param element the element.
+     *
      * @return the intermediary search type.
      */
     public static
     Search at(
-        final Node node
+        final Element element
         ) { return null; }
 
     /**
-     * Returns an intermediary object for performing simple searches on the node at the specified index or sequence of nested indexes.
+     * Returns an intermediary object for performing simple searches on the element at the specified index or sequence of nested indexes.
      * <p>
-     * Sequences must start from the top-most level enumerating the document child nodes.
+     * Sequences must start from the top-most level enumerating the document child elements.
      *
-     * @param index the node index.
+     * @param index the element index.
+     *
      * @return the intermediary search type.
      */
     public static
@@ -113,18 +141,20 @@ implements Hierarchical
         ) { return null; }
 
     /**
-     * Clones the source node and adds it to the target node.
+     * Clones the source element and adds it as a child element to the target element and returns the cloned element.
      *
-     * @param source the source node.
-     * @param target the target node.
-     * @return the cloned node.
+     * @param source the source element.
+     * @param target the target element.
+     *
+     * @return the cloned element.
+     *
      * @throws DOMException if a node name is not a valid XML name.
      * @throws UnsupportedOperationException if an unexpected node type other than ELEMENT or TEXT is passed.
      */
     public static
-    Node clone(
-        final Node source,
-        final Node target
+    Element clone(
+        final Element source,
+        final Element target
         )
     throws
         DOMException,
@@ -133,27 +163,29 @@ implements Hierarchical
         if (source == null)
             return target;
 
-        switch(source.getNodeType()) {
-            case Node.ELEMENT_NODE:
-                return target.appendChild(cloneAttributes(source, target.getOwnerDocument().createElement(source.getNodeName())));
+        switch (source.getNodeType())
+        {
+        case Node.ELEMENT_NODE:
+            return (Element) target.appendChild(cloneAttributes(source, (Element) Element.of(target.getOwnerDocument().createElement(source.getNodeName()))));
 
-            case Node.TEXT_NODE:
-                return target.appendChild(target.getOwnerDocument().createTextNode(source.getNodeValue()));
+        case Node.TEXT_NODE:
+            return (Element) target.appendChild(target.getOwnerDocument().createTextNode(source.getNodeValue()));
         }
 
         throw new UnsupportedOperationException("Unsupported XML node type: " + source.getNodeType());
     }
 
     /**
-     * Clones the attributes of the source node and adds them to the target element.
+     * Clones the attributes of the source element and adds them as attributes to the target element.
      *
-     * @param source the source node.
+     * @param source the source element.
      * @param target the target element.
+     *
      * @return the target element.
      */
     public static
     Element cloneAttributes(
-        final Node source,
+        final Element source,
         final Element target
         ) {
         if (source == null)
@@ -171,18 +203,19 @@ implements Hierarchical
     }
 
     /**
-     * Clones the attributes of the source node and adds them to the target element if one of the provided conditions pass.
+     * Clones the attributes of the source element and adds them as attributes to the target element if one of the provided conditions pass, and returns the target element.
      * <p>
-     * The bi-predicate functions must accept a number for the source attribute's order of appearance and the attribute node as arguments.
+     * The bi-predicate functions must accept a number for the source attribute's order of appearance and the attribute as arguments.
      *
      * @param source the source node.
      * @param target the target element.
      * @param preds the source attribute pass condition bi-predicates.
+     *
      * @return the target element.
      */
     public static
     Element cloneAttributes(
-        final Node source,
+        final Element source,
         final Element target,
         final BiPredicate<Number, Node>... preds
         ) {
@@ -208,26 +241,26 @@ implements Hierarchical
     }
 
     /**
-     * Clones the entire inner structure of the source node and adds them to the target node.
+     * Clones the entire inner structure of the source element and adds them as children to the target element, and returns the target element.
      * <p>
      * This implementation is recursive.
      *
-     * @param source the source node.
-     * @param target the target node.
-     * @return the target node.
-     * @throws DOMException if the target node is of a type that does not allow children of the source node's child type.
+     * @param source the source element.
+     * @param target the target element.
+     *
+     * @return the target element.
      */
     public static
-    Node cloneChildren(
-        final Node source,
-        final Node target
+    Element cloneChildren(
+        final Element source,
+        final Element target
         )
     throws DOMException
     {
         if (source != null && source.hasChildNodes()) {
             final NodeList innerElements = source.getChildNodes();
             for (int n = 0; n < innerElements.getLength(); n++) {
-                final Node innerElement = innerElements.item(n);
+                final Element innerElement = (Element) Element.of(innerElements.item(n));
                 cloneChildren(innerElement, clone(innerElement, target));
             }
         }
@@ -236,22 +269,22 @@ implements Hierarchical
     }
 
     /**
-     * Clones the entire inner structure of the source node and adds them to the target node if one of the provided conditions pass.
+     * Clones the entire inner structure of the source element and adds them as children to the target element if one of the provided conditions pass, and returns the target element.
      * <p>
      * This implementation is recursive.
-     * The conditions are passed down to all child nodes recursively.
-     * The bi-predicate functions must accept a number for the child element's order of appearance and the child element node as arguments.
+     * The conditions are passed down to all child elements recursively.
+     * The bi-predicate functions must accept a number for the child element's order of appearance and the child element as arguments.
      *
-     * @param source the source node.
-     * @param target the target node.
+     * @param source the source element.
+     * @param target the target element.
      * @param preds the child element pass condition bi-predicates.
-     * @return the target node.
-     * @throws DOMException if the target node is of a type that does not allow children of the source node's child type.
+     *
+     * @return the target element.
      */
     public static
-    Node cloneChildren(
-        final Node source,
-        final Node target,
+    Element cloneChildren(
+        final Element source,
+        final Element target,
         final BiPredicate<Number, Node>... preds
         )
     throws DOMException
@@ -260,12 +293,12 @@ implements Hierarchical
             final NodeList innerElements = source.getChildNodes();
             if (preds.length == 0)
                 for (int n = 0; n < innerElements.getLength(); n++) {
-                    final Node innerElement = innerElements.item(n);
+                    final Element innerElement = (Element) innerElements.item(n);
                     cloneChildren(innerElement, clone(innerElement, target));
                 }
             else
                 for (int n = 0; n < innerElements.getLength(); n++) {
-                    final Node innerElement = innerElements.item(n);
+                    final Element innerElement = (Element) innerElements.item(n);
                     for (int j = 0; j < preds.length; j++)
                         if (preds[j].test(n, innerElement))
                             cloneChildren(innerElement, clone(innerElement, target), preds);
@@ -276,20 +309,22 @@ implements Hierarchical
     }
 
     /**
-     * Returns an intermediary object for performing simple searches starting from the specified node.
+     * Returns an intermediary object for performing simple searches starting from the specified element.
      *
-     * @param node the starting node.
+     * @param element the starting element.
+     *
      * @return the intermediary search type.
      */
     public static
     Search from(
-        final Node node
+        final Element element
         ) { return null; }
 
     /**
      * Returns an intermediary object for performing simple searches starting from the node at the specified index or sequence of nested indexes.
      *
      * @param index the node index.
+     *
      * @return the intermediary search type.
      */
     public static
@@ -343,7 +378,8 @@ implements Hierarchical
      * Returns a new transformer, or null if an error occurs.
      *
      * @return a new transformer, or null if an error occurs.
-     * @throws TransformerFactoryConfigurationError Thrown in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     *
+     * @see TransformerFactory#newInstance()
      */
     public static
     Transformer newTransformer() {
@@ -361,6 +397,13 @@ implements Hierarchical
         }
     }
 
+    public static
+    XML of(
+        final org.w3c.dom.Document document
+        ) {
+        return null;
+    }
+
     /**
      * Parses the input stream with the specified handler.
      * <p>
@@ -368,7 +411,9 @@ implements Hierarchical
      *
      * @param inputStream the input stream.
      * @param handler the handler.
+     *
      * @return the document, or null if handler is not a {@code Handler} type.
+     *
      * @throws IOException if any I/O errors occur.
      * @throws ParserConfigurationException if a serious configuration error occurs.
      * @throws SAXException if a processing error occurs.
@@ -392,13 +437,15 @@ implements Hierarchical
     }
 
     /**
-     * Parses the input stream using the basic implementation of {@link Handler}.
+     * Parses the input stream using the standard implementation of {@link DocumentHandler}.
      *
      * @param inputStream the input stream.
+     *
      * @return the document.
-     * @throws IOException
-     * @throws ParserConfigurationException
-     * @throws SAXException
+     *
+     * @throws IOException if any I/O errors occur.
+     * @throws ParserConfigurationException if a serious configuration error occurs.
+     * @throws SAXException if a processing error occurs.
      */
     public static
     Node parse(
@@ -409,7 +456,7 @@ implements Hierarchical
         ParserConfigurationException,
         SAXException
     {
-        return parse(inputStream, Handler.basic(null));
+        return parse(inputStream, DocumentHandler.standard());
     }
 
     /**
@@ -417,6 +464,7 @@ implements Hierarchical
      *
      * @param outputStream the output stream.
      * @param indent indentation amount.
+     *
      * @throws TransformerConfigurationException if a serious configuration error occurs.
      * @throws TransformerException if a transformation error occurs.
      */
@@ -455,8 +503,27 @@ implements Hierarchical
     }
 
     @Override
+    public Class<?> getOrderClass() {
+        return Element.class;
+    }
+
+    @Override
     public int length() {
         return 0;
+    }
+
+    @Override
+    public org.w3c.dom.Document object() {
+        return handler instanceof Handler
+               ? getDocument()
+               : null;
+    }
+
+    @Override
+    public Class<?> objectType() {
+        return handler instanceof Handler
+                ? ((Handler<?>) handler).document.getClass()
+                : null;
     }
 
     @Override
@@ -473,6 +540,7 @@ implements Hierarchical
      * Writes the XML document to the specified output stream.
      *
      * @param outputStream the output stream.
+     *
      * @throws TransformerConfigurationException if a serious configuration error occurs.
      * @throws TransformerException if a transformation error occurs.
      */
@@ -489,12 +557,17 @@ implements Hierarchical
      * Returns the XML document.
      *
      * @return the XML document.
+     *
+     * @throws IllegalStateException if the handler is null or has an incorrect type.
      */
     public
     org.w3c.dom.Document getDocument() {
-        return handler instanceof Handler
-               ? ((Handler<org.w3c.dom.Document>) handler).document
-               : null;
+        try {
+            return (org.w3c.dom.Document) ((Handler<?>) handler).document;
+        }
+        catch (Exception e) {
+            throw new IllegalStateException();
+        }
     }
 
     /**
@@ -503,12 +576,209 @@ implements Hierarchical
      * @return the handler.
      */
     public
-    DefaultHandler getHandler() {
+    Document.Handler getHandler() {
         return handler;
     }
 
     /**
+     * {@code DocumentHandler} represent a handler that is in charge of parsing entire XML documents.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    public static abstract
+    class DocumentHandler
+    extends Handler<org.w3c.dom.Document>
+    {
+        /**
+         * Returns a document handler that accepts only elements, attributes, and text nodes.
+         * <p>
+         * If a document is not provided, a new document is created and used by this handler.
+         *
+         * @return the basic handler.
+         */
+        public static final
+        DocumentHandler basic() {
+            return new Basic();
+        }
+
+        /**
+         * Returns a document handler that accepts all node types.
+         * <p>
+         * If a document is not provided, a new document is created and used by the handler.
+         *
+         * @return the standard handler.
+         */
+        public static final
+        DocumentHandler standard() {
+            return new Standard();
+        }
+
+        /**
+         * {@code Basic} is an implementation of a document handler that only accepts elements, attributes, and text nodes.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        protected static
+        class Basic
+        extends DocumentHandler
+        {
+            /** The "document closed" flag. */
+            protected
+            boolean closed;
+
+            /** The element stack. */
+            protected final
+            Stack<org.w3c.dom.Element> stack = new Stack<>();
+
+            /** The document depth. */
+            protected
+            int depth;
+
+            /**
+             * Accepts an element text.
+             *
+             * @throws IllegalStateException if document is closed.
+             * @throws SAXException if the stack size does not match the document depth.
+             */
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
+                super.characters(ch, start, length);
+
+                if (stack.empty() || stack.size() != depth)
+                    throw new SAXException();
+
+                // Append the characters to the element at the top of the stack
+                stack.peek().appendChild(getDocument().createTextNode(new String(ch, start, length)));
+            }
+
+            /**
+             * Ends the document.
+             *
+             * @throws IllegalStateException if document is closed.
+             */
+            @Override
+            public void endDocument() throws SAXException {
+                super.endDocument();
+                closed = depth == 0;
+            }
+
+            /**
+             * Ends an element.
+             * <p>
+             * This implementation calls {@link #endDocument()} internally if there is only one element left in the stack.
+             *
+             * @throws IllegalStateException if document is closed.
+             * @throws SAXException if the stack size does not match the document depth.
+             */
+            @Override
+            public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+                super.endElement(uri, localName, qName);
+
+                // Finalize and close the element in the stack
+                if (depth > 0 && stack.size() == depth && qName.equals(stack.peek().getTagName()))
+                    if (stack.size() == 1) {
+                        document.appendChild(stack.pop());
+                        depth = 0;
+                        endDocument();
+                        return;
+                    }
+                    else
+                        stack.peek().appendChild(stack.pop());
+                else
+                    throw new SAXException();
+
+                depth--;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean isClosed() {
+                return closed;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
+                // To avoid DTD validation
+                return new InputSource(new ByteArrayInputStream(new byte[] {}));
+            }
+
+            /**
+             * Starts the document.
+             * <p>
+             * If the document is null, a new one is created.
+             * If the document is not empty, an {@code IllegalStateException} is thrown.
+             *
+             * @throws IllegalStateException if document is closed or non-empty.
+             */
+            @Override
+            public void startDocument() throws SAXException {
+                super.startDocument();
+
+                final org.w3c.dom.Document doc = getDocument();
+                if (doc == null)
+                    setDocument(newDocumentBuilder().newDocument());
+                else
+                    if (doc.hasChildNodes()) {
+                        closed = true;
+                        throw new IllegalStateException();
+                    }
+
+                depth = 0;
+            }
+
+            /**
+             * Starts an element.
+             *
+             * @throws IllegalStateException if document is closed.
+             */
+            @Override
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+                super.startElement(uri, localName, qName, attributes);
+
+                // Create a placeholder element
+                final org.w3c.dom.Element e = getDocument().createElement(qName);
+
+                // Add the attributes to the element
+                final int length = attributes.getLength();
+                for (int i = 0; i < length; i++)
+                    e.setAttribute(attributes.getQName(i), attributes.getValue(i));
+
+                // Push the element to the stack
+                stack.push(e);
+                depth++;
+            }
+        }
+
+        /**
+         * {@code Standard} is an implementation of a document handler that accepts all node types.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        protected static
+        class Standard
+        extends Basic
+        {}
+    }
+
+    /**
      * {@code Filter} represents data types that are constructed in order to filter out parts of XML documents during traversal.
+     * <p>
+     * This class implementation is empty.
+     *
+     * @see Document.Filter
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Filter
@@ -519,7 +789,12 @@ implements Hierarchical
          * <p>
          * Technically speaking, a match condition can be as arbitrarily complex as needed.
          * Any form of programmatic logic can be laid out by match types given that the traversal logic provides enough data to the containing filter type at runtime, such as element index, depth, name, etc.
-         * The predefined subclasses inside this class represent only a handful of match conditions that are commonly employed in most forms of traversals.
+         * The predefined subclasses inside this class represent only a handful of match conditions that are commonly employed in most forms of XML traversals.
+         * <p>
+         * This class implementation is empty.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public static abstract
         class Match
@@ -527,6 +802,11 @@ implements Hierarchical
         {
             /**
              * {@code Ancestor} represents all match types that target XML element ancestor conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Ancestor
@@ -535,6 +815,11 @@ implements Hierarchical
 
             /**
              * {@code Attribute} represents all match types that target XML element attribute conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Attribute
@@ -543,6 +828,11 @@ implements Hierarchical
 
             /**
              * {@code AttributeName} represents all match types that target XML element attribute name conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class AttributeName
@@ -551,6 +841,11 @@ implements Hierarchical
 
             /**
              * {@code AttributeIndex} represents all match types that target XML element attribute index conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class AttributeIndex
@@ -559,6 +854,11 @@ implements Hierarchical
 
             /**
              * {@code AttributeValue} represents all match types that target XML element attribute value conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class AttributeValue
@@ -567,6 +867,11 @@ implements Hierarchical
 
             /**
              * {@code Child} represents all match types that target XML element child conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Child
@@ -575,6 +880,11 @@ implements Hierarchical
 
             /**
              * {@code Descendant} represents all match types that target XML element descendant conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Descendant
@@ -583,6 +893,11 @@ implements Hierarchical
 
             /**
              * {@code Depth} represents all match types that target XML element depth conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Depth
@@ -591,6 +906,11 @@ implements Hierarchical
 
             /**
              * {@code Element} represents all match types that target XML element conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Element
@@ -599,6 +919,11 @@ implements Hierarchical
 
             /**
              * {@code Index} represents all match types that target XML element index conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Index
@@ -607,6 +932,11 @@ implements Hierarchical
 
             /**
              * {@code Name} represents all match types that target XML element name conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Name
@@ -615,6 +945,11 @@ implements Hierarchical
 
             /**
              * {@code Parent} represents all match types that target XML element parent conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Parent
@@ -623,6 +958,11 @@ implements Hierarchical
 
             /**
              * {@code Sibling} represents all match types that target XML element sibling conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Sibling
@@ -631,6 +971,11 @@ implements Hierarchical
 
             /**
              * {@code Text} represents all match types that target XML element text conditions.
+             * <p>
+             * This class implementation is empty.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Text
@@ -640,19 +985,19 @@ implements Hierarchical
     }
 
     /**
-     * {@code Handler} re-implements the {@link org.xml.sax.helpers.DefaultHandler} class.
+     * {@code Handler} re-implements the {@link DefaultHandler} class.
      * <p>
-     * By design, the generic type of this class defines the handler's result or target node type.
+     * By design, the generic type of this class defines the handler's result or target element type.
      *
-     * @param <T> the document node type.
+     * @param <T> the document type.
      */
     public static abstract
     class Handler<T extends Node>
     extends DefaultHandler
     implements Document.Handler
     {
-        /** the document. */
-        public
+        /** the document. (node) */
+        protected
         T document;
 
         /**
@@ -660,125 +1005,122 @@ implements Hierarchical
          *
          * @param document the document.
          */
-        protected
+        public
         Handler(
             final T document
             ) {
-            super();
-            this.document = document;
+            this();
+            setDocument(document);
         }
 
         /**
-         * Returns a document handler that accepts all element, attribute, and text nodes.
-         * <p>
-         * If a document is not provided, a new document is created and used by the handler.
-         *
-         * @param document the optional document.
-         * @return the basic handler.
+         * Creates a handler without any document.
          */
-        public static final
-        Handler<org.w3c.dom.Document> basic(
-            final org.w3c.dom.Document document
-            ) {
-            return new Handler<org.w3c.dom.Document>(
-                document == null
-                ? newDocumentBuilder().newDocument()
-                : document)
-            {
-                private
-                boolean completed;
-
-                private final
-                Stack<Element> stack = new Stack<Element>();
-
-                private
-                int depth;
-
-                @Override
-                public void characters(final char[] ch, final int start, final int length) throws SAXException {
-                    if (completed || stack.empty() || stack.size() != depth)
-                        return;
-
-                    // Append the characters to the element at the top of the stack
-                    String s = "";
-                    for (int i = start; i < start + length; i++)
-                        s += ch[i];
-                    stack.peek().appendChild(document.createTextNode(s));
-                }
-
-                @Override
-                public void endDocument() {
-                    completed = true;
-                }
-
-                @Override
-                public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                    if (completed)
-                        return;
-
-                    // Finalize and close the element in the stack
-                    if (stack.size() == depth && qName.equals(stack.peek().getTagName())) {
-                        final Element e = stack.pop();
-
-                        if (stack.empty()) {
-                            document.appendChild(e);
-                            endDocument();
-                        }
-                        else
-                            stack.peek().appendChild(e);
-                    }
-
-                    depth--;
-                }
-
-                @Override
-                public boolean isUsed() {
-                    return completed;
-                }
-
-                @Override
-                public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
-                    // To avoid DTD validation
-                    return new InputSource(new ByteArrayInputStream(new byte[] {}));
-                }
-
-                @Override
-                public void startDocument() throws SAXException {
-                    depth = 0;
-                }
-
-                @Override
-                public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                    if (completed)
-                        return;
-
-                    // Create a placeholder element
-                    final Element e = document.createElement(qName);
-
-                    // Add the attributes to the element
-                    for (int i = 0; i < attributes.getLength(); i++) {
-                        final String aName = attributes.getQName(i);
-                            e.setAttribute(aName, attributes.getValue(i));
-                    }
-
-                    // Push the element to the stack
-                    stack.push(e);
-                    depth++;
-                }
-            };
+        protected
+        Handler() {
+            super();
         }
 
         /**
-         * Returns true after handler is used usually indicating that the document is parsed completely.
+         * {@inheritDoc}
+         * <p>
+         * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
          *
-         * @return true after handler is used.
+         * @throws IllegalStateException if document is closed.
+         */
+        @Override
+        public void characters(final char[] ch, final int start, final int length) throws SAXException {
+            if (isClosed())
+                throw new IllegalStateException();
+
+            super.characters(ch, start,length);
+        }
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
+         *
+         * @throws IllegalStateException if document is closed.
+         */
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+            if (isClosed())
+                throw new IllegalStateException();
+
+            super.endElement(uri, localName, qName);
+        }
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
+         *
+         * @throws IllegalStateException if document is closed.
+         */
+        @Override
+        public void startDocument() throws SAXException {
+            if (isClosed())
+                throw new IllegalStateException();
+
+            super.startDocument();
+        }
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
+         *
+         * @throws IllegalStateException if document is closed.
+         */
+        @Override
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+            super.startElement(uri, localName, qName, attributes);
+            if (isClosed())
+                throw new IllegalStateException();
+        }
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * When a handler is closed it usually indicates that the document is parsed completely.
+         *
+         * @return true if the handler is closed, and false otherwise.
          */
         public abstract
-        boolean isUsed();
+        boolean isClosed();
+
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This implementation refers to the traditional XML node type as the document.
+         * Therefore, it can also refer to the XML document element; however, the naming is intended to reflect the role of the object as a documented source of data and it can be any subclass of {@link Node}.
+         *
+         * @return the XML document.
+         */
+        @Override
+        public T getDocument() {
+            return document;
+        }
+
+        /**
+         * Sets the handler document.
+         *
+         * @param document the document.
+         */
+        public
+        void setDocument(
+            final T document
+            ) {
+            this.document = document;
+        }
     }
 
     /**
      * {@code Locator} classifies a simple lookup interface for individual nodes and provides default methods for locating relatives of such nodes.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Locator
@@ -792,7 +1134,7 @@ implements Hierarchical
          * @param pred the attribute node condition bi-predicate.
          * @return the attribute node, or null if it doesn't exist.
          */
-        public static
+        default
         Node findAttribute(
             final Node node,
             final BiPredicate<Number, Node> pred
@@ -822,7 +1164,7 @@ implements Hierarchical
          * @param pred the attribute node condition bi-predicate.
          * @return the attribute node, or null if it doesn't exist.
          */
-        public static
+        default
         Node findAttribute(
             final Node node,
             final int n,
@@ -854,7 +1196,7 @@ implements Hierarchical
          * @param attrPred the attribute node condition bi-predicate.
          * @return the attribute node, or null if it doesn't exist.
          */
-        public static
+        default
         Node findAttribute(
             final Node node,
             final int n,
@@ -883,7 +1225,7 @@ implements Hierarchical
          * @param name the attribute name.
          * @return the attribute value, or null if it doesn't exist.
          */
-        public static
+        static
         String findAttributeValue(
             final Node node,
             final String name
@@ -907,7 +1249,7 @@ implements Hierarchical
          * @param childNamePred the child node name condition predicate.
          * @return the child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final Predicate<String> childNamePred
             ) {
@@ -933,7 +1275,7 @@ implements Hierarchical
          * @param childName the child node name.
          * @return the child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final String childName
             ) {
@@ -952,7 +1294,7 @@ implements Hierarchical
          * @param childAttrPred the child attribute condition bi-predicate.
          * @return the child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final int index,
             final Node node,
@@ -1009,7 +1351,7 @@ implements Hierarchical
          * @param childAttrPred the child attribute condition bi-predicate.
          * @return the first child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final Node node,
             final Predicate<String> childNamePred,
@@ -1031,7 +1373,7 @@ implements Hierarchical
          * @param childAttrPred the child attribute condition bi-predicate.
          * @return the child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final int index,
             final Node node,
@@ -1053,7 +1395,7 @@ implements Hierarchical
          * @param childAttrPred the child attribute condition bi-predicate.
          * @return the first child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final Node node,
             final String childName,
@@ -1075,7 +1417,7 @@ implements Hierarchical
          * @param childAttrValue the child attribute value.
          * @return the child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final int index,
             final Node node,
@@ -1102,7 +1444,7 @@ implements Hierarchical
          * @param childAttrValue the child attribute value.
          * @return the first child node, or null if it doesn't exist.
          */
-        public default
+        default
         Node findChild(
             final Node node,
             final String childName,
@@ -1117,7 +1459,7 @@ implements Hierarchical
          *
          * @return iterable for child nodes.
          */
-        public default
+        default
         Iterable<Node> findChildren() {
             return new Iterable<Node>() {
                 @Override
@@ -1161,7 +1503,7 @@ implements Hierarchical
          * @param namePred the child node name condition predicate.
          * @return iterable for child nodes.
          */
-        public default
+        default
         Iterable<Node> findChildren(
             final Predicate<String> namePred
             ) {
@@ -1211,7 +1553,7 @@ implements Hierarchical
          * @param childName the child node name.
          * @return iterable for child nodes.
          */
-        public default
+        default
         Iterable<Node> findChildren(
             final String childName
             ) {
@@ -1227,7 +1569,7 @@ implements Hierarchical
          * @param attrPred the child attribute condition bi-predicate.
          * @return iterable for child nodes.
          */
-        public default
+        default
         Iterable<Node> findChildren(
             final Predicate<String> namePred,
             final BiPredicate<Integer, Node> attrPred
@@ -1295,7 +1637,7 @@ implements Hierarchical
          * @param attrValue the child attribute value.
          * @return iterable for child nodes.
          */
-        public default
+        default
         Iterable<Node> findChildren(
             final String childName,
             final String attrName,
@@ -1314,12 +1656,14 @@ implements Hierarchical
          *
          * @return the target node.
          */
-        public
         Node getNode();
     }
 
     /**
      * {@code Neighborhood} classifies uniquely contained domains consisting of consecutive sibling nodes.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Neighborhood
@@ -1331,9 +1675,8 @@ implements Hierarchical
          * @param start the start node.
          * @return the search type.
          */
-        public
         Search from(
-            Node start
+            Element start
             );
 
         /**
@@ -1341,7 +1684,6 @@ implements Hierarchical
          *
          * @return the end index of neighborhood.
          */
-        public
         Integer getEndIndex();
 
         /**
@@ -1349,7 +1691,6 @@ implements Hierarchical
          *
          * @return the start index of neighborhood.
          */
-        public
         Integer getStartIndex();
 
         /**
@@ -1358,14 +1699,144 @@ implements Hierarchical
          * @param end the end node.
          * @return the search type.
          */
-        public
         Search until(
-            Node end
+            Element end
             );
     }
 
     /**
+     * {@code Element} classifies all XML data elements.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    public
+    interface Element
+    extends XMLElement
+    {
+        /**
+         * Returns a conventional XML element wrapped around the specified traditional XML element as its target.
+         *
+         * @param target the traditional XML element.
+         *
+         * @return the conventional XML element.
+         */
+        static
+        XMLElement of(
+            final Node target
+            ) {
+            if (target instanceof XMLDocument) {
+                final org.w3c.dom.Element object = (org.w3c.dom.Element) ((XMLDocument) target).object();
+                return new XMLDocument() {
+                    @Override
+                    public org.w3c.dom.Element object() {
+                        return object;
+                    }
+
+                    @Override
+                    public Class<? extends Node> objectType() {
+                        return target.getClass();
+                    }
+                };
+            }
+
+            if (target instanceof org.w3c.dom.Document)
+                return new XMLDocument() {
+                    @Override
+                    public org.w3c.dom.Element object() {
+                        return (org.w3c.dom.Element) target;
+                    }
+
+                    @Override
+                    public Class<? extends Node> objectType() {
+                        return target.getClass();
+                    }
+                };
+
+            if (target instanceof XMLElement) {
+                final org.w3c.dom.Element object = (org.w3c.dom.Element) ((Element) target).object();
+                return new Element() {
+                    @Override
+                    public org.w3c.dom.Element object() {
+                        return object;
+                    }
+
+                    @Override
+                    public Class<? extends Node> objectType() {
+                        return target.getClass();
+                    }
+                };
+            }
+
+            return new Element() {
+                @Override
+                public org.w3c.dom.Element object() {
+                    return (org.w3c.dom.Element) target;
+                }
+
+                @Override
+                public Class<? extends Node> objectType() {
+                    return target.getClass();
+                }
+            };
+        }
+
+        /**
+         * {@code Element} classifies all XML data element attributes.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public
+        interface Attribute
+        extends XMLAttribute
+        {
+            /**
+             * Returns a conventional XML element attribute wrapped around the specified traditional XML element attribute as its target.
+             *
+             * @param target the traditional XML element attribute.
+             *
+             * @return the conventional XML element attribute.
+             */
+            static
+            Attribute of(
+                final Attr target
+                ) {
+                if (target instanceof Attribute) {
+                    final Attr object = (Attr) ((Attribute) target).object();
+                    return new Attribute() {
+                        @Override
+                        public Attr object() {
+                            return object;
+                        }
+
+                        @Override
+                        public Class<? extends Attr> objectType() {
+                            return target.getClass();
+                        }
+                    };
+                }
+
+                return new Attribute() {
+                    @Override
+                    public Attr object() {
+                        return target;
+                    }
+
+                    @Override
+                    public Class<? extends Attr> objectType() {
+                        return target.getClass();
+                    }
+                };
+            }
+        }
+    }
+
+    /**
      * {@code Search} classifies functional selections within neighborhoods such as sorts.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Search
@@ -1376,11 +1847,14 @@ implements Hierarchical
          *
          * @return the collection of nodes.
          */
-        public abstract
-        Collection<Node> find();
+        abstract
+        Collection<Element> find();
 
         /**
          * {@code Binary} classifies forms of binary sort algorithm that employ linear lookup strategies.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Binary
@@ -1391,16 +1865,20 @@ implements Hierarchical
              *
              * @param plan the binary search traversal plan.
              * @param target the target node(s).
+             *
+             * @return the bound search type.
              */
-            public
             Binary bind(
                 Filter plan,
-                Node... target
+                Element... target
                 );
         }
 
         /**
          * {@code Merge} classifies forms of merge sort algorithm that employ divide-and-conquer strategies.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Merge
@@ -1411,20 +1889,24 @@ implements Hierarchical
              *
              * @param plan the merge traversal plan.
              * @param source the source node(s).
+             *
+             * @return the merged search type.
              */
-            public
             Merge merge(
                 Filter plan,
-                Node... source
+                Element... source
                 );
         }
     }
 
     /**
-     * {@code Traversal} represents an iterative algorithm over a neighborhood of nodes such that every node is visited at least once.
+     * {@code Traversal} represents an iterative algorithm over a neighborhood of XML nodes such that every node is visited at least once.
      * <p>
      * Instances of this class can be considered as encapsulated units of logic that are by themselves sufficient for carrying out all the necessary work for filtering by match conditions.
      * For example, if a traversal logic is designed to support concurrency, the work of thread management should ideally be handled inside this class.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Traversal

@@ -13,6 +13,9 @@ import java.util.Map;
  * {@code Human} represents a performer's physical body.
  * <p>
  * This superclass defines a model of the human anatomy, sufficiently simplified for representing the postures and movements in music performance.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Human
@@ -162,14 +165,21 @@ extends Instrument
      * {@code Abdomen} represents the human abdomen.
      * <p>
      * The human abdomen is the lower part of the torso also known as the belly.
+     * It is the joint in the torso connecting the waist to the thorax.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @BodyPart.Connection(parts = { Waist.class, Thorax.class })
     public abstract
     class Abdomen
     extends Joint
     implements
         External,
-        Lower,
+        Mid,
         TorsoPart
     {
         /**
@@ -178,21 +188,26 @@ extends Instrument
         protected
         Abdomen() {
             super();
-            createPart(Abdomen.class);
         }
     }
 
     /**
      * {@code AllFingers} represents all fingers of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Fingers.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFingers
     extends OrientationalBodyPartGroup
     implements
         External,
         HandPart,
-        Universal.ComprehensiveGroup<Finger, Human>
+        Universal.ComprehensiveGroup<Fingers, Hands>
     {
         /**
          * Creates all fingers.
@@ -201,32 +216,30 @@ extends Instrument
         AllFingers() {
             super();
 
-            createPart(Finger.class)
-            .withParameterRanges(2, 5)
-            .withValues(Orientation.RIGHT, 0)
-            .withValues(Orientation.LEFT, 0)
-            .withValues(Orientation.RIGHT, 1)
-            .withValues(Orientation.LEFT, 1)
-            .withValues(Orientation.RIGHT, 2)
-            .withValues(Orientation.LEFT, 2)
-            .withValues(Orientation.RIGHT, 3)
-            .withValues(Orientation.LEFT, 3)
-            .withValues(Orientation.RIGHT, 4)
-            .withValues(Orientation.LEFT, 4);
+            createPart(Fingers.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
      * {@code AllFingerJoints} represents all finger joints of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerJoints.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFingerJoints
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerJoint, Human>
+        Universal.ComprehensiveGroup<FingerJoints, Hands>
     {
         /**
          * Creates all finger joints.
@@ -235,42 +248,30 @@ extends Instrument
         AllFingerJoints() {
             super();
 
-            createPart(FingerJoint.class)
-            .withParameterRanges(2, 5, 2)
-            .withValues(Orientation.RIGHT, 0, 0)
-            .withValues(Orientation.RIGHT, 0, 1)
-            .withValues(Orientation.LEFT, 0, 0)
-            .withValues(Orientation.LEFT, 0, 1)
-            .withValues(Orientation.RIGHT, 1, 0)
-            .withValues(Orientation.RIGHT, 1, 1)
-            .withValues(Orientation.LEFT, 1, 0)
-            .withValues(Orientation.LEFT, 1, 1)
-            .withValues(Orientation.RIGHT, 2, 0)
-            .withValues(Orientation.RIGHT, 2, 1)
-            .withValues(Orientation.LEFT, 2, 0)
-            .withValues(Orientation.LEFT, 2, 1)
-            .withValues(Orientation.RIGHT, 3, 0)
-            .withValues(Orientation.RIGHT, 3, 1)
-            .withValues(Orientation.LEFT, 3, 0)
-            .withValues(Orientation.LEFT, 3, 1)
-            .withValues(Orientation.RIGHT, 4, 0)
-            .withValues(Orientation.RIGHT, 4, 1)
-            .withValues(Orientation.LEFT, 4, 0)
-            .withValues(Orientation.LEFT, 4, 1);
+            createPart(FingerJoints.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
      * {@code AllFingerKnuckles} represents all finger knuckles of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerKnuckles.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFingerKnuckles
     extends OrientationalBodyPartGroup
     implements
         External,
         HandPart,
-        Universal.ComprehensiveGroup<FingerKnuckle, Human>
+        Universal.ComprehensiveGroup<FingerKnuckles, Hands>
     {
         /**
          * Creates all finger knuckles.
@@ -279,32 +280,30 @@ extends Instrument
         AllFingerKnuckles() {
             super();
 
-            createPart(FingerKnuckle.class)
-            .withParameterRanges(2, 5)
-            .withValues(Orientation.RIGHT, 0)
-            .withValues(Orientation.LEFT, 0)
-            .withValues(Orientation.RIGHT, 1)
-            .withValues(Orientation.LEFT, 1)
-            .withValues(Orientation.RIGHT, 2)
-            .withValues(Orientation.LEFT, 2)
-            .withValues(Orientation.RIGHT, 3)
-            .withValues(Orientation.LEFT, 3)
-            .withValues(Orientation.RIGHT, 4)
-            .withValues(Orientation.LEFT, 4);
+            createPart(FingerKnuckles.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
      * {@code AllFingerNails} represents all finger nails of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerNails.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFingerNails
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerNail, Human>
+        Universal.ComprehensiveGroup<FingerNails, Hands>
     {
         /**
          * Creates all finger nails.
@@ -313,32 +312,30 @@ extends Instrument
         AllFingerNails() {
             super();
 
-            createPart(FingerNail.class)
-            .withParameterRanges(2, 5)
-            .withValues(Orientation.RIGHT, 0)
-            .withValues(Orientation.LEFT, 0)
-            .withValues(Orientation.RIGHT, 1)
-            .withValues(Orientation.LEFT, 1)
-            .withValues(Orientation.RIGHT, 2)
-            .withValues(Orientation.LEFT, 2)
-            .withValues(Orientation.RIGHT, 3)
-            .withValues(Orientation.LEFT, 3)
-            .withValues(Orientation.RIGHT, 4)
-            .withValues(Orientation.LEFT, 4);
+            createPart(FingerNails.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
      * {@code AllFingerTips} represents all finger tips of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerTips.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFingerTips
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerTip, Human>
+        Universal.ComprehensiveGroup<FingerTips, Hands>
     {
         /**
          * Creates all finger tips.
@@ -347,32 +344,30 @@ extends Instrument
         AllFingerTips() {
             super();
 
-            createPart(FingerTip.class)
-            .withParameterRanges(2, 5)
-            .withValues(Orientation.RIGHT, 0)
-            .withValues(Orientation.LEFT, 0)
-            .withValues(Orientation.RIGHT, 1)
-            .withValues(Orientation.LEFT, 1)
-            .withValues(Orientation.RIGHT, 2)
-            .withValues(Orientation.LEFT, 2)
-            .withValues(Orientation.RIGHT, 3)
-            .withValues(Orientation.LEFT, 3)
-            .withValues(Orientation.RIGHT, 4)
-            .withValues(Orientation.LEFT, 4);
+            createPart(FingerTips.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
-     * {@code AllFingerKnuckles} represents both knuckles of the human feet.
+     * {@code AllFootKnuckles} represents both knuckles of the human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FootKnuckles.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFootKnuckles
     extends OrientationalBodyPartGroup
     implements
         External,
         FootPart,
-        Universal.ComprehensiveGroup<FootKnuckles, Human>
+        Universal.ComprehensiveGroup<FootKnuckles, Feet>
     {
         /**
          * Creates both foot knuckles.
@@ -390,15 +385,21 @@ extends Instrument
 
     /**
      * {@code AllFourFingers} represents all four fingers of the human hands excluding the thumbs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourFingers.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourFingers.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourFingers
     extends OrientationalBodyPartGroup
     implements
         External,
         HandPart,
-        Universal.ComprehensiveGroup<FourFingers, Human>
+        Universal.ComprehensiveGroup<FourFingers, Hands>
     {
         /**
          * Creates all four fingers.
@@ -416,15 +417,21 @@ extends Instrument
 
     /**
      * {@code AllFourFingerJoints} represents all four finger joints of the human hands excluding the thumb joints.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourFingerJoints.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourFingerJoints.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourFingerJoints
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FourFingerJoints, Human>
+        Universal.ComprehensiveGroup<FourFingerJoints, Hands>
     {
         /**
          * Creates all four finger joints.
@@ -442,15 +449,21 @@ extends Instrument
 
     /**
      * {@code AllFourFingerKnuckles} represents all four finger knuckles of the human hands excluding the knuckles connecting to the thumbs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourFingerKnuckles.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourFingerKnuckles.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourFingerKnuckles
     extends OrientationalBodyPartGroup
     implements
         External,
         HandPart,
-        Universal.ComprehensiveGroup<FourFingerKnuckles, Human>
+        Universal.ComprehensiveGroup<FourFingerKnuckles, Hands>
     {
         /**
          * Creates all four finger knuckles.
@@ -468,15 +481,21 @@ extends Instrument
 
     /**
      * {@code AllFourFingerNails} represents all four finger nails of the human hands excluding the thumb nails.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourFingerNails.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourFingerNails.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourFingerNails
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FourFingerNails, Human>
+        Universal.ComprehensiveGroup<FourFingerNails, Hands>
     {
         /**
          * Creates all four finger nails.
@@ -494,15 +513,21 @@ extends Instrument
 
     /**
      * {@code AllFourFingerTips} represents all four finger tips of the human hands excluding the tips of the thumbs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourFingerTips.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourFingerTips.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourFingerTips
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FourFingerTips, Human>
+        Universal.ComprehensiveGroup<FourFingerTips, Hands>
     {
         /**
          * Creates all four finger tips.
@@ -520,15 +545,21 @@ extends Instrument
 
     /**
      * {@code AllFourPhalanges} represents all phalanges of four fingers of the human hands excluding the phalanges of the thumbs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FourPhalanges.class, instances = { "orientation", "RIGHT", "LEFT" })
+    @Category
+    @Category.Instance(type = FourPhalanges.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllFourPhalanges
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FourPhalanges, Human>
+        Universal.ComprehensiveGroup<FourPhalanges, Hands>
     {
         /**
          * Creates all four phalanges.
@@ -546,15 +577,21 @@ extends Instrument
 
     /**
      * {@code AllPhalanges} represents all phalanges of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Phalanges.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllPhalanges
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<Phalanx, Human>
+        Universal.ComprehensiveGroup<Phalanges, Hands>
     {
         /**
          * Creates all phalanges.
@@ -563,52 +600,30 @@ extends Instrument
         AllPhalanges() {
             super();
 
-            createPart(Phalanx.class)
-            .withParameterRanges(2, 5, 3)
-            .withValues(Orientation.RIGHT, 0, 0)
-            .withValues(Orientation.LEFT, 0, 0)
-            .withValues(Orientation.RIGHT, 0, 1)
-            .withValues(Orientation.LEFT, 0, 1)
-            .withValues(Orientation.RIGHT, 0, 2)
-            .withValues(Orientation.LEFT, 0, 2)
-            .withValues(Orientation.RIGHT, 1, 0)
-            .withValues(Orientation.LEFT, 1, 0)
-            .withValues(Orientation.RIGHT, 1, 1)
-            .withValues(Orientation.LEFT, 1, 1)
-            .withValues(Orientation.RIGHT, 1, 2)
-            .withValues(Orientation.LEFT, 1, 2)
-            .withValues(Orientation.RIGHT, 2, 0)
-            .withValues(Orientation.LEFT, 2, 0)
-            .withValues(Orientation.RIGHT, 2, 1)
-            .withValues(Orientation.LEFT, 2, 1)
-            .withValues(Orientation.RIGHT, 2, 2)
-            .withValues(Orientation.LEFT, 2, 2)
-            .withValues(Orientation.RIGHT, 3, 0)
-            .withValues(Orientation.LEFT, 3, 0)
-            .withValues(Orientation.RIGHT, 3, 1)
-            .withValues(Orientation.LEFT, 3, 1)
-            .withValues(Orientation.RIGHT, 3, 2)
-            .withValues(Orientation.LEFT, 3, 2)
-            .withValues(Orientation.RIGHT, 4, 0)
-            .withValues(Orientation.LEFT, 4, 0)
-            .withValues(Orientation.RIGHT, 4, 1)
-            .withValues(Orientation.LEFT, 4, 1)
-            .withValues(Orientation.RIGHT, 4, 2)
-            .withValues(Orientation.LEFT, 4, 2);
+            createPart(Phalanges.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
         }
     }
 
     /**
      * {@code AllToes} represents both toes of the human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Toes.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class AllToes
     extends OrientationalBodyPartGroup
     implements
         External,
         FootPart,
-        Universal.ComprehensiveGroup<Toes, Human>
+        Universal.ComprehensiveGroup<Toes, Feet>
     {
         /**
          * Creates both toes.
@@ -628,8 +643,14 @@ extends Instrument
      * {@code Ankle} represents the human ankle.
      * <p>
      * The human ankle is the joint in the leg connecting the lower leg to the foot.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Leg.class)
+    @BodyPart.Connection(parts = { LowerLeg.class, Foot.class })
     public abstract
     class Ankle
     extends OrientationalJoint
@@ -642,6 +663,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Ankle(
             final Orientation orientation
@@ -652,8 +674,14 @@ extends Instrument
 
     /**
      * {@code Ankles} represents both ankles of the human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Ankle.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Ankles
     extends OrientationalBodyPartGroup
@@ -680,13 +708,25 @@ extends Instrument
      * {@code Arm} represents the human arm.
      * <p>
      * The human arm is the part of the body containing the upper arm, elbow, lower arm, wrist, and hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @Category
+    @Category.Instance(type = UpperArm.class, values = "orientation -> orientation")
+    @Category.Instance(type = Elbow.class, values = "orientation -> orientation")
+    @Category.Instance(type = LowerArm.class, values = "orientation -> orientation")
+    @Category.Instance(type = Wrist.class, values = "orientation -> orientation")
+    @Category.Instance(type = Hand.class, values = "orientation -> orientation")
     public abstract
     class Arm
     extends CompositeOrientationalBodyPart
     implements
         External,
+        Ordered.PerOrientation,
         Upper
     {
         /**
@@ -694,6 +734,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Arm(
             final Orientation orientation
@@ -724,18 +765,34 @@ extends Instrument
 
     /**
      * {@code ArmPart} classifies a part of the human arm.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface ArmPart
     extends
         BodyPart,
         Upper
-    {}
+    {
+        @Override
+        public default Class<? extends CompositeOrientationalBodyPart> getCorrespondingBodyPartClass() {
+            return Arm.class;
+        }
+    }
 
     /**
      * {@code Arms} represents both arms of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Arm.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Arms
     extends OrientationalBodyPartGroup
@@ -760,6 +817,11 @@ extends Instrument
 
     /**
      * {@code AtomicBodyPart} classifies a human body part that has the characteristics of an atomic instrument part.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class AtomicBodyPart
@@ -769,66 +831,138 @@ extends Instrument
 
     /**
      * {@code BodyPart} classifies a human body part.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected
     interface BodyPart
     extends Part
     {
         @Override
-        public default boolean is(final system.Type<Part> type) {
+        public default boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof BodyPart;
         }
 
+        /**
+         * Returns the body part class corresponding to this body part classification, or null if it doesn't exist.
+         *
+         * @return the body part class corresponding to this body part classification, or null if it doesn't exist.
+         */
+        public
+        Class<? extends BodyPart> getCorrespondingBodyPartClass();
+
+        /**
+         * {@code Connection} classifies, by annotation, body parts that connect to other parts of the human body.
+         * <p>
+         * Since this annotation type is repeatable it is up to the application context to resolve relations among its {@link Definition} annotations by design.
+         * This task can be achieved by the proper use of connection IDs.
+         * The repeating annotations intend to allow more than one connection type for an individual part type and to identify those connections separately in code.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         @Retention(RUNTIME)
         @Target(TYPE)
         @Repeatable(Connections.class)
         public
         @interface Connection
         {
-            /** Joint connection flag. */
+            /** The connection ID. */
+            String id()
+            default "";
+
+            /** Joint connection indicator. */
             boolean joint()
             default true;
 
-            /** The first connecting part type. */
-            Class<? extends BodyPart> firstPart();
+            /** The connecting part instance definition. (constructor parameter-value pairs) */
+            String[] instance()
+            default "";
 
-            /** The second connecting part type. */
-            Class<? extends BodyPart> secondPart();
+            /** The connecting part hash. */
+            int hash()
+            default Integer.MIN_VALUE;
 
+            /** The connected part types. */
+            Class<? extends Part>[] parts();
+
+            /**
+             * {@code Definition} classifies, by annotation, body part types that are connected by another part of the human body through the use of the {@link Connection} annotation.
+             * <p>
+             * Since this annotation type is repeatable it is up to the application context to resolve relation with the {@code Connection} annotation by design.
+             * This task can be achieved by the proper use of connection IDs.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
             @Retention(RUNTIME)
             @Target(TYPE)
             @Repeatable(Definitions.class)
             public
             @interface Definition
             {
-                /** The instance part type. */
-                Class<? extends BodyPart> type();
-
-                /** The instance definitions. */
-                String[] instances()
+                /** The connection definition ID. */
+                String id()
                 default "";
+
+                /** The connected part type index. */
+                int index();
+
+                /** The connected part instance definitions. (constructor parameter-value pairs) */
+                String[] instance()
+                default "";
+
+                /** The categorized part hash. */
+                int hash()
+                default Integer.MIN_VALUE;
             }
 
+            /**
+             * {@code Definitions} is the container for the repeatable {@link Definition} values.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
             @Retention(RUNTIME)
             @Target(TYPE)
             public
             @interface Definitions
             {
+                /** The repeating annotated values. */
                 Definition[] value();
             }
         }
 
+        /**
+         * {@code Connections} is the container for the repeatable {@link Connection} values.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         @Retention(RUNTIME)
         @Target(TYPE)
         public
         @interface Connections
         {
+            /** The repeating annotated values. */
             Connection[] value();
         }
     }
 
     /**
      * {@code BodyPartGroup} classifies a human body part group.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class BodyPartGroup
@@ -837,6 +971,11 @@ extends Instrument
 
     /**
      * {@code CompositeBodyPart} classifies a human body part that has the characteristics of a composite instrument part.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class CompositeBodyPart
@@ -846,6 +985,11 @@ extends Instrument
 
     /**
      * {@code CompositeOrientationalBodyPart} classifies a composite body part that is also orientational.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class CompositeOrientationalBodyPart
@@ -878,6 +1022,11 @@ extends Instrument
      * {@code Ear} represents the human ear.
      * <p>
      * The human ear is the organ on the head through which sound is primarily sensed.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Head.class)
     public abstract
@@ -885,7 +1034,8 @@ extends Instrument
     extends OrientationalFixture
     implements
         External,
-        HeadPart
+        HeadPart,
+        Ordered.PerOrientation
     {
         /**
          * Creates the ear with the specified orientation.
@@ -902,6 +1052,11 @@ extends Instrument
 
     /**
      * {@code Ears} represents both human ears.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
@@ -930,8 +1085,14 @@ extends Instrument
      * {@code Elbow} represents the human elbow.
      * <p>
      * The human elbow is the joint in the arm connecting the upper arm to the lower arm.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Arm.class)
+    @BodyPart.Connection(parts = { UpperArm.class, LowerArm.class })
     public abstract
     class Elbow
     extends OrientationalJoint
@@ -944,6 +1105,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Elbow(
             final Orientation orientation
@@ -954,8 +1116,14 @@ extends Instrument
 
     /**
      * {@code Elbows} represents both human elbows.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Elbow.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Elbows
     extends OrientationalBodyPartGroup
@@ -982,6 +1150,11 @@ extends Instrument
      * {@code External} classifies an external human body part.
      * <p>
      * The external body parts are those that are visible.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface External
@@ -992,6 +1165,11 @@ extends Instrument
      * {@code Eye} represents the human eye.
      * <p>
      * The human eye is the primary organ of vision on the head.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Head.class)
     public abstract
@@ -999,7 +1177,8 @@ extends Instrument
     extends OrientationalFixture
     implements
         External,
-        HeadPart
+        HeadPart,
+        Ordered.PerOrientation
     {
         /**
          * Creates the eye with the specified orientation.
@@ -1016,6 +1195,11 @@ extends Instrument
 
     /**
      * {@code Eyes} represents both human eyes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
@@ -1042,8 +1226,14 @@ extends Instrument
 
     /**
      * {@code Feet} represents both human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Foot.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Feet
     extends OrientationalBodyPartGroup
@@ -1070,15 +1260,26 @@ extends Instrument
      * {@code Finger} represents the finger of the human hand.
      * <p>
      * The human finger is the outermost part of the hand attached to the palm via its knuckle joint.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Hand.class, count = 5)
+    @Category
+    @Category.Instance(type = Phalanx.class, values = { "orientation -> orientation", "fingerOrder -> order", "order", "0", "1", "2" })
+    @Category.Instance(type = FingerJoint.class, values = { "orientation -> orientation", "fingerOrder -> order", "order", "0", "1" })
+    @Category.Instance(type = FingerTip.class, values = { "orientation -> orientation", "fingerOrder -> order" })
+    @Category.Instance(type = FingerNail.class, values = { "orientation -> orientation", "fingerOrder -> order" })
     public abstract
     class Finger
     extends CompositeOrientationalBodyPart
     implements
         External,
         HandPart,
-        Ordered
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
     {
         /** The finger order. */
         protected final
@@ -1087,11 +1288,14 @@ extends Instrument
         /**
          * Creates the finger with the specified orientation containing phalanges, joints, finger tips, and nails.
          * <p>
+         * By convention, the order of the thumb is 0, the index finger is 1, the middle finger is 2, the ring finger is 3, and the pinky is 4.
+         * <p>
          * This constructor calls {@link Number#byteValue()} on the order.
          *
          * @param orientation the orientation.
          * @param order the finger order.
          */
+        @Categorized(parameters = { "orientation", "order" }, ranges = { 2, 5 })
         protected
         Finger(
             final Orientation orientation,
@@ -1130,14 +1334,14 @@ extends Instrument
          * @param partClass the containing part class.
          */
         @Override
-        public Number getOrder(
-            final Class<? extends Part> partClass
+        public Byte getOrder(
+            final Class<? extends Unit> partClass
             ) {
             if (partClass == FourFingers.class || partClass == Hand.class || partClass == Arm.class)
                 return order;
 
-            else if (partClass == Hands.class || partClass == AllFourFingers.class || partClass == Arms.class)
-                return  orientation.order * 5 + order;
+            if (partClass == Hands.class || partClass == AllFourFingers.class || partClass == Arms.class)
+                return  (byte) (orientation.order * 5 + order);
 
             return null;
         }
@@ -1148,7 +1352,7 @@ extends Instrument
          * @return the finger order.
          */
         @Override
-        public short getOrder() {
+        public Byte getOrder() {
             return order;
         }
     }
@@ -1157,15 +1361,80 @@ extends Instrument
      * {@code FingerJoint} represents the joint of the human finger.
      * <p>
      * The human finger joint is the part of the finger that bends.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Finger.class, count = 2)
+    @BodyPart.Connection(id = "0", instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "0", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "0" })
+    @BodyPart.Connection.Definition(id = "1", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "1" })
+    @BodyPart.Connection(id = "1", instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "2", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "1" })
+    @BodyPart.Connection.Definition(id = "3", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "2" })
+    @BodyPart.Connection(id = "2", instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "4", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "0" })
+    @BodyPart.Connection.Definition(id = "5", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "1" })
+    @BodyPart.Connection(id = "3", instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "6", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "1" })
+    @BodyPart.Connection.Definition(id = "7", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "2" })
+    @BodyPart.Connection(id = "4", instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "8", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "0" })
+    @BodyPart.Connection.Definition(id = "9", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "1" })
+    @BodyPart.Connection(id = "5", instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "10", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "1" })
+    @BodyPart.Connection.Definition(id = "11", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "2" })
+    @BodyPart.Connection(id = "6", instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "12", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "0" })
+    @BodyPart.Connection.Definition(id = "13", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "1" })
+    @BodyPart.Connection(id = "7", instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "14", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "1" })
+    @BodyPart.Connection.Definition(id = "15", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "2" })
+    @BodyPart.Connection(id = "8", instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "16", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "0" })
+    @BodyPart.Connection.Definition(id = "17", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "1" })
+    @BodyPart.Connection(id = "9", instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "18", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "1" })
+    @BodyPart.Connection.Definition(id = "19", index = 1, instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "2" })
+    @BodyPart.Connection(id = "10", instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "20", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "0" })
+    @BodyPart.Connection.Definition(id = "21", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "1" })
+    @BodyPart.Connection(id = "11", instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "22", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "1" })
+    @BodyPart.Connection.Definition(id = "23", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "2" })
+    @BodyPart.Connection(id = "12", instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "24", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "0" })
+    @BodyPart.Connection.Definition(id = "25", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "1" })
+    @BodyPart.Connection(id = "13", instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "26", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "1" })
+    @BodyPart.Connection.Definition(id = "27", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "2" })
+    @BodyPart.Connection(id = "14", instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "28", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "0" })
+    @BodyPart.Connection.Definition(id = "29", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "1" })
+    @BodyPart.Connection(id = "15", instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "30", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "1" })
+    @BodyPart.Connection.Definition(id = "31", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "2" })
+    @BodyPart.Connection(id = "16", instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "32", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "0" })
+    @BodyPart.Connection.Definition(id = "33", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "1" })
+    @BodyPart.Connection(id = "17", instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "34", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "1" })
+    @BodyPart.Connection.Definition(id = "35", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "2" })
+    @BodyPart.Connection(id = "18", instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "0" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "36", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "0" })
+    @BodyPart.Connection.Definition(id = "37", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "1" })
+    @BodyPart.Connection(id = "19", instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "1" }, parts = { Phalanx.class, Phalanx.class })
+    @BodyPart.Connection.Definition(id = "38", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "1" })
+    @BodyPart.Connection.Definition(id = "39", index = 1, instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "2" })
     public abstract
     class FingerJoint
     extends OrientationalJoint
     implements
         External,
         FingerPart,
-        Ordered
+        Ordered.PerMany.FingerVaried
     {
         /** The finger order. */
         protected final
@@ -1184,6 +1453,7 @@ extends Instrument
          * @param fingerOrder the finger order.
          * @param order the order of the joint in the finger.
          */
+        @Categorized(parameters = { "orientation", "fingerOrder", "order" })
         protected
         FingerJoint(
             final Orientation orientation,
@@ -1196,47 +1466,46 @@ extends Instrument
         }
 
         @Override
+        public byte count() {
+            return 2;
+        }
+
+        @Override
         public byte getFingerOrder() {
             return fingerOrder;
         }
 
         @Override
-        public Number getOrder(
-            final Class<? extends Part> partClass
-            ) {
-            if (partClass == Finger.class)
-                return order;
-
-            else if (partClass == Hand.class || partClass == FourFingers.class || partClass == Arm.class)
-                return fingerOrder * 2 + order;
-
-            else if (partClass == Hands.class || partClass == AllFourFingers.class || partClass == Arms.class)
-                return  orientation.order * 5 + fingerOrder * 2 + order;
-
-            return null;
-        }
-
-        @Override
-        public short getOrder() {
+        public Byte getOrder() {
             return order;
         }
     }
 
     /**
      * {@code FingerJoints} represents all finger joints of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerJoint.class, values = { "orientation -> orientation", "fingerOrder", "0", "1", "2", "3", "4", "order", "0", "1" })
     public abstract
     class FingerJoints
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerJoint, Arm>
+        Ordered.PerOrientation,
+        Universal.ComprehensiveGroup<FingerJoint, Hand>
     {
         /**
          * Creates all finger joints of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FingerJoints(
             final Orientation orientation
@@ -1262,17 +1531,41 @@ extends Instrument
      * {@code FingerKnuckle} represents the knuckle of the human hand.
      * <p>
      * The human finger knuckle is the joint in the hand connecting the palm to the finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Hand.class, count = 5)
-    @BodyPart.Connection(firstPart = Phalanx.class, secondPart = Palm.class)
-    @BodyPart.Connection.Definition(type = Phalanx.class, instances = { "order", "0" })
+    @BodyPart.Connection(id = "0", instance = { "orientation", "RIGHT", "fingerOrder", "0" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "0", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "0", "order", "0" })
+    @BodyPart.Connection(id = "1", instance = { "orientation", "RIGHT", "fingerOrder", "1" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "1", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "1", "order", "0" })
+    @BodyPart.Connection(id = "2", instance = { "orientation", "RIGHT", "fingerOrder", "2" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "2", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "2", "order", "0" })
+    @BodyPart.Connection(id = "3", instance = { "orientation", "RIGHT", "fingerOrder", "3" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "3", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "3", "order", "0" })
+    @BodyPart.Connection(id = "4", instance = { "orientation", "RIGHT", "fingerOrder", "4" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "4", index = 0, instance = { "orientation", "RIGHT", "fingerOrder", "4", "order", "0" })
+    @BodyPart.Connection(id = "5", instance = { "orientation", "LEFT", "fingerOrder", "0" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "5", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "0", "order", "0" })
+    @BodyPart.Connection(id = "6", instance = { "orientation", "LEFT", "fingerOrder", "1" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "6", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "1", "order", "0" })
+    @BodyPart.Connection(id = "7", instance = { "orientation", "LEFT", "fingerOrder", "2" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "7", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "2", "order", "0" })
+    @BodyPart.Connection(id = "8", instance = { "orientation", "LEFT", "fingerOrder", "3" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "8", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "3", "order", "0" })
+    @BodyPart.Connection(id = "9", instance = { "orientation", "LEFT", "fingerOrder", "4" }, parts = { Phalanx.class, Palm.class })
+    @BodyPart.Connection.Definition(id = "9", index = 0, instance = { "orientation", "LEFT", "fingerOrder", "4", "order", "0" })
     public abstract
     class FingerKnuckle
     extends OrientationalJoint
     implements
         External,
         HandPart,
-        Ordered.PerFinger
+        Ordered<Byte>,
+        Ordered.PerMany.FingerUnique
     {
         /** The finger order. */
         protected final
@@ -1286,6 +1579,7 @@ extends Instrument
          * @param orientation the orientation.
          * @param fingerOrder the finger order.
          */
+        @Categorized(parameters = { "orientation", "fingerOrder" })
         protected
         FingerKnuckle(
             final Orientation orientation,
@@ -1295,40 +1589,40 @@ extends Instrument
             this.fingerOrder = fingerOrder.byteValue();
         }
 
-        public
-        byte getFingerOrder() {
+        @Override
+        public byte getFingerOrder() {
             return fingerOrder;
         }
 
         @Override
-        public Number getOrder(
-            final Class<? extends Part> part
-            ) {
-            if (part == Finger.class)
-                return getFingerOrder();
-
-            return null;
-        }
-
-        @Override
-        public short getOrder() {
+        public Byte getOrder() {
             return getFingerOrder();
         }
     }
 
     /**
      * {@code FingerKnuckles} represents all finger knuckles of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerKnuckle.class, values = { "fingerOrder", "0", "1", "2", "3", "4" })
     public abstract
     class FingerKnuckles
     extends OrientationalBodyPartGroup
     implements
         External,
-        Universal.ComprehensiveGroup<FingerKnuckle, Arm>
+        HandPart,
+        Ordered.PerOrientation,
+        Universal.ComprehensiveGroup<FingerKnuckle, Hand>
     {
         /**
          * Creates all finger knuckles of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
         protected
         FingerKnuckles(
@@ -1350,6 +1644,11 @@ extends Instrument
      * {@code FingerNail} represents the nail of the human finger.
      * <p>
      * The finger nail is the flat horn-like part of the finger tip.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Finger.class)
     public abstract
@@ -1358,7 +1657,8 @@ extends Instrument
     implements
         External,
         FingerPart,
-        Ordered
+        Ordered<Byte>,
+        Ordered.PerMany.FingerUnique
     {
         /** The finger order. */
         protected final
@@ -1372,6 +1672,7 @@ extends Instrument
          * @param orientation the orientation.
          * @param fingerOrder the finger order.
          */
+        @Categorized(parameters = { "orientation", "fingerOrder" })
         protected
         FingerNail(
             final Orientation orientation,
@@ -1387,35 +1688,34 @@ extends Instrument
         }
 
         @Override
-        public Number getOrder(
-            final Class<? extends Part> part
-            ) {
-            if (part == Finger.class)
-                return getFingerOrder();
-
-            return null;
-        }
-
-        @Override
-        public short getOrder() {
-            return getFingerOrder();
+        public Byte getOrder() {
+            return fingerOrder;
         }
     }
 
     /**
      * {@code FingerNails} represents all finger nails of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FingerNail.class, values = { "orientation", "RIGHT", "LEFT", "fingerOrder", "0", "1", "2", "3", "4" })
     public abstract
     class FingerNails
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerNail, Arm>
+        Ordered.PerOrientation,
+        Universal.ComprehensiveGroup<FingerNail, Hand>
     {
         /**
          * Creates all finger nails of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
         protected
         FingerNails(
@@ -1435,22 +1735,29 @@ extends Instrument
 
     /**
      * {@code FingerPart} classifies a part of the human finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface FingerPart
     extends HandPart
     {
-        /**
-         * Returns the finger order.
-         *
-         * @return the finger order.
-         */
-        public
-        byte getFingerOrder();
+        @Override
+        public default Class<Finger> getCorrespondingBodyPartClass() {
+            return Finger.class;
+        }
     }
 
     /**
      * {@code Fingers} represents all fingers of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
@@ -1459,11 +1766,14 @@ extends Instrument
     implements
         External,
         HandPart,
-        Universal.ComprehensiveGroup<Finger, Arm>
+        Universal.ComprehensiveGroup<Finger, Hand>
     {
         /**
          * Creates all fingers of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Fingers(
             final Orientation orientation
@@ -1484,6 +1794,11 @@ extends Instrument
      * {@code FingerTip} represents the tip of the human finger.
      * <p>
      * The fingertip is the outermost part of the last finger phalanx.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Finger.class)
     public abstract
@@ -1492,7 +1807,8 @@ extends Instrument
     implements
         External,
         FingerPart,
-        Ordered
+        Ordered<Byte>,
+        Ordered.PerMany.FingerUnique
     {
         /** The finger order. */
         protected final
@@ -1506,6 +1822,7 @@ extends Instrument
          * @param orientation the orientation.
          * @param fingerOrder the finger order.
          */
+        @Categorized(parameters = { "orientation", "fingerOrder" })
         protected
         FingerTip(
             final Orientation orientation,
@@ -1521,23 +1838,18 @@ extends Instrument
         }
 
         @Override
-        public Number getOrder(
-            final Class<? extends Part> part
-            ) {
-            if (part == Finger.class)
-                return getFingerOrder();
-
-            return null;
-        }
-
-        @Override
-        public short getOrder() {
-            return getFingerOrder();
+        public Byte getOrder() {
+            return fingerOrder;
         }
     }
 
     /**
      * {@code FingerTips} represents all finger tips of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
@@ -1546,11 +1858,15 @@ extends Instrument
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<FingerTip, Arm>
+        Ordered.PerOrientation,
+        Universal.ComprehensiveGroup<FingerTip, Hand>
     {
         /**
          * Creates all finger tips of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized
         protected
         FingerTips(
             final Orientation orientation
@@ -1569,25 +1885,81 @@ extends Instrument
 
     /**
      * {@code FirstFinger} represents the human first finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "1" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "1" })
     public abstract
     class FirstFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the first finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        FirstFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 1);
+        }
+    }
 
     /**
      * {@code FirstFingers} represents both human first fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FirstFinger.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class FirstFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<FirstFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<FirstFinger, Hands>
+    {
+        /**
+         * Creates both first fingers.
+         */
+        protected
+        FirstFingers()
+        {
+            super();
+
+            createPart(FirstFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Fixture} classifies an atomic body part that doesn't, or is not intended to, bend and connects to a joint or multiple joints.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Fixture
@@ -1598,20 +1970,32 @@ extends Instrument
      * {@code Foot} represents the human foot.
      * <p>
      * The human foot is the lowest part of the leg attached to the lower leg via the ankle.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Leg.class)
+    @Category
+    @Category.Instance(type = Heel.class, values = "orientation -> orientation")
+    @Category.Instance(type = Sole.class, values = "orientation -> orientation")
+    @Category.Instance(type = FootKnuckles.class, values = "orientation -> orientation")
+    @Category.Instance(type = Toes.class, values = "orientation -> orientation")
     public abstract
     class Foot
     extends CompositeOrientationalBodyPart
     implements
         External,
-        LegPart
+        LegPart,
+        Ordered.PerOrientation
     {
         /**
          * Creates the foot with the specified orientation and containing the heel, sole, knuckles, and toes.
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Foot(
             final Orientation orientation
@@ -1640,6 +2024,11 @@ extends Instrument
      * {@code FootKnuckles} represents all the knuckles of the human foot as a single body part.
      * <p>
      * The human foot knuckles are the joints connecting the sole to the toes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Foot.class)
     public abstract
@@ -1664,16 +2053,32 @@ extends Instrument
 
     /**
      * {@code FootPart} classifies a part of the human foot.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface FootPart
     extends LegPart
-    {}
+    {
+        @Override
+        public default Class<Foot> getCorrespondingBodyPartClass() {
+            return Foot.class;
+        }
+    }
 
     /**
      * {@code FourFingerJoints} represents four finger joints of the human hand excluding the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FingerJoint.class, instances = { "fingerOrder", "1", "2", "3", "4", "order", "0", "1", "2" })
+    @Category
+    @Category.Instance(type = FingerJoint.class, values = { "orientation -> orientation", "fingerOrder", "1", "2", "3", "4", "order", "0", "1", "2" })
     public abstract
     class FourFingerJoints
     extends OrientationalBodyPartGroup
@@ -1683,7 +2088,10 @@ extends Instrument
     {
         /**
          * Creates all four finger joints with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourFingerJoints(
             final Orientation orientation
@@ -1709,8 +2117,14 @@ extends Instrument
 
     /**
      * {@code FourFingerKnuckles} represents four finger knuckles of the human hand excluding the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FingerKnuckle.class, instances = { "order", "1", "2", "3", "4" })
+    @Category
+    @Category.Instance(type = FingerKnuckle.class, values = { "orientation -> orientation", "fingerOrder", "1", "2", "3", "4" })
     public abstract
     class FourFingerKnuckles
     extends OrientationalBodyPartGroup
@@ -1720,7 +2134,10 @@ extends Instrument
     {
         /**
          * Creates all four finger knuckles with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourFingerKnuckles(
             final Orientation orientation
@@ -1738,8 +2155,14 @@ extends Instrument
 
     /**
      * {@code FourFingerNails} represents four finger nails of the human hand excluding the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FingerNail.class, instances = { "order", "1", "2", "3", "4" })
+    @Category
+    @Category.Instance(type = FingerNail.class, values = { "orientation -> orientation", "fingerOrder", "1", "2", "3", "4" })
     public abstract
     class FourFingerNails
     extends OrientationalBodyPartGroup
@@ -1749,7 +2172,10 @@ extends Instrument
     {
         /**
          * Creates all four finger nails with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourFingerNails(
             final Orientation orientation
@@ -1767,8 +2193,14 @@ extends Instrument
 
     /**
      * {@code FourFingers} represents four fingers of the human hand excluding the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "1", "2", "3", "4" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "1", "2", "3", "4" })
     public abstract
     class FourFingers
     extends OrientationalBodyPartGroup
@@ -1778,7 +2210,10 @@ extends Instrument
     {
         /**
          * Creates all four fingers of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourFingers(
             final Orientation orientation
@@ -1795,9 +2230,15 @@ extends Instrument
     }
 
     /**
-     * {@code FourFingerTips} represents four finger tips of the human hand excluding the thumb.
+     * {@code FourFingerTips} represents four finger tips of the human hand excluding the tip of the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = FingerTip.class, instances = { "order", "1", "2", "3", "4" })
+    @Category
+    @Category.Instance(type = FingerTip.class, values = { "orientation -> orientation", "order", "1", "2", "3", "4" })
     public abstract
     class FourFingerTips
     extends OrientationalBodyPartGroup
@@ -1807,14 +2248,17 @@ extends Instrument
     {
         /**
          * Creates all four finger tips with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourFingerTips(
             final Orientation orientation
             ) {
             super();
 
-            createPart(Finger.class)
+            createPart(FingerTip.class)
             .withParameterRanges(2, 5)
             .withValues(orientation, 1)
             .withValues(orientation, 2)
@@ -1824,9 +2268,15 @@ extends Instrument
     }
 
     /**
-     * {@code FourPhalanges} represents all phalanges of four fingers of the human hand excluding the thumb.
+     * {@code FourPhalanges} represents all phalanges of four fingers of the human hand excluding the phalanges of the thumb.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Phalanx.class, instances = { "fingerOrder", "1", "2", "3", "4", "order", "0", "1", "2" })
+    @Category
+    @Category.Instance(type = Phalanx.class, values = { "orientation -> orientation", "fingerOrder", "1", "2", "3", "4", "order", "0", "1", "2" })
     public abstract
     class FourPhalanges
     extends OrientationalBodyPartGroup
@@ -1839,6 +2289,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         FourPhalanges(
             final Orientation orientation
@@ -1864,29 +2315,86 @@ extends Instrument
 
     /**
      * {@code FourthFinger} represents the human fourth finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "4" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "3" })
     public abstract
     class FourthFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the fourth finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        FourthFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 3);
+        }
+    }
 
     /**
      * {@code FourthFingers} represents both human fourth fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = FourthFinger.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class FourthFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<FourthFinger, Human>
-    {}
+    implements Universal.ComprehensiveGroup<FourthFinger, Hands>
+    {
+        /**
+         * Creates both first fingers.
+         */
+        protected
+        FourthFingers()
+        {
+            super();
+
+            createPart(FourthFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Hand} represents the human hand.
      * <p>
      * The human hand is the outermost part of the arm attached to the lower arm via the wrist.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Arm.class)
+    @Category
+    @Category.Instance(type = Palm.class)
+    @Category.Instance(type = FingerKnuckle.class, values = { "orientation -> orientation", "fingerOrder", "0", "1", "2", "3", "4" })
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "0", "1", "2", "3", "4" })
     public abstract
     class Hand
     extends CompositeOrientationalBodyPart
@@ -1899,6 +2407,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Hand(
             final Orientation orientation
@@ -1932,15 +2441,21 @@ extends Instrument
 
     /**
      * {@code Hands} represents both hands of the human arms.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Hand.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Hands
     extends OrientationalBodyPartGroup
     implements
         ArmPart,
         External,
-        Universal.ComprehensiveGroup<Hand, Human>
+        Universal.ComprehensiveGroup<Hand, Arms>
     {
         /**
          * Creates both hands.
@@ -1958,16 +2473,36 @@ extends Instrument
 
     /**
      * {@code HandPart} classifies a part of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface HandPart
     extends ArmPart
-    {}
+    {
+        @Override
+        public default Class<? extends CompositeOrientationalBodyPart> getCorrespondingBodyPartClass() {
+            return Hand.class;
+        }
+    }
 
     /**
      * {@code Head} represents the human head.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @Category
+    @Category.Instance(type = Eyes.class)
+    @Category.Instance(type = Ears.class)
+    @Category.Instance(type = Nose.class)
+    @Category.Instance(type = Mouth.class)
     public abstract
     class Head
     extends CompositeBodyPart
@@ -1991,18 +2526,33 @@ extends Instrument
 
     /**
      * {@code HeadPart} classifies a part of the human head.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface HeadPart
     extends
         BodyPart,
         Upper
-    {}
+    {
+        @Override
+        public default Class<? extends CompositeBodyPart> getCorrespondingBodyPartClass() {
+            return Head.class;
+        }
+    }
 
     /**
      * {@code Heel} represents the heel of the human foot.
      * <p>
      * The human heel is the part of the foot between the ankle and the sole.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Foot.class)
     public abstract
@@ -2017,6 +2567,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Heel(
             final Orientation orientation
@@ -2027,15 +2578,21 @@ extends Instrument
 
     /**
      * {@code Heels} represents both heels of the human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Heel.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Heels
     extends OrientationalBodyPartGroup
     implements
         External,
         FootPart,
-        Universal.ComprehensiveGroup<Heel, Human>
+        Universal.ComprehensiveGroup<Heel, Feet>
     {
         /**
          * Creates both heels.
@@ -2055,8 +2612,17 @@ extends Instrument
      * {@code Hip} represents the human hip.
      * <p>
      * The human hip is the joint connecting the waist to the leg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @BodyPart.Connection(id = "0", instance = { "orientation", "RIGHT" }, parts = { Waist.class, Leg.class })
+    @BodyPart.Connection.Definition(id = "0", index = 1, instance = { "orientation -> orientation" })
+    @BodyPart.Connection(id = "1", instance = { "orientation", "LEFT" }, parts = { Waist.class, Leg.class })
+    @BodyPart.Connection.Definition(id = "1", index = 1, instance = { "orientation -> orientation" })
     public abstract
     class Hip
     extends OrientationalJoint
@@ -2069,6 +2635,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Hip(
             final Orientation orientation
@@ -2079,8 +2646,14 @@ extends Instrument
 
     /**
      * {@code Hips} represents both hips of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Hip.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Hips
     extends OrientationalBodyPartGroup
@@ -2105,27 +2678,83 @@ extends Instrument
 
     /**
      * {@code IndexFinger} represents the human index finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "1" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "1" })
     public abstract
     class IndexFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the index finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        IndexFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 2);
+        }
+    }
 
     /**
      * {@code IndexFingers} represents both human index fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = IndexFinger.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class IndexFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<IndexFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<IndexFinger, Hands>
+    {
+        /**
+         * Creates both index fingers.
+         */
+        protected
+        IndexFingers()
+        {
+            super();
+
+            createPart(IndexFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Internal} classifies an internal human body part.
      * <p>
      * The internal body parts are those that are not visible.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Internal
@@ -2135,19 +2764,28 @@ extends Instrument
     /**
      * {@code Jaw} represents the human jaw.
      * <p>
-     * The human jaw is the joint inside the mouth containing the lower teeth, also known as the mandible.
+     * The human jaw is the joint inside the mouth also known as the mandible.
+     * It is the joint connecting to the head and the lower teeth.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
+    @Category
+    @Category.Instance(type = LowerTeeth.class)
+    @BodyPart.Connection(parts = Head.class)
+    @BodyPart.Connection(parts = LowerTeeth.class, joint = false)
     public abstract
     class Jaw
     extends Joint
     implements
         Internal,
-        Grouping,
         MouthPart
     {
         /**
-         * Creates the jaw containing the lower teeth.
+         * Creates the jaw.
          */
         protected
         Jaw() {
@@ -2158,6 +2796,11 @@ extends Instrument
 
     /**
      * {@code Joint} classifies an atomic body part that bends and connects two parts together.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Joint
@@ -2168,8 +2811,14 @@ extends Instrument
      * {@code Knee} represents the human knee.
      * <p>
      * The human knee is the joint in the leg connecting the upper leg to the lower leg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Leg.class)
+    @BodyPart.Connection(parts = { UpperLeg.class, LowerLeg.class })
     public abstract
     class Knee
     extends OrientationalJoint
@@ -2182,6 +2831,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Knee(
             final Orientation orientation
@@ -2192,15 +2842,21 @@ extends Instrument
 
     /**
      * {@code Knees} represents both knees of the human legs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Knee.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Knees
     extends OrientationalBodyPartGroup
     implements
         External,
         LegPart,
-        Universal.ComprehensiveGroup<Knee, Human>
+        Universal.ComprehensiveGroup<Knee, Legs>
     {
         /**
          * Creates both legs.
@@ -2220,8 +2876,19 @@ extends Instrument
      * {@code Leg} represents the human leg.
      * <p>
      * The human leg is the part of the body containing the upper leg, knee, lower leg, ankle, and foot.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @Category
+    @Category.Instance(type = UpperLeg.class, values = "orientation -> orientation")
+    @Category.Instance(type = Knee.class, values = "orientation -> orientation")
+    @Category.Instance(type = LowerLeg.class, values = "orientation -> orientation")
+    @Category.Instance(type = Ankle.class, values = "orientation -> orientation")
+    @Category.Instance(type = Foot.class, values = "orientation -> orientation")
     public abstract
     class Leg
     extends CompositeOrientationalBodyPart
@@ -2234,6 +2901,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Leg(
             final Orientation orientation
@@ -2264,8 +2932,14 @@ extends Instrument
 
     /**
      * {@code Legs} represents both legs of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Leg.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Legs
     extends OrientationalBodyPartGroup
@@ -2290,37 +2964,59 @@ extends Instrument
 
     /**
      * {@code LegPart} classifies a part of the human leg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface LegPart
     extends
         BodyPart,
         Lower
-    {}
+    {
+        @Override
+        public default Class<? extends CompositeOrientationalBodyPart> getCorrespondingBodyPartClass() {
+            return Leg.class;
+        }
+    }
 
     /**
      * {@code Lip} classifies one of the human lips.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Lip
     extends
         External,
-        HeadPart
+        MouthPart
     {}
 
     /**
      * {@code Lips} represents both lips.
      * <p>
      * The human lips are the outer part of the mouth, covering the teeth, through which consonants are shaped during speech.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = { UpperLip.class, LowerLip.class })
+    @Category
+    @Category.Instance(type = UpperLip.class)
+    @Category.Instance(type = LowerLip.class)
     public abstract
     class Lips
     extends BodyPartGroup
     implements
         External,
         MouthPart,
-        Universal.ComprehensiveGroup<Lip, Human>
+        Universal.ComprehensiveGroup<Lip, Mouth>
     {
         /**
          * Creates the lips containing the upper and lower lips.
@@ -2335,27 +3031,83 @@ extends Instrument
 
     /**
      * {@code LittleFinger} represents the human little finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "4" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "4" })
     public abstract
     class LittleFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the little finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        LittleFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 4);
+        }
+    }
 
     /**
      * {@code LittleFingers} represents both human little fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = LittleFinger.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class LittleFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<LittleFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<LittleFinger, Hands>
+    {
+        /**
+         * Creates both little fingers.
+         */
+        protected
+        LittleFingers()
+        {
+            super();
+
+            createPart(LittleFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Lower} classifies a human lower body part.
      * <p>
      * The lower body parts are those below the waist.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Lower
@@ -2378,6 +3130,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         LowerArm(
             final Orientation orientation
@@ -2388,15 +3141,21 @@ extends Instrument
 
     /**
      * {@code LowerArms} represents both lower arms of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = LowerArm.class, values = "orientation -> orientation")
     public abstract
     class LowerArms
     extends OrientationalBodyPartGroup
     implements
         External,
-        LegPart,
-        Universal.ComprehensiveGroup<LowerArm, Human>
+        ArmPart,
+        Universal.ComprehensiveGroup<LowerArm, Arms>
     {
         /**
          * Creates both lower arms.
@@ -2414,6 +3173,11 @@ extends Instrument
 
     /**
      * {@code LowerLeg} represents the lower part of the human leg between the knee and the ankle.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Leg.class)
     public abstract
@@ -2438,15 +3202,21 @@ extends Instrument
 
     /**
      * {@code LowerLegs} represents both lower legs of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = LowerLeg.class, values = "orientation -> orientation")
     public abstract
     class LowerLegs
     extends OrientationalBodyPartGroup
     implements
         External,
         LegPart,
-        Universal.ComprehensiveGroup<LowerLeg, Human>
+        Universal.ComprehensiveGroup<LowerLeg, Legs>
     {
         /**
          * Creates both lower legs.
@@ -2464,15 +3234,17 @@ extends Instrument
 
     /**
      * {@code LowerLip} represents the lower part of the human lips.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
     public abstract
     class LowerLip
     extends AtomicBodyPart
-    implements
-        External,
-        Lip,
-        MouthPart
+    implements Lip
     {
         /**
          * Creates the lower lip.
@@ -2487,6 +3259,11 @@ extends Instrument
      * {@code LowerTeeth} represents the lower part of the human teeth.
      * <p>
      * The human lower teeth are the sharp extensions of the jaw bone.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
     public abstract
@@ -2509,8 +3286,13 @@ extends Instrument
      * {@code Lungs} represents the human lungs as a single body part.
      * <p>
      * The human lungs are the cavities in the thorax where air flows during breathing.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Uniformed(group = Thorax.class)
+    @Uniformed(group = Human.class)
     public abstract
     class Lungs
     extends AtomicBodyPart
@@ -2532,6 +3314,11 @@ extends Instrument
      * {@code Mid} classifies a human middle body part.
      * <p>
      * The middle body parts are those above the hips and below the thorax.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Mid
@@ -2540,29 +3327,90 @@ extends Instrument
 
     /**
      * {@code MiddleFinger} represents the human middle finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "2" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "2" })
     public abstract
     class MiddleFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the middle finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        MiddleFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 2);
+        }
+    }
 
     /**
      * {@code MiddleFingers} represents both human middle fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = MiddleFinger.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class MiddleFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<MiddleFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<MiddleFinger, Hands>
+    {
+        /**
+         * Creates both middle fingers.
+         */
+        protected
+        MiddleFingers()
+        {
+            super();
+
+            createPart(MiddleFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Mouth} represents the human mouth.
      * <p>
-     * The human mouth is the cavity in the head containing the lips, tongue, and jaw.
+     * The human mouth is the cavity in the head containing the lips, tongue, teeth, and the jaw.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Head.class)
+    @Category
+    @Category.Instance(type = Lips.class)
+    @Category.Instance(type = Tongue.class)
+    @Category.Instance(type = Teeth.class)
+    @Category.Instance(type = Jaw.class)
     public abstract
     class Mouth
     extends CompositeBodyPart
@@ -2572,14 +3420,13 @@ extends Instrument
         HeadPart
     {
         /**
-         * Creates the mouth containing the upper and lower lips, tongue, teeth, and jaw.
+         * Creates the mouth containing the lips, tongue, teeth, and the jaw.
          */
         protected
         Mouth() {
             super();
 
-            createPart(UpperLip.class);
-            createPart(LowerLip.class);
+            createPart(Lips.class);
             createPart(Tongue.class);
             createPart(Teeth.class);
             createPart(Jaw.class);
@@ -2588,21 +3435,39 @@ extends Instrument
 
     /**
      * {@code MouthPart} classifies a part of the human mouth.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface MouthPart
     extends HeadPart
-    {}
+    {
+        @Override
+        public default Class<Mouth> getCorrespondingBodyPartClass() {
+            return Mouth.class;
+        }
+    }
 
     /**
      * {@code Neck} represents the human neck.
      * <p>
-     * The human neck is the joint connecting the head to the torso.
+     * The human neck is the joint connecting the thorax to the head and containing the throat.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @Category
+    @Category.Instance(type = Throat.class)
+    @BodyPart.Connection(parts = { Thorax.class, Head.class })
     public abstract
     class Neck
-    extends CompositeBodyPart
+    extends Joint
     implements
         External,
         Upper
@@ -2619,6 +3484,11 @@ extends Instrument
 
     /**
      * {@code NeckPart} classifies a part of the human neck.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface NeckPart
@@ -2626,17 +3496,27 @@ extends Instrument
         BodyPart,
         External,
         Upper
-    {}
+    {
+        @Override
+        public default Class<Neck> getCorrespondingBodyPartClass() {
+            return Neck.class;
+        }
+    }
 
     /**
      * {@code Nose} represents the human nose.
      * <p>
      * The human nose is the organ above the lips through which breath flows regularly.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Head.class)
     public abstract
     class Nose
-    extends AtomicBodyPart
+    extends Fixture
     implements
         External,
         HeadPart
@@ -2650,22 +3530,206 @@ extends Instrument
         }
     }
 
-    protected
-    interface Ordered
-    extends Instrument.Ordered
+    /**
+     * {@code Ordered} classifies a human body part, body part group, or grouping that has an order among similar body parts of a composite body part, body part group, or another arbitrary containing unit.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @param <T> the order type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    public
+    interface Ordered<T>
+    extends Instrument.Ordered<T>
     {
-        public
+        /**
+         * Returns the order of the body part within its natural containing part or containing unit.
+         *
+         * @return the body part order.
+         */
+        T getOrder();
+
+        /**
+         * {@code PerFinger} classifies body parts that are ordered per finger.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         interface PerFinger
-        extends Ordered
-        {}
+        extends system.data.Ordered
+        {
+            /**
+             * Returns the finger order of the body part.
+             *
+             * @return the finger order.
+             */
+            byte getFingerOrder();
+        }
+
+        /**
+         * {@code PerOrientation} classifies orientational body parts that can be ordered per orientation.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface PerOrientation
+        extends
+            system.data.Ordered,
+            Orientational
+        {
+            /**
+             * Returns the orientation order of the body part.
+             * <p>
+             * This implementation calls {@link #getOrientationOrder()} internally.
+             *
+             * @return the orientation order.
+             */
+            default
+            Byte getOrder() {
+                return getOrientationOrder();
+            }
+
+            /**
+             * Returns the orientation order of the body part.
+             * <p>
+             * By convention, the order of the right orientation is 0, the left orientation is 1, and the null orientation has null order.
+             *
+             * @return the orientation order.
+             */
+            default
+            Byte getOrientationOrder() {
+                Orientation orientation = getOrientation();
+                return orientation == null
+                       ? null
+                       : orientation.order;
+            }
+        }
+
+        /**
+         * {@code PerMany} classifies body parts that are ordered per many different body parts, body part groups, or other arbitrary containing units.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @param <T> the order type.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public
+        interface PerMany<T>
+        extends Instrument.Ordered.PerMany<T>
+        {
+            /**
+             * Returns the order of the body part within a larger unit or part, usually naturally containing the smaller body part; or null if the body part is not ordered within that unit type.
+             * <p>
+             * Note that in many cases, such as for all finger parts, the method argument can only accept unit or part types as low in the inheritance hierarchy as the class type defining the part to which the order of this body part belongs to.
+             * For example, for all finger phalanges, only the {@code Finger} class will be accepted as the smallest unit of ordering.
+             * The {@code IndexFinger} class, in such case, will fail even if this body part is ordered by belonging to the mentioned finger class.
+             * This is due to the hidden nature of orderings at some subclass levels that can occur by design.
+             *
+             * @param partClass the containing unit class.
+             * @return the body part order or null if order does not exist.
+             */
+            @Override
+            T getOrder(
+                Class<? extends Unit> partClass
+                );
+
+            /**
+             * {@code FingerUnique} classifies orientational body parts or units that are unique, or have exactly one variation, per individual finger.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface FingerUnique
+            extends
+                Human.Ordered.PerMany<Byte>,
+                Orientational,
+                PerFinger
+            {
+                @Override
+                default Byte getOrder(final Class<? extends Unit> partClass) {
+                    if (partClass == Finger.class)
+                        return 0;
+
+                    if (partClass == FourFingers.class ||
+                        partClass == Hand.class ||
+                        partClass == Arm.class)
+                        return getFingerOrder();
+
+                    if (partClass == AllFourFingers.class ||
+                        partClass == Hands.class ||
+                        partClass == Arms.class ||
+                        partClass == Human.class)
+                        return (byte) (getOrientation().order * 5 + getFingerOrder());
+
+                    return null;
+                }
+            }
+
+            /**
+             * {@code FingerVaried} classifies orientational body parts or units that are varied, or have more that one variation, per individual finger.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface FingerVaried
+            extends
+                Human.Ordered.PerMany<Byte>,
+                Ordered<Byte>,
+                Orientational,
+                PerFinger
+            {
+                @Override
+                default Byte getOrder(final Class<? extends Unit> partClass) {
+                    if (partClass == Finger.class)
+                        return getOrder();
+
+                    if (partClass == FourFingers.class ||
+                        partClass == Hand.class ||
+                        partClass == Arm.class)
+                        return (byte) (getFingerOrder() * count() + getOrder());
+
+                    if (partClass == AllFourFingers.class ||
+                        partClass == Hands.class ||
+                        partClass == Arms.class ||
+                        partClass == Human.class)
+                        return (byte) (getOrientation().order * 5 + getFingerOrder() * count() + getOrder());
+
+                    return null;
+                }
+
+                /**
+                 * Returns the count of similar units in a single finger.
+                 *
+                 * @return the unit count.
+                 */
+                byte count();
+            }
+        }
     }
 
     /**
      * {@code Orientation} represents the human body orientations: right and left.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     enum Orientation
-    implements Instrument.Universal.Orientation
+    implements Universal.Orientation
     {
         /** The right side. */
         RIGHT((byte) 0),
@@ -2676,6 +3740,7 @@ extends Instrument
         /**
          * The order of orientation.
          */
+        public final
         byte order;
 
         /**
@@ -2693,10 +3758,14 @@ extends Instrument
 
     /**
      * {@code Orientational} represents a body part that has an orientation.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Orientational
-    extends BodyPart
     {
         /**
          * Returns the orientation of the body part.
@@ -2709,6 +3778,11 @@ extends Instrument
 
     /**
      * {@code OrientationalBodyPartGroup} classifies a human body part group with individual parts being all orientational.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class OrientationalBodyPartGroup
@@ -2717,6 +3791,11 @@ extends Instrument
 
     /**
      * {@code OrientationalFixture} classifies a fixture that is also orientational.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class OrientationalFixture
@@ -2748,6 +3827,11 @@ extends Instrument
 
     /**
      * {@code OrientationalJoint} classifies a joint that is also orientational.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class OrientationalJoint
@@ -2781,6 +3865,11 @@ extends Instrument
      * {@code Palm} represents the palm of the human hand.
      * <p>
      * The human palm is the biggest portion of the hand between the wrist and the finger knuckles.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Hand.class)
     public abstract
@@ -2805,6 +3894,11 @@ extends Instrument
 
     /**
      * {@code Palms} represents both palms of the human hands.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
@@ -2833,14 +3927,20 @@ extends Instrument
      * {@code Phalanx} represents the finger phalanx in the human hand.
      * <p>
      * The human finger phalanx is the part of the finger that does not bend.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Finger.class, count = 3)
     public abstract
     class Phalanx
     extends OrientationalFixture
     implements
+        External,
         FingerPart,
-        Ordered
+        Ordered.PerMany.FingerVaried
     {
         /** The finger order. */
         protected final
@@ -2859,6 +3959,7 @@ extends Instrument
          * @param fingerOrder the finger order of the phalanx.
          * @param order the order of the phalanx in the finger.
          */
+        @Categorized(parameters = { "orientation", "fingerOrder", "order" })
         protected
         Phalanx(
             final Orientation orientation,
@@ -2870,16 +3971,17 @@ extends Instrument
             this.order = order.byteValue();
         }
 
+        public byte count() {
+            return 3;
+        }
+
         @Override
-        public
-        byte getFingerOrder() {
+        public byte getFingerOrder() {
             return fingerOrder;
         }
 
         @Override
-        public Number getOrder(
-            final Class<? extends Part> part
-            ) {
+        public Byte getOrder(final Class<? extends Unit> part) {
             if (part == Finger.class)
                 return getFingerOrder();
 
@@ -2887,26 +3989,35 @@ extends Instrument
         }
 
         @Override
-        public short getOrder() {
+        public Byte getOrder() {
             return order;
         }
     }
 
     /**
      * {@code Phalanges} represents all phalanges of the human hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Phalanx.class, values = { "orientation -> orientation", "fingerOrder", "0", "1", "2", "3", "4", "order", "0", "1", "2" })
     public abstract
     class Phalanges
     extends OrientationalBodyPartGroup
     implements
         External,
         FingerPart,
-        Universal.ComprehensiveGroup<Phalanx, Arm>
+        Universal.ComprehensiveGroup<Phalanx, Hand>
     {
         /**
          * Creates all phalanges of the human hand with the specified orientation.
+         *
+         * @param orientation the orientation.
          */
+        @Categorized
         protected
         Phalanges(
             final Orientation orientation
@@ -2934,58 +4045,223 @@ extends Instrument
     }
 
     /**
-     * {@code Pinky} represents the human pinky finger.
+     * {@code Pinkies} represents both human pinky fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "4" })
+    public abstract
+    class Pinkies
+    extends OrientationalBodyPartGroup
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<Pinky, Hands>
+    {
+        /**
+         * Creates both pinky fingers.
+         */
+        protected
+        Pinkies()
+        {
+            super();
+
+            createPart(Pinky.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
+
+    /**
+     * {@code Pinky} represents the human pinky finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    @Category
+    @Category.Instance(type = Finger.class, values = { "order", "4" })
     public abstract
     class Pinky
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the pinky finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        Pinky(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 4);
+        }
+    }
 
     /**
      * {@code RingFinger} represents the human ring finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "3" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "3" })
     public abstract
     class RingFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the ring finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        RingFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 3);
+        }
+    }
 
     /**
      * {@code RingFingers} represents both human ring fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
     class RingFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<RingFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<RingFinger, Hands>
+    {
+        /**
+         * Creates both ring fingers.
+         */
+        protected
+        RingFingers()
+        {
+            super();
+
+            createPart(RingFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code SecondFinger} represents the human second finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "2" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "2" })
     public abstract
     class SecondFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the second finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        SecondFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 2);
+        }
+    }
 
     /**
      * {@code SecondFingers} represents both human second fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
     class SecondFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<SecondFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<SecondFinger, Hands>
+    {
+        /**
+         * Creates both second fingers.
+         */
+        protected
+        SecondFingers()
+        {
+            super();
+
+            createPart(SecondFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Shoulder} represents the human shoulder.
      * <p>
      * The human shoulder is the joint connecting the torso to the arms.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Torso.class)
+    @BodyPart.Connection(parts = { Arm.class, Torso.class })
     public abstract
     class Shoulder
     extends OrientationalJoint
@@ -2999,6 +4275,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Shoulder(
             final Orientation orientation
@@ -3009,8 +4286,14 @@ extends Instrument
 
     /**
      * {@code Shoulders} represents both shoulders of the human torso.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Shoulder.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Shoulders
     extends OrientationalBodyPartGroup
@@ -3038,6 +4321,11 @@ extends Instrument
      * {@code Sole} represents the sole of the human foot.
      * <p>
      * The human sole is the biggest bottom portion of the foot between the heel and knuckles.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Foot.class)
     public abstract
@@ -3052,6 +4340,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Sole(
             final Orientation orientation
@@ -3062,15 +4351,21 @@ extends Instrument
 
     /**
      * {@code Soles} represents both soles of the human feet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Sole.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Soles
     extends OrientationalBodyPartGroup
     implements
         External,
         FootPart,
-        Universal.ComprehensiveGroup<Sole, Human>
+        Universal.ComprehensiveGroup<Sole, Feet>
     {
         /**
          * Creates both soles.
@@ -3090,8 +4385,16 @@ extends Instrument
      * {@code Teeth} represents the human teeth.
      * <p>
      * The human teeth are the bony extensions of the skull and jaw bone ordered around the tongue.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
+    @Category
+    @Category.Instance(type = UpperTeeth.class)
+    @Category.Instance(type = LowerTeeth.class)
     public abstract
     class Teeth
     extends BodyPartGroup
@@ -3114,11 +4417,18 @@ extends Instrument
      * {@code Thorax} represents the upper part of the torso.
      * <p>
      * The human thorax is the upper part of the torso also known as the chest.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Torso.class)
+    @Category
+    @Category.Instance(type = Lungs.class)
     public abstract
     class Thorax
-    extends CompositeBodyPart
+    extends Fixture
     implements
         Internal,
         TorsoPart,
@@ -3138,11 +4448,16 @@ extends Instrument
      * {@code Throat} represents the human throat.
      * <p>
      * The human throat is the cavity in the neck through which air flows into the lungs.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Uniformed(group = Neck.class)
+    @Uniformed(group = Human.class)
     public abstract
     class Throat
-    extends Fixture
+    extends Joint
     implements
         Internal,
         NeckPart
@@ -3158,46 +4473,149 @@ extends Instrument
 
     /**
      * {@code ThirdFinger} represents the human third finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    @Category(types = Finger.class, instances = { "order", "3" })
+    @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "3" })
     public abstract
     class ThirdFinger
-    implements Orientational
-    {}
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the third finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        ThirdFinger(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 3);
+        }
+    }
 
     /**
      * {@code ThirdFingers} represents both human third fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
     public abstract
     class ThirdFingers
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<ThirdFinger, Human>
-    {}
+    implements
+        External,
+        HandPart,
+        Universal.ComprehensiveGroup<ThirdFinger, Hands>
+    {
+        /**
+         * Creates both third fingers.
+         */
+        protected
+        ThirdFingers()
+        {
+            super();
+
+            createPart(ThirdFinger.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Thumb} represents the human thumb finger.
-     */
-    @Category(types = Finger.class, instances = { "order", "0" })
-    public abstract
-    class Thumb
-    implements Orientational
-    {}
-
-    /**
-     * {@code Thumb} represents the human thumb finger.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Finger.class, values = { "orientation -> orientation", "order", "0" })
+    public abstract
+    class Thumb
+    extends CompositeOrientationalBodyPart
+    implements
+        External,
+        HandPart,
+        Ordered<Byte>,
+        Ordered.PerMany<Byte>
+    {
+        /**
+         * Creates the thumb finger with the specified orientation.
+         *
+         * @param orientation the orientation.
+         */
+        @Categorized(parameters = "orientation")
+        protected
+        Thumb(
+            final Orientation orientation
+            ) {
+            super(orientation);
+
+            createPart(Finger.class)
+            .withParameterRanges(2, 5)
+            .withValues(orientation, 0);
+        }
+    }
+
+    /**
+     * {@code Thumb} represents both human thumb fingers.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    @Category
+    @Category.Instance(type = Thumb.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Thumbs
     extends OrientationalBodyPartGroup
-    implements Universal.ComprehensiveGroup<Thumb, Human>
-    {}
+    implements Universal.ComprehensiveGroup<Thumb, Hands>
+    {
+        /**
+         * Creates both thumbs.
+         */
+        protected
+        Thumbs()
+        {
+            super();
+
+            createPart(Thumb.class)
+            .withParameterRanges(2)
+            .withValues(Orientation.RIGHT)
+            .withValues(Orientation.LEFT);
+        }
+    }
 
     /**
      * {@code Toes} represents all the toes of the human foot as a single body part.
      * <p>
      * The human foot toes are the outermost part of the foot containing all phalanges attached to the knuckles.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Foot.class)
     public abstract
@@ -3212,6 +4630,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Toes(
             final Orientation orientation
@@ -3224,6 +4643,11 @@ extends Instrument
      * {@code Tongue} represents the human tongue.
      * <p>
      * The human tongue is the loose organ inside the mouth with which voice is altered during speech.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
     public abstract
@@ -3246,8 +4670,17 @@ extends Instrument
      * {@code Torso} represents the human torso.
      * <p>
      * The human torso is the upper middle portion of the body containing the thorax, abdomen, and waist.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Human.class)
+    @Category
+    @Category.Instance(type = Thorax.class)
+    @Category.Instance(type = Abdomen.class)
+    @Category.Instance(type = Waist.class)
     public abstract
     class Torso
     extends CompositeBodyPart
@@ -3271,100 +4704,404 @@ extends Instrument
 
     /**
      * {@code TorsoPart} classifies a part of the human torso.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface TorsoPart
     extends BodyPart
-    {}
+    {
+        @Override
+        public default Class<Torso> getCorrespondingBodyPartClass() {
+            return Torso.class;
+        }
+    }
 
     /**
      * {@code Universal} identifies human-specific universality.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Universal
     extends Instrument.Universal
     {
-        interface Circumduction extends Motion {}
+        /**
+         * {@code Circumduction} classifies the circumduction motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Circumduction
+        extends Motion
+        {}
 
-        interface Coronal extends Plane
+        /**
+         * {@code Coronal} classifies the coronal anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Coronal
+        extends Plane
         {
-            interface Abduction extends Motion {}
+            /**
+             * {@code Abduction} classifies the abduction motion of human body parts.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Abduction
+            extends Motion
+            {}
 
-            interface Adduction extends Motion {}
+            /**
+             * {@code Adduction} classifies the adduction motion of human body parts.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Adduction
+            extends Motion
+            {}
         }
 
-        interface CounterNutation extends Motion {}
+        /**
+         * {@code Counternutation} classifies the counternutation motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Counternutation
+        extends Motion
+        {}
 
-        interface Depression extends Motion {}
+        /**
+         * {@code Depression} classifies the depression motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Depression
+        extends Motion
+        {}
 
-        interface Dorsal extends Plane {}
+        /**
+         * {@code Dorsal} classifies the dorsal anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Dorsal
+        extends Plane
+        {}
 
-        interface Elevation extends Motion {}
+        /**
+         * {@code Elevation} classifies the elevation motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Elevation
+        extends Motion
+        {}
 
-        interface Nutation extends Motion {}
+        /**
+         * {@code Nutation} classifies the nutation motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Nutation
+        extends Motion
+        {}
 
-        interface Occlusion extends Motion {}
+        /**
+         * {@code Occlusion} classifies the occlusion motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Occlusion
+        extends Motion
+        {}
 
-        interface Opposition extends Motion {}
+        /**
+         * {@code Opposition} classifies the opposition motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Opposition
+        extends Motion
+        {}
 
-        interface Palmar extends Plane {}
+        /**
+         * {@code Palmar} classifies the palmar anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Palmar
+        extends Plane
+        {}
 
-        interface ParaSagittal extends Plane {}
+        /**
+         * {@code Parasagittal} classifies the parasagittal anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Parasagittal
+        extends Plane
+        {}
 
-        interface Pronation extends Motion {}
+        /**
+         * {@code Pronation} classifies the pronation motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Pronation
+        extends Motion
+        {}
 
-        interface Protraction extends Motion {}
+        /**
+         * {@code Protraction} classifies the protraction motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Protraction
+        extends Motion
+        {}
 
-        interface Protrusion extends Motion {}
+        /**
+         * {@code Protrusion} classifies the protrusion motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Protrusion
+        extends Motion
+        {}
 
-        interface Reciprocal extends Motion {}
+        /**
+         * {@code Reciprocal} classifies the reciprocal motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Reciprocal
+        extends Motion
+        {}
 
-        interface Reduction extends Motion {}
+        /**
+         * {@code Reduction} classifies the reduction motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Reduction
+        extends Motion
+        {}
 
-        interface Reposition extends Motion {}
+        /**
+         * {@code Reposition} classifies the reposition motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Reposition
+        extends Motion
+        {}
 
-        interface Retraction extends Motion {}
+        /**
+         * {@code Retraction} classifies the retraction motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Retraction
+        extends Motion
+        {}
 
-        interface Retrusion extends Motion {}
+        /**
+         * {@code Retrusion} classifies the retrusion motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Retrusion
+        extends Motion
+        {}
 
-        interface Rotation extends Motion
+        /**
+         * {@code Rotation} classifies the rotation motion of human body parts.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Rotation
+        extends Motion
         {
-            interface External extends Rotation {}
+            /**
+             * {@code External} classifies the external rotation motion of human body parts.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface External
+            extends Rotation
+            {}
 
-            interface Internal extends Rotation {}
+            /**
+             * {@code Internal} classifies the internal rotation motion of human body parts.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Internal
+            extends Rotation
+            {}
         }
 
-        interface Sagittal extends Plane
+        /**
+         * {@code Sagittal} classifies the sagittal anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Sagittal
+        extends Plane
         {
-            interface Eversion extends Motion {}
+            /**
+             * {@code Eversion} classifies the eversion motion of human body parts on the sagittal plane.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Eversion
+            extends Motion
+            {}
 
-            interface Extension extends Motion {}
+            /**
+             * {@code Extension} classifies the extension motion of human body parts on the sagittal plane.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Extension
+            extends Motion
+            {}
 
-            interface Flexion extends Motion
+            /**
+             * {@code Flexion} classifies the flexion motion of human body parts on the sagittal plane.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Flexion
+            extends Motion
             {
-                interface Dorsi extends Flexion {}
+                /**
+                 * {@code Dorsi} classifies the dorsiflexion motion of human body parts on the sagittal plane.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
+                 */
+                interface Dorsi
+                extends Flexion
+                {}
 
-                interface Palmar extends Flexion {}
+                /**
+                 * {@code Palmar} classifies the palmarflexion motion of human body parts on the sagittal plane.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
+                 */
+                interface Palmar
+                extends Flexion
+                {}
 
-                interface Plantar extends Flexion {}
+                /**
+                 * {@code Plantar} classifies the plantarflexion motion of human body parts on the sagittal plane.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
+                 */
+                interface Plantar
+                extends Flexion
+                {}
             }
 
-            interface Inversion extends Motion {}
+            /**
+             * {@code Inversion} classifies the inversion motion of human body parts on the sagittal plane.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            interface Inversion
+            extends Motion
+            {}
         }
 
-        interface Supination extends Motion {}
+        /**
+         * {@code Supination} classifies the supination motion of human body parts on the sagittal plane.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Supination
+        extends Motion
+        {}
 
-        interface Torsion extends Motion {}
+        /**
+         * {@code Torsion} classifies the torsion motion of human body parts on the sagittal plane.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Torsion
+        extends Motion
+        {}
 
-        interface Transverse extends Plane {}
+        /**
+         * {@code Transverse} classifies the transverse anatomical plane of the human body.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Transverse
+        extends Plane
+        {}
 
-        interface Version extends Motion {}
+        /**
+         * {@code Version} classifies the version motion of human body parts on the sagittal plane.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Version
+        extends Motion
+        {}
     }
 
     /**
      * {@code Upper} classifies a human upper body part.
      * <p>
      * The upper body parts are those above the abdomen.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Upper
@@ -3375,6 +5112,11 @@ extends Instrument
      * {@code UpperArm} represents the upper part of the human arm.
      * <p>
      * The human upper arm is the part between the shoulder and the elbow.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Arm.class)
     public abstract
@@ -3389,6 +5131,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         UpperArm(
             final Orientation orientation
@@ -3399,15 +5142,21 @@ extends Instrument
 
     /**
      * {@code UpperArms} represents both upper arms of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = UpperArm.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class UpperArms
     extends OrientationalBodyPartGroup
     implements
         ArmPart,
         External,
-        Universal.ComprehensiveGroup<UpperArm, Human>
+        Universal.ComprehensiveGroup<UpperArm, Arms>
     {
         /**
          * Creates both upper arms.
@@ -3427,6 +5176,11 @@ extends Instrument
      * {@code UpperLeg} represents the upper part of the human leg.
      * <p>
      * The human upper leg is the part between the hip and knee also known as the thigh.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Leg.class)
     public abstract
@@ -3441,6 +5195,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         UpperLeg(
             final Orientation orientation
@@ -3451,15 +5206,21 @@ extends Instrument
 
     /**
      * {@code UpperLegs} represents both upper legs of the human body.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = UpperLeg.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class UpperLegs
     extends OrientationalBodyPartGroup
     implements
         External,
         LegPart,
-        Universal.ComprehensiveGroup<UpperLeg, Human>
+        Universal.ComprehensiveGroup<UpperLeg, Legs>
     {
         /**
          * Creates both upper legs.
@@ -3477,15 +5238,17 @@ extends Instrument
 
     /**
      * {@code UpperLip} represents the upper part of the human lips.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
     public abstract
     class UpperLip
     extends AtomicBodyPart
-    implements
-        External,
-        Lip,
-        MouthPart
+    implements Lip
     {
         /**
          * Creates the upper lip.
@@ -3498,6 +5261,11 @@ extends Instrument
 
     /**
      * {@code UpperTeeth} represents the upper part of the human teeth.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Mouth.class)
     public abstract
@@ -3520,6 +5288,11 @@ extends Instrument
      * {@code Waist} represents the human waist.
      * <p>
      * The human waist is the joint in the middle body connecting the abdomen to the hips.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Torso.class)
     public abstract
@@ -3543,6 +5316,11 @@ extends Instrument
      * {@code Wrist} represents the human wrist.
      * <p>
      * The human wrist is the joint in the arm connecting the lower arm to the hand.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Arm.class)
     public abstract
@@ -3557,6 +5335,7 @@ extends Instrument
          *
          * @param orientation the orientation.
          */
+        @Categorized(parameters = "orientation")
         protected
         Wrist(
             final Orientation orientation
@@ -3567,14 +5346,20 @@ extends Instrument
 
     /**
      * {@code Wrists} represents both wrists of the human arms.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Category
+    @Category.Instance(type = Wrist.class, values = { "orientation", "RIGHT", "LEFT" })
     public abstract
     class Wrists
     extends OrientationalBodyPartGroup
     implements
         External,
-        Universal.ComprehensiveGroup<Wrist, Arm>,
+        Universal.ComprehensiveGroup<Wrist, Arms>,
         Upper
     {
         /**

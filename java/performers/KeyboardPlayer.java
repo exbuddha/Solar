@@ -21,8 +21,13 @@ import performance.Interaction.Physical.Repetitive;
 
 /**
  * {@code KeyboardPlayer} is a representation of a performer who has knowledge of performing a musical instrument played with keyboard.
+ * <p>
+ * This class implementation is in progress.
  *
  * @param <I> the instrument type.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class KeyboardPlayer<I extends Keyboard>
@@ -62,12 +67,22 @@ extends Performer<I>
 
     /**
      * Groups both-oriented interaction classes for all keyboard players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Both
     {
         /**
          * {@code Position} represents moving a hand to a new position.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PositionName,
@@ -94,6 +109,9 @@ extends Performer<I>
         {
             /**
              * Creates a position interaction with the specified body and instrument parts.
+             *
+             * @param masculine the masculine part.
+             * @param feminine the feminine part.
              */
             protected
             Position(
@@ -106,6 +124,11 @@ extends Performer<I>
 
         /**
          * {@code Press} represents pressing a key.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PressName,
@@ -134,6 +157,9 @@ extends Performer<I>
         {
             /**
              * Creates a press interaction with the specified body and instrument parts.
+             *
+             * @param masculine the masculine part.
+             * @param feminine the feminine part.
              */
             protected
             Press(
@@ -146,6 +172,11 @@ extends Performer<I>
 
         /**
          * {@code Release} represents quietly releasing a finger off of a key.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = ReleaseName,
@@ -172,6 +203,9 @@ extends Performer<I>
         {
             /**
              * Creates a release interaction with the specified body and instrument parts.
+             *
+             * @param masculine the masculine part.
+             * @param feminine the feminine part.
              */
             protected
             Release(
@@ -184,6 +218,11 @@ extends Performer<I>
 
         /**
          * {@code Slide} represents gliding a finger that is pressing a key to another key.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = SlideName,
@@ -212,6 +251,9 @@ extends Performer<I>
         {
             /**
              * Creates a slide interaction with the specified body and instrument parts.
+             *
+             * @param masculine the masculine part.
+             * @param feminine the feminine part.
              */
             protected
             Slide(
@@ -224,6 +266,11 @@ extends Performer<I>
 
         /**
          * {@code Trill} represents pressing and releasing a key repetitively with a finger.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = TrillName,
@@ -253,6 +300,9 @@ extends Performer<I>
         {
             /**
              * Creates a trill interaction with the specified body and instrument parts.
+             *
+             * @param masculine the masculine part.
+             * @param feminine the feminine part.
              */
             protected
             Trill(
@@ -266,6 +316,11 @@ extends Performer<I>
 
     /**
      * {@code ChangeGraph} is a representation of keyboard player's performance knowledge.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class ChangeGraph

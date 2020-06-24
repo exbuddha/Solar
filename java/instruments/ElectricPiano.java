@@ -5,7 +5,12 @@ import java.util.Arrays;
 /**
  * {@code ElectricPiano} classifies the most common form of an electric piano instrument.
  * <p>
- * Electric piano only has a sustain pedal and doesn't have, or provide, access to the strings.
+ * An electric piano only has a sustain pedal and does not have, or provide, access to the strings.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class ElectricPiano
@@ -16,6 +21,6 @@ extends Piano
      */
     public
     ElectricPiano() {
-        super(getDefaultFirstKeyNote(), getDefaultNumberOfKeys(), Arrays.asList(performance.Constant.Piano.SustainPedal));
+        super(getDefaultFirstKeyNote(), getDefaultNumberOfKeys(), Arrays.asList(performance.Constant.Piano.SustainPedalName));
     }
 }

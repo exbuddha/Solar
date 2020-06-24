@@ -1,7 +1,12 @@
 package instruments;
 
 /**
- * {@code AcousticGuitar} classifies the most common form of an acoustic guitar instrument.
+ * {@code AcousticGuitar} represents the most common form of an acoustic guitar instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class AcousticGuitar
@@ -43,16 +48,40 @@ extends Guitar
         return DefaultHarmonicCount;
     }
 
+    /**
+     * {@code Hole} represents the acoustic guitar hole.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Hole
     extends AtomicPart
     {}
 
+    /**
+     * {@code Resonator} represents the acoustic guitar resonator.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Resonator
     extends AtomicPart
     {}
 
+    /**
+     * {@code Soundboard} represents the acoustic guitar soundboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Soundboard
     extends AtomicPart

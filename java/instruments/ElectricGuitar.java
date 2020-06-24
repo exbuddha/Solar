@@ -2,6 +2,11 @@ package instruments;
 
 /**
  * {@code ElectricGuitar} classifies the most common form of the electric guitar instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class ElectricGuitar
@@ -43,21 +48,53 @@ extends Guitar
         return DefaultHarmonicCount;
     }
 
+    /**
+     * {@code Pickup} represents the electric guitar pickup.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Pickup
     extends AtomicPart
     {
+        /**
+         * {@code Selector} represents the electric guitar pickup selector.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public abstract
         class Selector
         extends Accessory
         {}
     }
 
+    /**
+     * {@code Tone} represents the electric guitar tone control knob.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Tone
     extends Accessory
     {}
 
+    /**
+     * {@code Volume} represents the electric guitar volume control knob.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Volume
     extends Accessory

@@ -8,9 +8,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.lang.model.type.NullType;
-
-import music.system.data.DataPoint;
+import music.system.DataPoint;
 import musical.Duration;
 import musical.Interval;
 import musical.Repetition;
@@ -25,6 +23,11 @@ import performance.system.data.Description;
  * It involves two part types: a masculine part that initiates the action, and a feminine part that reacts to the action.
  * An interaction is an atomic piece of data defining the most basic form of action-reaction for the purpose of creating the desired change, which doesn't require any further breakdown to smaller action-reaction definitions in the context of music performance.
  * For example, pressing a fret or plucking a string with a finger is considered to be an interaction.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Interaction
@@ -32,16 +35,22 @@ implements Snapshot
 {
     /** The masculine part. */
     protected final
-    system.Unit masculine;
+    system.data.Unit masculine;
 
     /** The feminine part. */
     protected final
-    system.Unit feminine;
+    system.data.Unit feminine;
 
+    /**
+     * Creates an interaction with the specified masculine and feminine units.
+     *
+     * @param masculine the masculine unit.
+     * @param feminine the feminine unit.
+     */
     public
     Interaction(
-        final system.Unit masculine,
-        final system.Unit feminine
+        final system.data.Unit masculine,
+        final system.data.Unit feminine
         ) {
         this.masculine = masculine;
         this.feminine = feminine;
@@ -68,7 +77,7 @@ implements Snapshot
      * @return the masculine part.
      */
     public
-    system.Unit getMasculine() {
+    system.data.Unit getMasculine() {
         return masculine;
     }
 
@@ -78,7 +87,7 @@ implements Snapshot
      * @return the feminine part.
      */
     public
-    system.Unit getFeminine() {
+    system.data.Unit getFeminine() {
         return feminine;
     }
 
@@ -87,14 +96,19 @@ implements Snapshot
      * <p>
      * An interaction point is defined as a data point in the three-dimensional space with axes defined as performance action, effect, and reaction types.
      * The aim of this interface is to provide a tabular approach to functionality similar to instrument and interaction interchangeability as sets of conversions.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the performance unit type, or the conversion type.
      * @param <A> the action type.
      * @param <E> the effect type.
      * @param <R> the reaction type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
-    interface Conversion<T extends Unit, A extends system.Type<Action>, E extends system.Type<Effect>, R extends system.Type<Reaction>>
+    interface Conversion<T extends Unit, A extends system.data.Type<Action>, E extends system.data.Type<Effect>, R extends system.data.Type<Reaction>>
     extends Decision
     {
         /**
@@ -113,8 +127,13 @@ implements Snapshot
 
     /**
      * {@code Physical} classifies instrument-specific interactions that involve physical actions, and acts as the superclass for all interactions in music performance.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the instrument type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Physical<T extends Unit>
@@ -125,10 +144,16 @@ implements Snapshot
         protected
         Motion motion;
 
+        /**
+         * Creates a physical interaction with the specified masculine and feminine units.
+         *
+         * @param masculine the masculine unit.
+         * @param feminine the feminine unit.
+         */
         protected
         Physical(
-            final system.Unit masculine,
-            final system.Unit feminine
+            final system.data.Unit masculine,
+            final system.data.Unit feminine
             ) {
             super(masculine, feminine);
         }
@@ -171,6 +196,11 @@ implements Snapshot
 
         /**
          * {@code Accelerational} classifies interactions with accelerational action types.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Accelerational
@@ -197,6 +227,11 @@ implements Snapshot
 
         /**
          * {@code Alternative} classifies repetitive interactions with action types that alter pitch or affect quality of sound.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Alternative
@@ -205,6 +240,11 @@ implements Snapshot
 
         /**
          * {@code Bilateral} classifies interactions with action types that are performed uniquely differently by either of the body orientations with one usually, but not necessarily, preferred over the other.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Bilateral
@@ -213,6 +253,11 @@ implements Snapshot
 
         /**
          * {@code Continuous} classifies interactions for which action and/or reaction types are not negligible in time.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Continuous
@@ -221,6 +266,11 @@ implements Snapshot
 
         /**
          * {@code Coordination} classifies the instrument's awareness of physical interactions.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public static abstract
         class Coordination
@@ -231,6 +281,11 @@ implements Snapshot
          * {@code Copitched} classifies interactions with effect types altering to a pitch that depends on the state of the instrument part or is in collaboration with another change target.
          * <p>
          * This classifies the more complex interaction types of an instrument involving more than one part in order to produce a certain effect, or sonically depend on the state of another part or parts.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Copitched
@@ -239,6 +294,11 @@ implements Snapshot
 
         /**
          * {@code Decaying} classifies interactions with reaction types that decrease in loudness after the action is completed.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Decaying
@@ -247,6 +307,11 @@ implements Snapshot
 
         /**
          * {@code Directional} classifies interactions with directional action types.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Directional
@@ -273,6 +338,11 @@ implements Snapshot
 
         /**
          * {@code Durational} classifies interactions with action types maintained over passage of time.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Durational
@@ -299,6 +369,11 @@ implements Snapshot
 
         /**
          * {@code Dynamic} classifies interactions with reaction types that are associable with musical dynamics.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Dynamic
@@ -325,6 +400,11 @@ implements Snapshot
 
         /**
          * {@code Gliding} classifies interactions with action types that produce glide effects, similar to that glissando.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Gliding
@@ -369,6 +449,11 @@ implements Snapshot
 
         /**
          * {@code Gradual} classifies interactions with action types that vary in physical intensity producing gradual degrees in effect.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Gradual
@@ -377,6 +462,11 @@ implements Snapshot
 
         /**
          * {@code Instantaneous} classifies all instantaneous interactions negligible in time.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public abstract
         class Instantaneous
@@ -399,6 +489,11 @@ implements Snapshot
 
         /**
          * {@code Intervallic} classifies interactions with effect types that alter pitch by a certain musical interval.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Intervallic
@@ -425,6 +520,11 @@ implements Snapshot
 
         /**
          * {@code Lasting} classifies interactions with reaction types that independently last after the action is completed.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Lasting
@@ -433,6 +533,11 @@ implements Snapshot
 
         /**
          * {@code Melodic} classifies interactions with effect types that produce melody in music by altering pitch of sound.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Melodic
@@ -441,6 +546,11 @@ implements Snapshot
 
         /**
          * {@code Motion} classifies motion types for all physical interactions.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         enum Motion
@@ -520,12 +630,17 @@ implements Snapshot
              * @return true if the specified motion type is of this type, and false otherwise.
              */
             @Override
-            public boolean is(final system.Type<Motion> type) {
+            public boolean is(final system.data.Type<? extends Motion> type) {
                 return type == this;
             }
 
             /**
              * {@code Acceleration} classifies motion acceleration types.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public
             enum Acceleration
@@ -557,15 +672,21 @@ implements Snapshot
                 public Object apply(ExecutionModel model, Motion motion) { return null; }
 
                 @Override
-                public boolean is(final system.Type<Acceleration> type) {
+                public boolean is(final system.data.Type<? extends Acceleration> type) {
                     // Accelerations are not associated with another type
                     return false;
                 }
+
             }
         }
 
         /**
          * {@code Negligible} classifies interactions that are free of time.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Negligible
@@ -574,6 +695,11 @@ implements Snapshot
 
         /**
          * {@code NonAccelerational} classifies interactions with action types that can be performed only with constant speed or repetition rate.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface NonAccelerational
@@ -582,12 +708,16 @@ implements Snapshot
 
         /**
          * {@code Performance} is the super-type for all interaction type classifiers.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Performance
         extends
             DataPoint<Action, Effect, Reaction>,
-            Node,
             Snapshot,
             performance.system.Type<Performance>
         {
@@ -616,7 +746,12 @@ implements Snapshot
             performance.system.Type<Reaction> getReaction();
 
             /**
-             * {@code Style} classifies music performance style.
+             * {@code Style} classifies a music performance style.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public
             interface Style<T extends performance.system.Type<Performance>>
@@ -624,6 +759,14 @@ implements Snapshot
                 Description<T>,
                 performance.system.Type<Performance>
             {
+                /**
+                 * {@code Music} classifies music styles that are formed purely based on variations in performance.
+                 * <p>
+                 * This class implementation is in progress.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
+                 */
                 public
                 interface Music
                 extends
@@ -635,6 +778,11 @@ implements Snapshot
 
         /**
          * {@code Pitched} classifies interactions with effect types that independently alter pitch of sound on that instrument.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Pitched
@@ -643,6 +791,11 @@ implements Snapshot
 
         /**
          * {@code Positional} classifies interactions with action types requiring the body part to be in a certain position, or range, relative to instrument parts.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Positional
@@ -651,6 +804,11 @@ implements Snapshot
 
         /**
          * {@code Productive} classifies unitary interactions with effect types that produce new sound and excite the aural field.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Productive
@@ -659,6 +817,11 @@ implements Snapshot
 
         /**
          * {@code Reductive} classifies interactions with effect types that reduce active sound and quiet the aural field.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Reductive
@@ -667,6 +830,11 @@ implements Snapshot
 
         /**
          * {@code Repetitive} classifies interactions with repetitive action, reaction, and/or effect types.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Repetitive
@@ -693,6 +861,11 @@ implements Snapshot
 
         /**
          * {@code Secondary} classifies interactions with action types affecting the aural field only when instrument part produces, or is producing, a unitary change and not otherwise.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Secondary
@@ -701,6 +874,11 @@ implements Snapshot
 
         /**
          * {@code Subtle} classifies interactions with effect types that alter pitch only when the instrument part or its larger containing body is in a productive state that doesn't end by the effect of this interaction.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Subtle
@@ -709,6 +887,11 @@ implements Snapshot
 
         /**
          * {@code Sustained} classifies interactions with reaction types that diminish as soon as the action stops or is completed.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Sustained
@@ -719,6 +902,11 @@ implements Snapshot
          * {@code Tertiary} classifies interactions with action types that do not affect the aural field in any way.
          * <p>
          * Subclasses of this interface are the silent interactions with actions intended as preparation for another change.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Tertiary
@@ -727,6 +915,11 @@ implements Snapshot
 
         /**
          * {@code Tonal} classifies interactions with effect types altering the active tone quality of sound.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Tonal
@@ -735,6 +928,11 @@ implements Snapshot
 
         /**
          * {@code Undetermined} classifies interactions with action types that alter pitch in an undetermined manner or are not intended to have an exact pitch.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Undetermined
@@ -743,6 +941,11 @@ implements Snapshot
 
         /**
          * {@code Unilateral} classifies interactions with action types that are performed only by one of the body orientations.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Unilateral
@@ -751,6 +954,11 @@ implements Snapshot
 
         /**
          * {@code Unitary} classifies interactions with effect types uniquely and authoritatively affecting the aural field in a way that no other unitary change on the same instrument part can coexist with.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Unitary
@@ -759,6 +967,11 @@ implements Snapshot
 
         /**
          * {@code Unpitched} classifies interactions with effect types that do not alter pitch of sound by themselves alone, or the pitch is determined by another change or instrument part state.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Unpitched
@@ -767,6 +980,11 @@ implements Snapshot
 
         /**
          * {@code Variational} classifies interactions with action types that vary in physical performance characteristics.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Variational
@@ -775,6 +993,11 @@ implements Snapshot
 
         /**
          * {@code Vibrational} classifies interactions with effect types that vibrate pitch or quality of sound.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Vibrational
@@ -782,7 +1005,12 @@ implements Snapshot
         {}
 
         /**
-         * {@Form} identifies additive interaction class compositions by name.
+         * {@code Form} identifies additive interaction class compositions by name.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Retention(RUNTIME)
         @Target({
@@ -798,8 +1026,8 @@ implements Snapshot
             default "";
 
             /** The form composition. */
-            Class<? extends NullType>[] composition()
-            default NullType.class;
+            Class<? super Null>[] composition()
+            default Null.class;
         }
     }
 }

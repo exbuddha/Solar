@@ -8,6 +8,11 @@ import performance.Performer;
 
 /**
  * {@code LutePlayer} is a representation of a performer who has knowledge of performing a lute instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class LutePlayer<I extends Lute>
@@ -31,6 +36,11 @@ extends Performer<I>
 
     /**
      * {@code ChangeGraph} is a representation of lute player's performance knowledge.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class ChangeGraph
@@ -39,6 +49,11 @@ extends Performer<I>
 
     /**
      * Groups right-oriented interaction classes for all lute players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Right

@@ -5,14 +5,19 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
 
+import system.data.Format.Interpretable.Document.Element;
+
 /**
  * {@code Interpreted} classifies the entity in performance capable of translating elements in the score to effects in the aural field, or actions on the instrument, for performers.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Interpreted
-extends
-    musical.Interpreted,
-    system.data.JSON.Element
+extends musical.Interpreted
 {
     /**
      * Returns the ordered set of music elements.
@@ -30,17 +35,22 @@ extends
      */
     public
     Class<? super performance.system.Type<Interaction.Physical.Performance>> findPerformanceClass(
-        Node... music
+        Element... music
         );
 
     /**
      * {@code OrderedSet} classifies a sorted set with interpreted ordering.
      * <p>
      * Ordered sets are equivalent of java standard {@link SortedSet} with the twist that each element in the set can be attached to other adjacent elements creating a group with specific significance.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface OrderedSet
-    extends SortedSet<org.w3c.dom.Node>
+    extends SortedSet<Element>
     {
         /**
          * {@code Empty} is the default implementation of an empty ordered set.
@@ -52,37 +62,37 @@ extends
             Object[] empty = new Object[0];
 
             @Override
-            public Comparator<? super org.w3c.dom.Node> comparator() {
-                return new Comparator<org.w3c.dom.Node>() {
+            public Comparator<? super Element> comparator() {
+                return new Comparator<Element>() {
                     @Override
-                    public int compare(final org.w3c.dom.Node o1, final org.w3c.dom.Node o2) {
+                    public int compare(final Element o1, final Element o2) {
                         return 1;
                     }
                 };
             }
 
             @Override
-            public SortedSet<org.w3c.dom.Node> subSet(final org.w3c.dom.Node fromElement, final org.w3c.dom.Node toElement) {
+            public SortedSet<Element> subSet(final Element fromElement, final Element toElement) {
                 return this;
             }
 
             @Override
-            public SortedSet<org.w3c.dom.Node> headSet(final org.w3c.dom.Node toElement) {
+            public SortedSet<Element> headSet(final Element toElement) {
                 return this;
             }
 
             @Override
-            public SortedSet<org.w3c.dom.Node> tailSet(final org.w3c.dom.Node fromElement) {
+            public SortedSet<Element> tailSet(final Element fromElement) {
                 return this;
             }
 
             @Override
-            public Node first() {
+            public Element first() {
                 return null;
             }
 
             @Override
-            public Node last() {
+            public Element last() {
                 return null;
             }
 
@@ -102,8 +112,8 @@ extends
             }
 
             @Override
-            public Iterator<org.w3c.dom.Node> iterator() {
-                return new Iterator<org.w3c.dom.Node>()
+            public Iterator<Element> iterator() {
+                return new Iterator<Element>()
                 {
                     @Override
                     public boolean hasNext() {
@@ -111,7 +121,7 @@ extends
                     }
 
                     @Override
-                    public org.w3c.dom.Node next() {
+                    public Element next() {
                         return null;
                     }
                 };
@@ -128,7 +138,7 @@ extends
             }
 
             @Override
-            public boolean add(final org.w3c.dom.Node e) {
+            public boolean add(final Element e) {
                 return false;
             }
 
@@ -143,7 +153,7 @@ extends
             }
 
             @Override
-            public boolean addAll(final Collection<? extends org.w3c.dom.Node> col) {
+            public boolean addAll(final Collection<? extends Element> col) {
                 return false;
             }
 

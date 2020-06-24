@@ -2,12 +2,18 @@ package performance;
 
 /**
  * {@code Constant} holds all commonly accepted names and descriptions in music performance.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public final
 class Constant
 {
     /**
      * {@code ElectricGuitarPlayer} holds interaction and technique names and descriptions common to all or most electric guitar players.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface ElectricGuitarPlayer
@@ -25,6 +31,9 @@ class Constant
 
     /**
      * {@code GuitarPlayer} holds interaction and technique names and descriptions common to all or most guitar players.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface GuitarPlayer
@@ -46,22 +55,28 @@ class Constant
 
     /**
      * {@code Instrument} holds all instrument names.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Instrument
     {
-        final String AcousticGrandPiano = "acoustic grand piano";
-        final String AcousticGuitar = "acoustic guitar";
-        final String ElectricGuitar = "electric guitar";
-        final String ElectricPiano = "electric piano";
-        final String GrandPiano = "grand piano";
-        final String Guitar = "guitar";
-        final String NylonGuitar = "nylon guitar";
-        final String Piano = "piano";
+        final String AcousticGrandPianoName = "acoustic grand piano";
+        final String AcousticGuitarName = "acoustic guitar";
+        final String ElectricGuitarName = "electric guitar";
+        final String ElectricPianoName = "electric piano";
+        final String GrandPianoName = "grand piano";
+        final String GuitarName = "guitar";
+        final String NylonGuitarName = "nylon guitar";
+        final String PianoName = "piano";
     }
 
     /**
      * {@code KeyboardPlayer} holds interaction and technique names and descriptions common to all or most keyboard players.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface KeyboardPlayer
@@ -77,6 +92,9 @@ class Constant
 
     /**
      * {@code LutePlayer} holds interaction and technique names and descriptions common to all or most lute players.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface LutePlayer
@@ -134,6 +152,9 @@ class Constant
 
     /**
      * {@code Performer} holds interaction and technique names and descriptions common to all or most instrument performers.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Performer
@@ -160,17 +181,23 @@ class Constant
 
     /**
      * {@code Piano} holds all names related to piano instruments.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Piano
     {
-        final String SoftPedal = "soft";
-        final String SostenutoPedal = "sostenuto";
-        final String SustainPedal = "sustain";
+        final String SoftPedalName = "soft";
+        final String SostenutoPedalName = "sostenuto";
+        final String SustainPedalName = "sustain";
     }
 
     /**
      * {@code PianoPlayer} holds interaction and technique names and descriptions common to all or most piano players.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface PianoPlayer

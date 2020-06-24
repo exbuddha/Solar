@@ -18,6 +18,11 @@ import performance.Interaction.Physical.Intervallic;
 
 /**
  * {@code ElectricGuitarPlayer} is a representation of an electric guitar player.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class ElectricGuitarPlayer
@@ -57,6 +62,11 @@ extends GuitarPlayer<ElectricGuitar>
 
     /**
      * Groups right-oriented interaction classes for all electric guitar players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Right
@@ -64,6 +74,11 @@ extends GuitarPlayer<ElectricGuitar>
     {
         /**
          * {@code WhammyPull} represents pulling the whammy bar up to raise the guitar pitch.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = WhammyPullName,
@@ -108,6 +123,11 @@ extends GuitarPlayer<ElectricGuitar>
 
         /**
          * {@code WhammyPush} represents pushing the whammy bar down to lower the guitar pitch.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = WhammyPushName,
@@ -152,6 +172,11 @@ extends GuitarPlayer<ElectricGuitar>
 
         /**
          * {@code WhammyRelease} represents releasing the whammy bar to its original state.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = WhammyReleaseName,
@@ -196,6 +221,11 @@ extends GuitarPlayer<ElectricGuitar>
 
         /**
          * {@code WhammyVibrato} represents vibrating the whammy bar.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = WhammyVibratoName,
@@ -243,6 +273,11 @@ extends GuitarPlayer<ElectricGuitar>
 
     /**
      * {@code ChangeGraph} is a representation of electric guitar player's performance knowledge.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class ChangeGraph

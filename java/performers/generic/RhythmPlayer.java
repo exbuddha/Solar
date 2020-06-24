@@ -7,6 +7,11 @@ import performance.Instance;
  * {@code RhythmPlayer} is the base class for all performer types that deal with instruments that are performed in order to generate rhythm in music.
  * <p>
  * Unless the subject instrument is an electronic one, this classification refers to instruments for which a membrane is struck to project instantaneous, or negligibly instantaneous, sound.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class RhythmPlayer

@@ -1,7 +1,12 @@
 package performance;
 
+import system.data.Type;
+
 /**
  * {@code Action} categorizes the types of actions that body parts can perform on instrument parts or their accessories.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 enum Action
@@ -50,7 +55,7 @@ implements
 
     /** The action type. */
     private final
-    system.Type<Action> type;
+    Type<Action> type;
 
     /**
      * Creates an action of the specified type.
@@ -80,7 +85,7 @@ implements
      * @return true if the specified action type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final system.Type<Action> type) {
+    public boolean is(final system.data.Type<? extends Action>type) {
         if (type == null)
             return false;
 
@@ -96,7 +101,7 @@ implements
      * @return the action type.
      */
     public
-    system.Type<Action> getType() {
+    system.data.Type<Action> getType() {
         return type;
     }
 }

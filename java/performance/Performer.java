@@ -1,5 +1,6 @@
 package performance;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -13,8 +14,13 @@ import system.data.Graph;
  * It is the superclass for all instrument-specific performer classes that are in charge of providing knowledge, regarding their respective instrument, to the ASM in order to facilitate branching out and narrowing down the performance execution graph.
  * <p>
  * All concrete subclasses of the {@code Performer} class must declare a constructor that takes two parameters: an {@link Instrument} and an {@link Score.Interpreter} type.
+ * <p>
+ * This class implementation is in progress.
  *
  * @param <I> the instrument type.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Performer<I extends Unit>
@@ -82,7 +88,7 @@ implements
     }
 
     @Override
-    public boolean is(final system.Type<Instrument> type) {
+    public boolean is(final system.data.Type<? extends Instrument> type) {
         return type instanceof Performer;
     }
 
@@ -142,6 +148,11 @@ implements
 
     /**
      * {@code ASM} classifies performer's awareness of physical interactions that make up a performance graph.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected static abstract
     class ASM
@@ -157,16 +168,21 @@ implements
         ASM(
             final Score score
             ) {
-            score.super(score.findInterpreter().document, score.findInterpreter().index);
+            score.super(score.findInterpreter().getDocument(), score.findInterpreter().index);
         }
     }
 
     /**
      * {@code ChangeGraph} is a data structure connecting interaction classes, and their relevant meta-data, to each other for making action selection possible during performance.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class ChangeGraph
-    extends Graph<Null, Production<? extends Unit>>
+    extends Graph<Type, Production<? extends Unit>>
     {
         /**
          * Creates an empty change graph.
@@ -179,8 +195,13 @@ implements
 
     /**
      * {@code Coordination} classifies performer's awareness of instrument-specific changes.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the graph data type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Coordination<T extends Graph<?,?>>
@@ -201,6 +222,11 @@ implements
          * {@code Connective} classifies special data types that represent all or many connections, or disconnections, between vertices of graphs as a collection of existing, or non-existing, edges.
          * <p>
          * The aim of this interface is to provide a clean method for applying preferences to the main two types of graphs that each performer type handles in order to carry out the task of instruction generation.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Connective
@@ -212,6 +238,11 @@ implements
 
     /**
      * {@code PerformanceGraph} is a data structure interconnecting instructions that collectively represent all performance possibilities for a score interpretation.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class PerformanceGraph
@@ -227,11 +258,19 @@ implements
         }
     }
 
+    /**
+     * {@code Performed} classifies performance data types as sequentially located instances of interpreted performed units.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Performed
     extends
-        system.Data.Sequential<Instance>,
-        system.Unit
+        system.data.Format.Sequential<Instance>,
+        system.data.Unit
     {
         @Override
         public

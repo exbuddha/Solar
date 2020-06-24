@@ -2,14 +2,20 @@ package musical;
 
 import java.util.SortedSet;
 
+import music.system.data.Convertible;
 import music.system.data.Clockable.ProgressiveDataPoint;
 import music.system.data.Clockable.Progressor;
 import music.system.data.Clockable.Templator;
-import music.system.data.Convertible;
-import system.Type;
+import system.data.Symbolized;
+import system.data.Type;
 
 /**
  * {@code Chord} classifies musical ranges that connote harmony in music.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Chord
@@ -28,13 +34,18 @@ extends
 
     /**
      * {@code Progress} represents the measure of change in chord and song construction.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Progress<T extends Number>
     extends Interval
     implements
         Convertible<Progress<?>>,
-        ProgressiveDataPoint<Byte, Templator, Progressor>,
+        ProgressiveDataPoint<Byte, Progressor, Progressor>,
         Range,
         Templator
     {
@@ -63,7 +74,7 @@ extends
         Progress(
             final Progressor v
             ) {
-            super(null);
+            super((Number) null);
         }
 
         /**
@@ -118,12 +129,14 @@ extends
 
         @Override
         public Byte x() {
-            return this.getOrder();
+            return getOrder();
         }
 
         @Override
-        public Templator y() {
-            return this.getMode();
+        public Progressor y() {
+            return Interval.isStandard(this)
+                   ? ((Standard) ((Interval) this)).getMode()
+                   : null;
         }
 
         @Override
@@ -136,6 +149,11 @@ extends
      * {@code Mode} categorizes all known chord modes.
      * <p>
      * Chord modes consist of all individual parts that define the structure or mode of a chord excluding the numeric intervallic relations.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     enum Mode
@@ -183,7 +201,7 @@ extends
         }
 
         @Override
-        public boolean is(final Type<Mode> type) {
+        public boolean is(final Type<? extends Mode> type) {
             return this == type;
         }
 
@@ -204,6 +222,11 @@ extends
      * {@code OrderedSet} classifies ordered set of progresses for chords.
      * <p>
      * Ordered sets are equivalent of java standard {@link SortedSet} with the twist that each element in the set can be attached to other adjacent elements creating a group with specific significance.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface OrderedSet

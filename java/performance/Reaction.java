@@ -2,6 +2,11 @@ package performance;
 
 /**
  * {@code Reaction} categorizes the types of reactions that instrument parts can show to the actions of body parts.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 enum Reaction
@@ -35,7 +40,7 @@ implements
 
     /** The reaction type. */
     private final
-    system.Type<Reaction> type;
+    system.data.Type<Reaction> type;
 
     /**
      * Creates a reaction of the specified type.
@@ -65,7 +70,7 @@ implements
      * @return true if the specified reaction type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final system.Type<Reaction> type) {
+    public boolean is(final system.data.Type<? extends Reaction> type) {
         if (type == null)
             return false;
 
@@ -81,7 +86,7 @@ implements
      * @return the reaction type.
      */
     public
-    system.Type<Reaction> getType() {
+    system.data.Type<Reaction> getType() {
         return type;
     }
 }

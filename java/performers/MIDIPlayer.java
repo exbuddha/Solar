@@ -7,6 +7,11 @@ import instruments.MusicalInstrument;
  * <p>
  * This base class exceptionally inherits the {@link MusicalInstrument} class and does not define a change graph.
  * The reason for this design decision is that generally all MIDI instruments are considered to be just electronic circuits and don't require to encapsulate any knowledge for human parts or their simulated interaction space.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class MIDIPlayer
@@ -23,6 +28,11 @@ extends MusicalInstrument
 
     /**
      * {@code Graph} classifies the state graph for the device's electronic parts or events.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected
     interface Graph

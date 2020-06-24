@@ -4,7 +4,12 @@ import musical.Note;
 import musical.Note.Pitch;
 
 /**
- * {@code Accordion} classifies the most common form of the accordion instrument.
+ * {@code Accordion} represents the most common form of the accordion instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Accordion
@@ -56,26 +61,66 @@ extends FreeAerophone
             throw new IllegalArgumentException("Number of keys is out of range.");
     }
 
+    /**
+     * {@code Accompaniment} represents the accordion accompaniment.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Accompaniment
     extends CompositePart
     {}
 
+    /**
+     * {@code Bellows} represents the accordion bellows.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Bellows
     extends AtomicPart
     {}
 
+    /**
+     * {@code Button} represents the accordion button.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Button
     extends AtomicPart
     {}
 
+    /**
+     * {@code Buttons} represents all of the accordion buttons.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Buttons
     extends CompositePart
     {}
 
+    /**
+     * {@code Key} represents the accordion key.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Key
     extends MusicalInstrument.Key
@@ -85,11 +130,27 @@ extends FreeAerophone
         }
     }
 
+    /**
+     * {@code Keys} represents all of the accordion keys.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Keys
     extends MusicalInstrument.Keys
     {}
 
+    /**
+     * {@code Manual} represents the accordion manual.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Manual
     extends CompositePart

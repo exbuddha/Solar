@@ -4,17 +4,20 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import musical.Score;
-import system.Data.Interpretable;
+import system.data.Format.Interpretable;
 
 /**
  * {@code Conductor} represents an arbitrarily complex method of music conduction and defines a set of static members for organization of performance analysis.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Conductor<T>
 implements
     Consumer<T>,
     performance.system.Type<Conductor<? super Interpretable>>,
-    system.Unit
+    system.data.Unit
 {
     /**
      * Conducts a score.
@@ -29,6 +32,9 @@ implements
 
     /**
      * {@code Coordination} classifies conductor's awareness of performance-specific changes.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Coordination
@@ -37,13 +43,16 @@ implements
 
     /**
      * {@code ExecutionModel} classifies the logical model for conducting a music score.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class ExecutionModel
     extends Conductor<CharSequence>
     implements
         system.Observation.Task,
-        system.Type.Null
+        system.data.Type.Null
     {
         /**
          * Ends the thread.
@@ -92,7 +101,7 @@ implements
         }
 
         @Override
-        public boolean is(final system.Type<Conductor<? super Interpretable>> type) {
+        public boolean is(final system.data.Type<? extends Conductor<? super Interpretable>> type) {
             return type instanceof ExecutionModel;
         }
 
@@ -117,6 +126,9 @@ implements
      * <p>
      * This superclass represents alternatively ordered views of the performance snapshots produced and maintained by instances of a {@code Performer} class's performance graph.
      * It can be considered as an organized product in a conducting model at the highest echelon of classification, capable of maintaining many groups of instances in a performance with multiple degrees of resolution.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Orchestration
@@ -125,6 +137,9 @@ implements
     {
         /**
          * {@code Section} represents orchestral sections defined as groups of instruments.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public abstract
         class Section
@@ -137,6 +152,9 @@ implements
      * <p>
      * This superclass represents styles of performance maintained by instances of a {@code Performer} class's performance graph as suppliers of advancement routines for significant performer-instrument combinations.
      * It is the most self-sustained unit of intelligent data in performance.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected static abstract
     class Performance
@@ -145,6 +163,12 @@ implements
         Consumer<Score.Interpreter>,
         Supplier<Runnable>
     {
+        /**
+         * {@code Score} is a representation of performance instructional data as JSON score object.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public abstract
         class Score
         extends system.data.JSON.Score

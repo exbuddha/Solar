@@ -2,6 +2,11 @@ package instruments;
 
 /**
  * {@code Chimes} classifies the most common form of the chimes instrument as a set of hanging bells suspended from an apex.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Chimes

@@ -1,7 +1,12 @@
 package instruments;
 
 /**
- * {@code Aerophone} classifies instruments in which sound is primarily produced by vibrating air.
+ * {@code Aerophone} represents instruments in which sound is primarily produced by vibrating air.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Aerophone

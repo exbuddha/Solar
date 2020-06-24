@@ -6,6 +6,11 @@ import java.util.List;
 
 /**
  * {@code Partition} represents timing in music.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Partition
@@ -52,6 +57,11 @@ implements Iterable<Duration>
 
     /**
      * {@code Reorder} represents a reordering for partition rates.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Reorder

@@ -2,6 +2,11 @@ package performance;
 
 /**
  * {@code Spectral} classifies all visible colors.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Spectral
@@ -16,6 +21,11 @@ interface Spectral
 
     /**
      * {@code Filter} classifies spectral types that filter other similar types.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Filter

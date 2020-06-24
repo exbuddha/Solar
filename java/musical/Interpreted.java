@@ -6,11 +6,15 @@ import exceptions.UnsupportedClefException;
 import system.data.Fraction;
 
 /**
- * {@code Interpreter} classifies the entity in music capable of translating elements in the score to intermediary types.
+ * {@code Interpreter} classifies the entity in music capable of translating elements in the score to intermediary types that relate to instances of music.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Interpreted
-extends system.Type.Null.Node
 {
     /**
      * Finds the effective performance instrument name or names of this instance, or returns an empty list if data is not found.
@@ -43,13 +47,13 @@ extends system.Type.Null.Node
      * @return the effective tempo, or null if data is not found.
      */
     public
-    Fraction findTempo();
+    Tempo findTempo();
 
     /**
-     * Finds the duration of the effective time signature of this instance, or returns null if data is not found.
+     * Finds the effective time signature of this instance, or returns null if data is not found.
      *
      * @return the effective time signature, or null if data is not found.
      */
     public
-    Duration findTime();
+    Fraction findTimeSignature();
 }

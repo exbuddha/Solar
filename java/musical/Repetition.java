@@ -8,6 +8,11 @@ import system.data.Fraction;
 
 /**
  * {@code Repetition} represents a time interval in music, relative to the quarter note time value, over which an ordered list of interactions are repeated.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Repetition
@@ -144,16 +149,40 @@ extends Partition
         this.offset = offset;
     }
 
+    /**
+     * {@code Complex} represents repetition time offsets that are complex.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Complex
     extends Offset
     {}
 
+    /**
+     * {@code Intro} represents repetition offsets that occur at the beginning of the repetition.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Intro
     extends Offset
     {}
 
+    /**
+     * {@code Offset} represents all repetition time offsets that are simple.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Offset
     extends Duration
@@ -167,6 +196,14 @@ extends Partition
         Duration getOrder();
     }
 
+    /**
+     * {@code Outro} represents repetition offsets that occur at the end of the repetition.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Outro
     extends Offset

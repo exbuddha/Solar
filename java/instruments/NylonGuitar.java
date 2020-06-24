@@ -2,6 +2,11 @@ package instruments;
 
 /**
  * {@code NylonGuitar} classifies the most common form of the nylon guitar instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class NylonGuitar
@@ -43,16 +48,40 @@ extends Guitar
         return DefaultHarmonicCount;
     }
 
+    /**
+     * {@code Hole} represents the nylon guitar hole.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Hole
     extends AtomicPart
     {}
 
+    /**
+     * {@code Resonator} represents the nylon guitar resonator.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Resonator
     extends AtomicPart
     {}
 
+    /**
+     * {@code Soundboard} represents the nylon guitar soundboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Soundboard
     extends AtomicPart

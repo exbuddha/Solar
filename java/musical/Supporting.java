@@ -2,8 +2,13 @@ package musical;
 
 /**
  * {@code Supporting} classifies data types exclusively related to other data types for providing systematic support.
+ * <p>
+ * This class implementation is in progress.
  *
  * @param <T> the supported data type.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Supporting<T>

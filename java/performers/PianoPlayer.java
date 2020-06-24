@@ -17,6 +17,11 @@ import performance.Interaction.Physical.Dynamic;
 
 /**
  * {@code PianoPlayer} is a representation of a piano player.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class PianoPlayer
@@ -56,6 +61,11 @@ extends KeyboardPlayer<Piano>
 
     /**
      * Groups both-oriented interaction classes for all piano players.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Both
@@ -63,6 +73,11 @@ extends KeyboardPlayer<Piano>
     {
         /**
          * {@code Release} represents partially releasing a finger off of a key without silencing the sound.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = HoldReleaseName,
@@ -103,6 +118,11 @@ extends KeyboardPlayer<Piano>
 
         /**
          * {@code PedalLock} represents locking a pedal.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PedalLockName,
@@ -142,6 +162,11 @@ extends KeyboardPlayer<Piano>
 
         /**
          * {@code PedalPress} represents pressing a pedal.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PedalPressName,
@@ -182,6 +207,11 @@ extends KeyboardPlayer<Piano>
 
         /**
          * {@code PedalRelease} represents releasing a pedal.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PedalReleaseName,
@@ -221,6 +251,11 @@ extends KeyboardPlayer<Piano>
 
         /**
          * {@code PedalUnlock} represents unlocking a pedal.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PedalUnlockName,
@@ -260,6 +295,11 @@ extends KeyboardPlayer<Piano>
 
         /**
          * {@code Pluck} represents plucking the piano string with a finger.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Change(
             name = PluckName,
@@ -304,6 +344,11 @@ extends KeyboardPlayer<Piano>
 
     /**
      * {@code ChangeGraph} is a representation of piano player's performance knowledge.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class ChangeGraph

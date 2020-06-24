@@ -1,5 +1,11 @@
 package musical;
 
+import static musical.Constant.Note.*;
+import static musical.Constant.Note.Accidental.FlatSym;
+import static musical.Constant.Note.Accidental.NaturalSym;
+import static musical.Constant.Note.Accidental.SharpSym;
+import static musical.Constant.Note.Dynamics.*;
+import static musical.Constant.Note.Octave.*;
 import static musical.Note.Accidental.Flat;
 import static musical.Note.Accidental.Natural;
 import static musical.Note.Accidental.Sharp;
@@ -12,36 +18,660 @@ import java.util.Objects;
 import java.util.Set;
 
 import music.system.data.Clockable;
+import music.system.data.Delta;
 import music.system.data.Ordered;
+import musical.Spectrum.Modulus;
+import system.data.Symbolized;
 
 /**
  * {@code Note} represents the musical note of a certain octave and pitch.
  * <p>
+ * The instances of this class must satisfy the conditions below in order to benefit from all the functionality presented in this class:
  * <ul>
  * <li>Notes must have a pitch.
  * <li>A note that has a null octave is considered to be a pitch type, for which some functionality will fail.
  * <li>Notes can also have accidentals and adjustments.
  * <li>Pitch has a separate identity from accidental in this class.
  * The A-sharp note defines 'A' for pitch and 'sharp' for accidental.
+ * <li>Pitch symbols only support single characters.
  * <li>Double-sharp and double-flat accidentals are not supported.
  * This information is maintained by the subclass {@code Scale.Accidental}.
  * Note objects are meant to only represent the tune of instrument sounds or notes in a score.
  * <li>Note adjustment is accounted for in all operations and comparisons.
  * </ul>
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class Note
 implements
     Adjustable,
+    Adjusting<Note, Interval>,
     Clockable<Note>,
     Cloneable,
     Comparable<Note>,
     Localizable,
+    Modulus,
+    NoteType,
     Ordered<Float>,
-    Readjusting<Note>,
     Symbolized<String>,
-    music.system.Type<Note>
+    Unit
 {
+    public static final
+    Standard C_1 = new Standard(0F, C_1Sym, (byte) -1, Pitch.C, 8.18F);
+
+    public static final
+    Standard C_1s = new Standard(1F, C_1sSym, (byte) -1, Pitch.C, Sharp, 8.66F);
+
+    public static final
+    Standard D_1f = new Standard(1F, D_1fSym, (byte) -1, Pitch.D, Flat, 8.66F);
+
+    public static final
+    Standard D_1 = new Standard(2F, D_1Sym, (byte) -1, Pitch.D, 9.18F);
+
+    public static final
+    Standard D_1s = new Standard(3F, D_1sSym, (byte) -1, Pitch.D, Sharp, 9.72F);
+
+    public static final
+    Standard E_1f = new Standard(3F, E_1fSym, (byte) -1, Pitch.E, Flat, 9.72F);
+
+    public static final
+    Standard E_1 = new Standard(4F, E_1Sym, (byte) -1, Pitch.E, 10.30F);
+
+    public static final
+    Standard F_1 = new Standard(5F, F_1Sym, (byte) -1, Pitch.F, 10.91F);
+
+    public static final
+    Standard F_1s = new Standard(6F, F_1sSym, (byte) -1, Pitch.F, Sharp, 11.56F);
+
+    public static final
+    Standard G_1f = new Standard(6F, G_1fSym, (byte) -1, Pitch.G, Flat, 11.56F);
+
+    public static final
+    Standard G_1 = new Standard(7F, G_1Sym, (byte) -1, Pitch.G, 12.25F);
+
+    public static final
+    Standard G_1s = new Standard(8F, G_1sSym, (byte) -1, Pitch.G, Sharp, 12.98F);
+
+    public static final
+    Standard A_1f = new Standard(8F, A_1fSym, (byte) -1, Pitch.A, Flat, 12.98F);
+
+    public static final
+    Standard A_1 = new Standard(9F, A_1Sym, (byte) -1, Pitch.A, 13.75F);
+
+    public static final
+    Standard A_1s = new Standard(10F, A_1sSym, (byte) -1, Pitch.A, Sharp, 14.57F);
+
+    public static final
+    Standard B_1f = new Standard(10F, B_1fSym, (byte) -1, Pitch.B, Flat, 14.57F);
+
+    public static final
+    Standard B_1 = new Standard(11F, B_1Sym, (byte) -1, Pitch.B, 15.43F);
+
+    public static final
+    Standard C0 = new Standard(12F, C0Sym, (byte) 0, Pitch.C, 16.35F);
+
+    public static final
+    Standard C0s = new Standard(13F, C0sSym, (byte) 0, Pitch.C, Sharp, 17.32F);
+
+    public static final
+    Standard D0f = new Standard(13F, D0fSym, (byte) 0, Pitch.D, Flat, 17.32F);
+
+    public static final
+    Standard D0 = new Standard(14F, D0Sym, (byte) 0, Pitch.D, 18.35F);
+
+    public static final
+    Standard D0s = new Standard(15F, D0sSym, (byte) 0, Pitch.D, Sharp, 19.45F);
+
+    public static final
+    Standard E0f = new Standard(15F, E0fSym, (byte) 0, Pitch.E, Flat, 19.45F);
+
+    public static final
+    Standard E0 = new Standard(16F, E0Sym, (byte) 0, Pitch.E, 20.60F);
+
+    public static final
+    Standard F0 = new Standard(17F, F0Sym, (byte) 0, Pitch.F, 21.83F);
+
+    public static final
+    Standard F0s = new Standard(18F, F0sSym, (byte) 0, Pitch.F, Sharp, 23.12F);
+
+    public static final
+    Standard G0f = new Standard(18F, G0fSym, (byte) 0, Pitch.G, Flat, 23.12F);
+
+    public static final
+    Standard G0 = new Standard(19F, G0Sym, (byte) 0, Pitch.G, 24.50F);
+
+    public static final
+    Standard G0s = new Standard(20F, G0sSym, (byte) 0, Pitch.G, Sharp, 25.96F);
+
+    public static final
+    Standard A0f = new Standard(20F, A0fSym, (byte) 0, Pitch.A, Flat, 25.96F);
+
+    public static final
+    Standard A0 = new Standard(21F, A0Sym, (byte) 0, Pitch.A, 27.50F);
+
+    public static final
+    Standard A0s = new Standard(22F, A0sSym, (byte) 0, Pitch.A, Sharp, 29.14F);
+
+    public static final
+    Standard B0f = new Standard(22F, B0fSym, (byte) 0, Pitch.B, Flat, 29.14F);
+
+    public static final
+    Standard B0 = new Standard(23F, B0Sym, (byte) 0, Pitch.B, 30.87F);
+
+    public static final
+    Standard C1 = new Standard(24F, C1Sym, (byte) 1, Pitch.C, 32.70F);
+
+    public static final
+    Standard C1s = new Standard(25F, C1sSym, (byte) 1, Pitch.C, Sharp, 34.65F);
+
+    public static final
+    Standard D1f = new Standard(25F, D1fSym, (byte) 1, Pitch.D, Flat, 34.65F);
+
+    public static final
+    Standard D1 = new Standard(26F, D1Sym, (byte) 1, Pitch.D, 36.71F);
+
+    public static final
+    Standard D1s = new Standard(27F, D1sSym, (byte) 1, Pitch.D, Sharp, 38.89F);
+
+    public static final
+    Standard E1f = new Standard(27F, E1fSym, (byte) 1, Pitch.E, Flat, 38.89F);
+
+    public static final
+    Standard E1 = new Standard(28F, E1Sym, (byte) 1, Pitch.E, 41.20F);
+
+    public static final
+    Standard F1 = new Standard(29F, F1Sym, (byte) 1, Pitch.F, 43.65F);
+
+    public static final
+    Standard F1s = new Standard(30F, F1sSym, (byte) 1, Pitch.F, Sharp, 46.25F);
+
+    public static final
+    Standard G1f = new Standard(30F, G1fSym, (byte) 1, Pitch.G, Flat, 46.25F);
+
+    public static final
+    Standard G1 = new Standard(31F, G1Sym, (byte) 1, Pitch.G, 49.00F);
+
+    public static final
+    Standard G1s = new Standard(32F, G1sSym, (byte) 1, Pitch.G, Sharp, 51.91F);
+
+    public static final
+    Standard A1f = new Standard(32F, A1fSym, (byte) 1, Pitch.A, Flat, 51.91F);
+
+    public static final
+    Standard A1 = new Standard(33F, A1Sym, (byte) 1, Pitch.A, 55.00F);
+
+    public static final
+    Standard A1s = new Standard(34F, A1sSym, (byte) 1, Pitch.A, Sharp, 58.27F);
+
+    public static final
+    Standard B1f = new Standard(34F, B1fSym, (byte) 1, Pitch.B, Flat, 58.27F);
+
+    public static final
+    Standard B1 = new Standard(35F, B1Sym, (byte) 1, Pitch.B, 61.74F);
+
+    public static final
+    Standard C2 = new Standard(36F, C2Sym, (byte) 2, Pitch.C, 65.41F);
+
+    public static final
+    Standard C2s = new Standard(37F, C2sSym, (byte) 2, Pitch.C, Sharp, 69.30F);
+
+    public static final
+    Standard D2f = new Standard(37F, D2fSym, (byte) 2, Pitch.D, Flat, 69.30F);
+
+    public static final
+    Standard D2 = new Standard(38F, D2Sym, (byte) 2, Pitch.D, 73.42F);
+
+    public static final
+    Standard D2s = new Standard(39F, D2sSym, (byte) 2, Pitch.D, Sharp, 77.78F);
+
+    public static final
+    Standard E2f = new Standard(39F, E2fSym, (byte) 2, Pitch.E, Flat, 77.78F);
+
+    public static final
+    Standard E2 = new Standard(40F, E2Sym, (byte) 2, Pitch.E, 82.41F);
+
+    public static final
+    Standard F2 = new Standard(41F, F2Sym, (byte) 2, Pitch.F, 87.31F);
+
+    public static final
+    Standard F2s = new Standard(42F, F2sSym, (byte) 2, Pitch.F, Sharp, 92.50F);
+
+    public static final
+    Standard G2f = new Standard(42F, G2fSym, (byte) 2, Pitch.G, Flat, 92.50F);
+
+    public static final
+    Standard G2 = new Standard(43F, G2Sym, (byte) 2, Pitch.G, 98.00F);
+
+    public static final
+    Standard G2s = new Standard(44F, G2sSym, (byte) 2, Pitch.G, Sharp, 103.83F);
+
+    public static final
+    Standard A2f = new Standard(44F, A2fSym, (byte) 2, Pitch.A, Flat, 103.83F);
+
+    public static final
+    Standard A2 = new Standard(45F, A2Sym, (byte) 2, Pitch.A, 110.00F);
+
+    public static final
+    Standard A2s = new Standard(46F, A2sSym, (byte) 2, Pitch.A, Sharp, 116.54F);
+
+    public static final
+    Standard B2f = new Standard(46F, B2fSym, (byte) 2, Pitch.B, Flat, 116.54F);
+
+    public static final
+    Standard B2 = new Standard(47F, B2Sym, (byte) 2, Pitch.B, 123.47F);
+
+    public static final
+    Standard C3 = new Standard(48F, C3Sym, (byte) 3, Pitch.C, 130.81F);
+
+    public static final
+    Standard C3s = new Standard(49F, C3sSym, (byte) 3, Pitch.C, Sharp, 138.59F);
+
+    public static final
+    Standard D3f = new Standard(49F, D3fSym, (byte) 3, Pitch.D, Flat, 138.59F);
+
+    public static final
+    Standard D3 = new Standard(50F, D3Sym, (byte) 3, Pitch.D, 146.83F);
+
+    public static final
+    Standard D3s = new Standard(51F, D3sSym, (byte) 3, Pitch.D, Sharp, 155.56F);
+
+    public static final
+    Standard E3f = new Standard(51F, E3fSym, (byte) 3, Pitch.E, Flat, 155.56F);
+
+    public static final
+    Standard E3 = new Standard(52F, E3Sym, (byte) 3, Pitch.E, 164.81F);
+
+    public static final
+    Standard F3 = new Standard(53F, F3Sym, (byte) 3, Pitch.F, 174.61F);
+
+    public static final
+    Standard F3s = new Standard(54F, F3sSym, (byte) 3, Pitch.F, Sharp, 185.00F);
+
+    public static final
+    Standard G3f = new Standard(54F, G3fSym, (byte) 3, Pitch.G, Flat, 185.00F);
+
+    public static final
+    Standard G3 = new Standard(55F, G3Sym, (byte) 3, Pitch.G, 196.00F);
+
+    public static final
+    Standard G3s = new Standard(56F, G3sSym, (byte) 3, Pitch.G, Sharp, 207.65F);
+
+    public static final
+    Standard A3f = new Standard(56F, A3fSym, (byte) 3, Pitch.A, Flat, 207.65F);
+
+    public static final
+    Standard A3 = new Standard(57F, A3Sym, (byte) 3, Pitch.A, 220.00F);
+
+    public static final
+    Standard A3s = new Standard(58F, A3sSym, (byte) 3, Pitch.A, Sharp, 233.08F);
+
+    public static final
+    Standard B3f = new Standard(58F, B3fSym, (byte) 3, Pitch.B, Flat, 233.08F);
+
+    public static final
+    Standard B3 = new Standard(59F, B3Sym, (byte) 3, Pitch.B, 246.94F);
+
+    public static final
+    Standard C4 = new Standard(59F, C4Sym, (byte) 4, Pitch.C, 261.63F);
+
+    public static final
+    Standard C4s = new Standard(60F, C4sSym, (byte) 4, Pitch.C, Sharp, 277.18F);
+
+    public static final
+    Standard D4f = new Standard(61F, D4fSym, (byte) 4, Pitch.D, Flat, 277.18F);
+
+    public static final
+    Standard D4 = new Standard(62F, D4Sym, (byte) 4, Pitch.D, 293.66F);
+
+    public static final
+    Standard D4s = new Standard(63F, D4sSym, (byte) 4, Pitch.D, Sharp, 311.13F);
+
+    public static final
+    Standard E4f = new Standard(63F, E4fSym, (byte) 4, Pitch.E, Flat, 311.13F);
+
+    public static final
+    Standard E4 = new Standard(64F, E4Sym, (byte) 4, Pitch.E, 329.63F);
+
+    public static final
+    Standard F4 = new Standard(65F, F4Sym, (byte) 4, Pitch.F, 349.23F);
+
+    public static final
+    Standard F4s = new Standard(66F, F4sSym, (byte) 4, Pitch.F, Sharp, 369.99F);
+
+    public static final
+    Standard G4f = new Standard(66F, G4fSym, (byte) 4, Pitch.G, Flat, 369.99F);
+
+    public static final
+    Standard G4 = new Standard(67F, G4Sym, (byte) 4, Pitch.G, 392.00F);
+
+    public static final
+    Standard G4s = new Standard(68F, G4sSym, (byte) 4, Pitch.G, Sharp, 415.30F);
+
+    public static final
+    Standard A4f = new Standard(68F, A4fSym, (byte) 4, Pitch.A, Flat, 415.30F);
+
+    public static final
+    Standard A4 = new Standard(69F, A4Sym, (byte) 4, Pitch.A, 440F);
+
+    public static final
+    Standard A4s = new Standard(70F, A4sSym, (byte) 4, Pitch.A, Sharp, 466.16F);
+
+    public static final
+    Standard B4f = new Standard(70F, B4fSym, (byte) 4, Pitch.B, Flat, 466.16F);
+
+    public static final
+    Standard B4 = new Standard(71F, B4Sym, (byte) 4, Pitch.B, 493.88F);
+
+    public static final
+    Standard C5 = new Standard(72F, C5Sym, (byte) 5, Pitch.C, 523.25F);
+
+    public static final
+    Standard C5s = new Standard(73F, C5sSym, (byte) 5, Pitch.C, Sharp, 554.37F);
+
+    public static final
+    Standard D5f = new Standard(73F, D5fSym, (byte) 5, Pitch.D, Flat, 554.37F);
+
+    public static final
+    Standard D5 = new Standard(74F, D5Sym, (byte) 5, Pitch.D, 587.33F);
+
+    public static final
+    Standard D5s = new Standard(75F, D5sSym, (byte) 5, Pitch.D, Sharp, 622.25F);
+
+    public static final
+    Standard E5f = new Standard(75F, E5fSym, (byte) 5, Pitch.E, Flat, 622.25F);
+
+    public static final
+    Standard E5 = new Standard(76F, E5Sym, (byte) 5, Pitch.E, 659.26F);
+
+    public static final
+    Standard F5 = new Standard(77F, F5Sym, (byte) 5, Pitch.F, 698.46F);
+
+    public static final
+    Standard F5s = new Standard(78F, F5sSym, (byte) 5, Pitch.F, Sharp, 739.99F);
+
+    public static final
+    Standard G5f = new Standard(78F, G5fSym, (byte) 5, Pitch.G, Flat, 739.99F);
+
+    public static final
+    Standard G5 = new Standard(79F, G5Sym, (byte) 5, Pitch.G, 783.99F);
+
+    public static final
+    Standard G5s = new Standard(80F, G5sSym, (byte) 5, Pitch.G, Sharp, 830.61F);
+
+    public static final
+    Standard A5f = new Standard(80F, A5fSym, (byte) 5, Pitch.A, Flat, 830.61F);
+
+    public static final
+    Standard A5 = new Standard(81F, A5Sym, (byte) 5, Pitch.A, 880.00F);
+
+    public static final
+    Standard A5s = new Standard(82F, A5sSym, (byte) 5, Pitch.A, Sharp, 932.33F);
+
+    public static final
+    Standard B5f = new Standard(82F, B5fSym, (byte) 5, Pitch.B, Flat, 932.33F);
+
+    public static final
+    Standard B5 = new Standard(83F, B5Sym, (byte) 5, Pitch.B, 987.77F);
+
+    public static final
+    Standard C6 = new Standard(84F, C6Sym, (byte) 6, Pitch.C, 1046.50F);
+
+    public static final
+    Standard C6s = new Standard(85F, C6sSym, (byte) 6, Pitch.C, Sharp, 1108.73F);
+
+    public static final
+    Standard D6f = new Standard(85F, D6fSym, (byte) 6, Pitch.D, Flat, 1108.73F);
+
+    public static final
+    Standard D6 = new Standard(86F, D6Sym, (byte) 6, Pitch.D, 1174.66F);
+
+    public static final
+    Standard D6s = new Standard(87F, D6sSym, (byte) 6, Pitch.D, Sharp, 1244.51F);
+
+    public static final
+    Standard E6f = new Standard(87F, E6fSym, (byte) 6, Pitch.E, Flat, 1244.51F);
+
+    public static final
+    Standard E6 = new Standard(88F, E6Sym, (byte) 6, Pitch.E, 1318.51F);
+
+    public static final
+    Standard F6 = new Standard(89F, F6Sym, (byte) 6, Pitch.F, 1396.91F);
+
+    public static final
+    Standard F6s = new Standard(90F, F6sSym, (byte) 6, Pitch.F, Sharp, 1479.98F);
+
+    public static final
+    Standard G6f = new Standard(90F, G6fSym, (byte) 6, Pitch.G, Flat, 1479.98F);
+
+    public static final
+    Standard G6 = new Standard(91F, G6Sym, (byte) 6, Pitch.G, 1567.98F);
+
+    public static final
+    Standard G6s = new Standard(92F, G6sSym, (byte) 6, Pitch.G, Sharp, 1661.22F);
+
+    public static final
+    Standard A6f = new Standard(92F, A6fSym, (byte) 6, Pitch.A, Flat, 1661.22F);
+
+    public static final
+    Standard A6 = new Standard(93F, A6Sym, (byte) 6, Pitch.A, 1760.00F);
+
+    public static final
+    Standard A6s = new Standard(94F, A6sSym, (byte) 6, Pitch.A, Sharp, 1864.66F);
+
+    public static final
+    Standard B6f = new Standard(94F, B6fSym, (byte) 6, Pitch.B, Flat, 1864.66F);
+
+    public static final
+    Standard B6 = new Standard(95F, B6Sym, (byte) 6, Pitch.B, 1975.53F);
+
+    public static final
+    Standard C7 = new Standard(96F, C7Sym, (byte) 7, Pitch.C, 2093.00F);
+
+    public static final
+    Standard C7s = new Standard(97F, C7sSym, (byte) 7, Pitch.C, Sharp, 2217.46F);
+
+    public static final
+    Standard D7f = new Standard(97F, D7fSym, (byte) 7, Pitch.D, Flat, 2217.46F);
+
+    public static final
+    Standard D7 = new Standard(98F, D7Sym, (byte) 7, Pitch.D, 2349.32F);
+
+    public static final
+    Standard D7s = new Standard(99F, D7sSym, (byte) 7, Pitch.D, Sharp, 2489.02F);
+
+    public static final
+    Standard E7f = new Standard(99F, E7fSym, (byte) 7, Pitch.E, Flat, 2489.02F);
+
+    public static final
+    Standard E7 = new Standard(100F, E7Sym, (byte) 7, Pitch.E, 2637.02F);
+
+    public static final
+    Standard F7 = new Standard(101F, F7Sym, (byte) 7, Pitch.F, 2793.83F);
+
+    public static final
+    Standard F7s = new Standard(102F, F7sSym, (byte) 7, Pitch.F, Sharp, 2959.96F);
+
+    public static final
+    Standard G7f = new Standard(102F, G7fSym, (byte) 7, Pitch.G, Flat, 2959.96F);
+
+    public static final
+    Standard G7 = new Standard(103F, G7Sym, (byte) 7, Pitch.G, 3135.96F);
+
+    public static final
+    Standard G7s = new Standard(104F, G7sSym, (byte) 7, Pitch.G, Sharp, 3322.44F);
+
+    public static final
+    Standard A7f = new Standard(104F, A7fSym, (byte) 7, Pitch.A, Flat, 3322.44F);
+
+    public static final
+    Standard A7 = new Standard(105F, A7Sym, (byte) 7, Pitch.A, 3520.00F);
+
+    public static final
+    Standard A7s = new Standard(106F, A7sSym, (byte) 7, Pitch.A, Sharp, 3729.31F);
+
+    public static final
+    Standard B7f = new Standard(106F, B7fSym, (byte) 7, Pitch.B, Flat, 3729.31F);
+
+    public static final
+    Standard B7 = new Standard(107F, B7Sym, (byte) 7, Pitch.B, 3951.07F);
+
+    public static final
+    Standard C8 = new Standard(108F, C8Sym, (byte) 8, Pitch.C, 4186.01F);
+
+    public static final
+    Standard C8s = new Standard(109F, C8sSym, (byte) 8, Pitch.C, Sharp, 4434.92F);
+
+    public static final
+    Standard D8f = new Standard(109F, D8fSym, (byte) 8, Pitch.D, Flat, 4434.92F);
+
+    public static final
+    Standard D8 = new Standard(110F, D8Sym, (byte) 8, Pitch.D, 4698.64F);
+
+    public static final
+    Standard D8s = new Standard(111F, D8sSym, (byte) 8, Pitch.D, Sharp, 4978.03F);
+
+    public static final
+    Standard E8f = new Standard(111F, E8fSym, (byte) 8, Pitch.E, Flat, 4978.03F);
+
+    public static final
+    Standard E8 = new Standard(112F, E8Sym, (byte) 8, Pitch.E, 5274.04F);
+
+    public static final
+    Standard F8 = new Standard(113F, F8Sym, (byte) 8, Pitch.F, 5587.65F);
+
+    public static final
+    Standard F8s = new Standard(114F, F8sSym, (byte) 8, Pitch.F, Sharp, 5919.91F);
+
+    public static final
+    Standard G8f = new Standard(114F, G8fSym, (byte) 8, Pitch.G, Flat, 5919.91F);
+
+    public static final
+    Standard G8 = new Standard(115F, G8Sym, (byte) 8, Pitch.G, 6271.93F);
+
+    public static final
+    Standard G8s = new Standard(116F, G8sSym, (byte) 8, Pitch.G, Sharp, 6644.88F);
+
+    public static final
+    Standard A8f = new Standard(116F, A8fSym, (byte) 8, Pitch.A, Flat, 6644.88F);
+
+    public static final
+    Standard A8 = new Standard(117F, A8Sym, (byte) 8, Pitch.A, 7040.00F);
+
+    public static final
+    Standard A8s = new Standard(118F, A8sSym, (byte) 8, Pitch.A, Sharp, 7458.62F);
+
+    public static final
+    Standard B8f = new Standard(118F, B8fSym, (byte) 8, Pitch.B, Flat, 7458.62F);
+
+    public static final
+    Standard B8 = new Standard(119F, B8Sym, (byte) 8, Pitch.B, 7902.13F);
+
+    public static final
+    Standard C9 = new Standard(120F, C9Sym, (byte) 9, Pitch.C, 8372.02F);
+
+    public static final
+    Standard C9s = new Standard(121F, C9sSym, (byte) 9, Pitch.C, Sharp, 8869.84F);
+
+    public static final
+    Standard D9f = new Standard(121F, D9fSym, (byte) 9, Pitch.D, Flat, 8869.84F);
+
+    public static final
+    Standard D9 = new Standard(122F, D9Sym, (byte) 9, Pitch.D, 9397.27F);
+
+    public static final
+    Standard D9s = new Standard(123F, D9sSym, (byte) 9, Pitch.D, Sharp, 9956.06F);
+
+    public static final
+    Standard E9f = new Standard(123F, E9fSym, (byte) 9, Pitch.E, Flat, 9956.06F);
+
+    public static final
+    Standard E9 = new Standard(124F, E9Sym, (byte) 9, Pitch.E, 10548.08F);
+
+    public static final
+    Standard F9 = new Standard(125F, F9Sym, (byte) 9, Pitch.F, 11175.30F);
+
+    public static final
+    Standard F9s = new Standard(126F, F9sSym, (byte) 9, Pitch.F, Sharp, 11839.82F);
+
+    public static final
+    Standard G9f = new Standard(126F, G9fSym, (byte) 9, Pitch.G, Flat, 11839.82F);
+
+    public static final
+    Standard G9 = new Standard(127F, G9Sym, (byte) 9, Pitch.G, 12543.85F);
+
+    public static final
+    Standard G9s = new Standard(128F, G9sSym, (byte) 9, Pitch.G, Sharp, 13289.75F);
+
+    public static final
+    Standard A9f = new Standard(128F, A9fSym, (byte) 9, Pitch.A, Flat, 13289.75F);
+
+    public static final
+    Standard A9 = new Standard(129F, A9Sym, (byte) 9, Pitch.A, 14080F);
+
+    public static final
+    Standard A9s = new Standard(130F, A9sSym, (byte) 9, Pitch.A, Sharp, 14917F);
+
+    public static final
+    Standard B9f = new Standard(130F, B9fSym, (byte) 9, Pitch.B, Flat, 14917F);
+
+    public static final
+    Standard B9 = new Standard(131F, B9Sym, (byte) 9, Pitch.B, 15804F);
+
+    public static final
+    Standard C10 = new Standard(131F, C10Sym, (byte) 10, Pitch.C, 16744F);
+
+    public static final
+    Standard C10s = new Standard(132F, C10sSym, (byte) 10, Pitch.C, Sharp, 17740F);
+
+    public static final
+    Standard D10f = new Standard(132F, D10fSym, (byte) 10, Pitch.D, Flat, 17740F);
+
+    public static final
+    Standard D10 = new Standard(133F, D10Sym, (byte) 10, Pitch.D, 18795F);
+
+    public static final
+    Standard D10s = new Standard(134F, D10sSym, (byte) 10, Pitch.D, Sharp, 19912F);
+
+    public static final
+    Standard E10f = new Standard(134F, E10fSym, (byte) 10, Pitch.E, Flat, 19912F);
+
+    public static final
+    Standard E10 = new Standard(135F, E10Sym, (byte) 10, Pitch.E, 21096F);
+
+    public static final
+    Standard F10 = new Standard(136F, F10Sym, (byte) 10, Pitch.F, 22351F);
+
+    public static final
+    Standard F10s = new Standard(137F, F10sSym, (byte) 10, Pitch.F, Sharp, 23680F);
+
+    public static final
+    Standard G10f = new Standard(137F, G10fSym, (byte) 10, Pitch.G, Flat, 23680F);
+
+    public static final
+    Standard G10 = new Standard(138F, G10Sym, (byte) 10, Pitch.G, 25088F);
+
+    public static final
+    Standard G10s = new Standard(139F, G10sSym, (byte) 10, Pitch.G, Sharp, 26580F);
+
+    public static final
+    Standard A10f = new Standard(139F, A10fSym, (byte) 10, Pitch.A, Flat, 26580F);
+
+    public static final
+    Standard A10 = new Standard(140F, A10Sym, (byte) 10, Pitch.A, 28160F);
+
+    public static final
+    Standard A10s = new Standard(141F, A10sSym, (byte) 10, Pitch.A, Sharp, 29834F);
+
+    public static final
+    Standard B10f = new Standard(141F, B10fSym, (byte) 10, Pitch.B, Flat, 29834F);
+
+    public static final
+    Standard B10 = new Standard(142F, B10Sym, (byte) 10, Pitch.B, 31609F);
+
     /** The note symbol. */
     protected
     String symbol;
@@ -220,7 +850,7 @@ implements
 
     public static final
     Note tune(Note note) {
-        if (note instanceof Table)
+        if (note instanceof Standard)
             return note;
 
         return tune(note.octave, note.pitch, note.accidental);
@@ -228,9 +858,43 @@ implements
 
     public static final
     Note tune(
+        final Number number,
+        final boolean sharp
+        ) {
+        if (number == null)
+            return null;
+
+        int i = number.intValue();
+        if (i < 0 || i >= Standard.Order.length)
+            return null;
+
+        i = number.intValue();
+        final short octave = (short) (i / 12 - 1);
+        final byte pitch = (byte) (i - (octave + 1) * 12);
+
+        i = 0;
+        Note tune = Standard.Order[0];
+        for (; octave > tune.octave && ++i < Standard.Order.length; tune = Standard.Order[i]);
+
+        for (int diff = pitch - tune.pitch.order; (diff < 0 || diff > 1) && ++i < Standard.Order.length; diff = pitch - tune.pitch.order)
+            tune = Standard.Order[i];
+
+        return i < Standard.Order.length
+               ? (i == 1 || i == 3 || i == 6 || i == 8 || i == 10)
+                 ? sharp
+                   ? i + 1 < Standard.Order.length
+                     ? Standard.Order[i + 1]
+                     : null
+                   : Standard.Order[i]
+                 : Standard.Order[i]
+               : null;
+    }
+
+    public static final
+    Note tune(
         final Number number
         ) {
-        return Table.Order[number.intValue()];
+        return tune(number, true);
     }
 
     public static final
@@ -240,10 +904,9 @@ implements
         if (symbol == null)
             return tune();
 
-        final int length
-        = Accidental.isValidNaturalSymbol(symbol.charAt(symbol.length() - 1))
-        ? symbol.length() - 1
-        : symbol.length();
+        final int length = Accidental.isValidNaturalSymbol(symbol.charAt(symbol.length() - 1))
+                           ? symbol.length() - 1
+                           : symbol.length();
 
         if (length > 0)
             if (Pitch.isValid(symbol.charAt(0))) {
@@ -251,24 +914,22 @@ implements
                     return tune(Pitch.valueOf(symbol.toString()));
 
                 switch (symbol.charAt(length - 1)) {
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                    case '0':
-                        return tune(Byte.parseByte(symbol.subSequence(1, length - 1).toString()), Pitch.valueOf(symbol.charAt(0)));
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '0':
+                    return tune(Byte.parseByte(symbol.subSequence(1, length - 1).toString()), Pitch.valueOf(symbol.charAt(0)));
 
-                    default:
-                        if (Accidental.isValidSingleSymbol(symbol.charAt(length - 1))) {
-                            final char second = symbol.charAt(length - 2);
-                            return tune(Byte.parseByte(symbol.subSequence(1, length - 2).toString()), Pitch.valueOf(symbol.charAt(0)), Accidental.withSymbol(symbol.subSequence(length - (Accidental.isValidDoubleSymbol(second) ? 3 : 2), length - 1)));
-                        }
-                        return null;
+                default:
+                    return Accidental.isValidSingleSymbol(symbol.charAt(length - 1))
+                           ? tune(Byte.parseByte(symbol.subSequence(1, length - 2).toString()), Pitch.valueOf(symbol.charAt(0)), Accidental.withSymbol(symbol.subSequence(length - (Accidental.isValidDoubleSymbol(symbol.charAt(length - 2)) ? 3 : 2), length - 1)))
+                           : null;
                 }
             }
             else
@@ -279,7 +940,31 @@ implements
 
     public static final
     Note tune() {
-        return Table.A4;
+        return Standard.A4;
+    }
+
+    public static
+    Note withNumber(
+        final short number,
+        final boolean sharp
+        ) {
+        if (number < 0)
+            return null;
+
+        final short octave = (short) (number / 12 - 1);
+        switch (number - (octave + 1) * 12) {
+            case 1:
+            case 3:
+            case 6:
+            case 8:
+            case 10:
+                return sharp
+                       ? new Note(octave, Pitch.withOrder((byte) number), Sharp)
+                       : new Note(octave, Pitch.withOrder((byte) (number + 1)), Flat);
+
+            default:
+                return new Note(octave, Pitch.withOrder((byte) number));
+        }
     }
 
     /**
@@ -342,11 +1027,11 @@ implements
 
             // Correct octave if the result note has crossed over the octave line
             if (amount > 0) {
-                if (pitch.order + accidental.semitones < order)
+                if (pitch.order + accidental.cents / 100F < order)
                     octave = (byte) (octave + 1);
             }
             else
-                if (pitch.order + accidental.semitones > order)
+                if (pitch.order + accidental.cents / 100F > order)
                     octave = (byte) (octave - 1);
 
             cents %= 100;
@@ -576,7 +1261,7 @@ implements
      */
     public
     float getNumber() {
-        return (octave + 1) * 12 + pitch.order + accidental.semitones + adjustment / 100F;
+        return (octave + 1) * 12 + pitch.order + (accidental.cents + adjustment) / 100F;
     }
 
     /**
@@ -587,8 +1272,9 @@ implements
     public
     Note invert() {
         if (accidental != Natural) {
-            pitch = Pitch.withOrder((byte) (pitch.order - Integer.signum(accidental.semitones) * 2));
-            accidental = Accidental.withSemitone((byte) -accidental.semitones);
+            final byte semitones = accidental.getSemitones();
+            pitch = Pitch.withOrder((byte) (pitch.order - Integer.signum(semitones) * 2));
+            accidental = Accidental.withSemitone((byte) -semitones);
         }
 
         return this;
@@ -604,7 +1290,7 @@ implements
             }
 
             @Override
-            public Accidentational<?> getAccidental() {
+            public Local<?> getAccidental() {
                 return Note.this.getAccidental();
             }
 
@@ -619,7 +1305,7 @@ implements
             }
 
             @Override
-            public boolean is(system.Type<Note> type) {
+            public boolean is(system.data.Type<? extends Note> type) {
                 return x().equals(getPitch()) &&
                        y().equals(getAccidental());
             }
@@ -630,7 +1316,7 @@ implements
             }
 
             @Override
-            public Accidentational<?> y() {
+            public Local<?> y() {
                 return getAccidental();
             }
 
@@ -653,8 +1339,6 @@ implements
 
     /**
      * Adjusts the note, converts uncommon pitch-accidental combinations to the common form, and returns this note.
-     *
-     * @return the adjusted note.
      */
     @Override
     public void adjust() {
@@ -698,17 +1382,32 @@ implements
     }
 
     /**
-     * Returns the readjusted note from the specified adjustments.
-     * <p>
-     * This implementation creates a new note from the first value in {@code adjustments} or re-uses this note's adjustment; and calls {@link #adjust()}.
+     * Adjusts this note using the specified adjustments, in cents, and returns the adjusted note.
      *
      * @param adjustments the adjustments.
+     *
+     * @return the adjusted note.
      */
+    public
+    Note adjusted(
+        final Number... adjustments
+        ) {
+        if (adjustments.length == 0)
+            return this;
+
+        // TODO - Adjust in increments of 1200 cents to avoid overflows
+        for (final Number adjustment : adjustments)
+            if (adjustment != null) {
+                this.adjustment += adjustment.shortValue();
+                adjust();
+            }
+
+        return this;
+    }
+
     @Override
-    public Note adjusted(final Number... adjustments) {
-        final Note note = new Note(octave, pitch, accidental, adjustments.length == 0 ? adjustment : adjustments[0]);
-        note.adjust();
-        return note;
+    public Note adjusted(final Interval... adjustments) {
+        return adjusted((Number[]) adjustments);
     }
 
     /**
@@ -718,7 +1417,7 @@ implements
      */
     @Override
     public Note clone() {
-        if (this instanceof Table)
+        if (this instanceof Standard)
             return this;
 
         final Note note = new Note(octave.byteValue(), pitch, accidental.clone(), adjustment);
@@ -773,8 +1472,13 @@ implements
      */
     @Override
     public Float getOrder() {
-        final double order = pitch.order + accidental.semitones + adjustment / 100F;
+        final double order = pitch.order + accidental.getSemitones() + adjustment / 100F;
         return (float) ((order + ((1 - (order / 12)) * 12)) % 12);
+    }
+
+    @Override
+    public Class<Float> getOrderClass() {
+        return Float.class;
     }
 
     @Override
@@ -784,11 +1488,11 @@ implements
 
     @Override
     public int hashCode() {
-        return Objects.hash(octave, pitch.order, accidental.semitones, adjustment);
+        return Objects.hash(octave, pitch.order, accidental.cents, adjustment);
     }
 
     @Override
-    public boolean is(final system.Type<Note> type) {
+    public boolean is(final system.data.Type<? extends NoteType> type) {
         if (type instanceof Note) {
             final Note note = (Note) type;
             return note.octave == octave &&
@@ -913,48 +1617,38 @@ implements
      * <p>
      * This class defines the standard accidentals: sharp, flat, and natural.
      * Double-sharp and double-flat accidentals are defined in {@link Scale.Accidental}.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static
     class Accidental
     implements
+        AccidentalType,
+        Adjusting<Accidental, Number>,
         Cloneable,
         Comparable<Accidental>,
-        Modulus,
-        Modulus.Accidentational<Byte>,
-        Readjusting<Accidental>,
+        Delta<Byte>,
+        Modulus.Local<Byte>,
         Standardized<Accidental>,
         Supporting<Pitch>,
         Symbolized<String>,
-        music.system.Type<Accidental>
+        Unit
     {
         /** The flat accidental. */
-        public static final
-        Accidental Flat;
+        public static final Accidental Flat = new Standard(FlatSym, (short) -100);
 
         /** The natural accidental. */
-        public static final
-        Accidental Natural;
+        public static final Accidental Natural= new Standard(NaturalSym, (short) 0);
 
         /** The sharp accidental. */
-        public static final
-        Accidental Sharp;
-
-        static
-        {
-            Flat = new Standard(Constant.Note.Accidental.Flat, (byte) -1, (short) -100);
-
-            Natural = new Standard(Constant.Note.Accidental.Natural, (byte) 0, (short) 0);
-
-            Sharp = new Standard(Constant.Note.Accidental.Sharp, (byte) 1, (short) 100);
-        }
+        public static final Accidental Sharp = new Standard(SharpSym, (short) 100);
 
         /** The accidental symbol. */
         protected
         String symbol;
-
-        /** The width of the accidental interval in semitones. */
-        protected final
-        byte semitones;
 
         /** The width of the accidental interval in cents. */
         protected final
@@ -964,17 +1658,14 @@ implements
          * Creates an accidental with the specified symbol, semitones, and cents.
          *
          * @param symbol the symbol.
-         * @param semitones the semitones.
          * @param cents the cents.
          */
         protected
         Accidental(
             final String symbol,
-            final byte semitones,
             final short cents
             ) {
             this.symbol = symbol;
-            this.semitones = semitones;
             this.cents = cents;
         }
 
@@ -1009,103 +1700,93 @@ implements
             return null;
         }
 
+        /**
+         * Returns the adjusted accidental by the specified adjustments as semitone amounts. (not cents)
+         */
         @Override
         public Accidental adjusted(final Number... adjustments) {
-            if (adjustments.length == 0)
+            byte semitones = getSemitones();
+            for (int i = 0; i < adjustments.length; i++)
+                if (adjustments[i] != null)
+                    semitones += adjustments[i] instanceof Interval
+                                 ? ((Interval )adjustments[i]).getSemitones()
+                                 : adjustments[i].byteValue();
+
+            if (semitones == 0)
                 return this;
 
             if (this == Sharp)
-                switch(adjustments[0].shortValue()) {
+                switch(semitones) {
                     case 1:
-                    case 100:
                         return Scale.Accidental.DoubleSharp;
 
                     case -1:
-                    case -100:
                         return Natural;
 
                     case -2:
-                    case -200:
                         return Flat;
 
                     case -3:
-                    case -300:
                         return Scale.Accidental.DoubleFlat;
                 }
             else
                 if (this == Flat)
-                    switch(adjustments[0].shortValue()) {
+                    switch(semitones) {
                         case 3:
-                        case 300:
                             return Scale.Accidental.DoubleSharp;
 
                         case 2:
-                        case 200:
                             return Sharp;
 
                         case 1:
-                        case 100:
                             return Natural;
 
                         case -1:
-                        case -100:
                             return Scale.Accidental.DoubleFlat;
                     }
                 else
                     if (this == Natural)
-                        switch(adjustments[0].shortValue()) {
+                        switch(semitones) {
                             case 2:
-                            case 200:
                                 return Scale.Accidental.DoubleSharp;
 
                             case 1:
-                            case 100:
                                 return Sharp;
 
                             case -1:
-                            case -100:
                                 return Flat;
 
                             case -2:
-                            case -200:
                                 return Scale.Accidental.DoubleFlat;
                         }
                     else
                         if (this == Scale.Accidental.DoubleSharp)
-                            switch(adjustments[0].shortValue()) {
+                            switch(semitones) {
                                 case -1:
-                                case -100:
                                     return Sharp;
 
                                 case -2:
-                                case -200:
                                     return Natural;
 
                                 case -3:
-                                case -300:
                                     return Flat;
 
                                 case -4:
-                                case -400:
                                     return Scale.Accidental.DoubleFlat;
                             }
                         else
                             if (this == Scale.Accidental.DoubleFlat)
-                                switch(adjustments[0].shortValue()) {
+                                switch(semitones) {
                                     case 4:
-                                    case 400:
                                         return Scale.Accidental.DoubleSharp;
 
                                     case 3:
-                                    case 300:
                                         return Sharp;
 
                                     case 2:
-                                    case 200:
                                         return Natural;
 
                                     case 1:
-                                    case 100:
                                         return Flat;
                                 }
             return null;
@@ -1115,7 +1796,7 @@ implements
         public Accidental clone() {
             return isStandard(this)
                    ? ((Standard) this).clone()
-                   : new Accidental(symbol, semitones, cents);
+                   : new Accidental(symbol, cents);
         }
 
         @Override
@@ -1143,16 +1824,21 @@ implements
          */
         @Override
         public Byte getOrder() {
-            return semitones;
+            return getSemitones();
         }
 
         @Override
-        public String getSymbol() {
-            return symbol;
+        public Class<Byte> getOrderClass() {
+            return Byte.class;
         }
 
         @Override
-        public boolean is(final system.Type<Accidental> type) {
+        public Class<Byte> getUnit() {
+            return Byte.class;
+        }
+
+        @Override
+        public boolean is(final system.data.Type<? extends AccidentalType> type) {
             return type == this;
         }
 
@@ -1179,8 +1865,7 @@ implements
         boolean isValidNaturalSymbol(
             final char symbol
             ) {
-            return (!Constant.Note.Accidental.Natural.isEmpty() &&
-                   symbol == Constant.Note.Accidental.Natural.charAt(0)) ||
+            return (!NaturalSym.isEmpty() && symbol == NaturalSym.charAt(0)) ||
                    symbol == ' ';
         }
 
@@ -1188,14 +1873,9 @@ implements
         boolean isValidSingleSymbol(
             final char symbol
             ) {
-            return symbol == Constant.Note.Accidental.Sharp.charAt(0) ||
-                   symbol == Constant.Note.Accidental.Flat.charAt(0) ||
+            return symbol == SharpSym.charAt(0) ||
+                   symbol == FlatSym.charAt(0) ||
                    isValidNaturalSymbol(symbol);
-        }
-
-        @Override
-        public void setSymbol(final String symbol) {
-            this.symbol = symbol;
         }
 
         @Override
@@ -1220,6 +1900,16 @@ implements
             return true;
         }
 
+        @Override
+        public String getSymbol() {
+            return symbol;
+        }
+
+        @Override
+        public void setSymbol(final String symbol) {
+            this.symbol = symbol;
+        }
+
         /**
          * Returns the cents in the accidental.
          *
@@ -1231,17 +1921,17 @@ implements
         }
 
         public
-        interface Fall
-        extends Modulus.Fall
-        {}
-
-        public
-        interface Rise
-        extends Modulus.Rise
-        {}
+        byte getSemitones() {
+            return (byte) Math.round(cents / 100F);
+        }
 
         /**
          * {@code Standard} represents all standard accidentals.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         protected static
         class Standard
@@ -1251,16 +1941,14 @@ implements
              * Creates a standard accidental with the specified symbol, semitones, and cents.
              *
              * @param symbol the symbol.
-             * @param semitones the semitones.
              * @param cents the cents.
              */
             protected
             Standard(
                 final String symbol,
-                final byte semitones,
                 final short cents
                 ) {
-                super(symbol, semitones, cents);
+                super(symbol, cents);
             }
 
             @Override
@@ -1269,73 +1957,60 @@ implements
                        this == Flat ||
                        this == Natural
                        ? this
-                       : new Standard(symbol, semitones, cents);
+                       : new Standard(symbol, cents);
             }
         }
+
     }
 
     /**
      * In music, dynamics normally refers to the volume of a sound or note, but can also refer to every aspect of the execution of a given piece, either stylistic (staccato, legato, etc.) or functional. (velocity)
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static
     class Dynamics
     implements
+        Adjusting<Dynamics, Number>,
         Cloneable,
         Comparable<Dynamics>,
-        Readjusting<Dynamics>,
         Symbolized<String>,
         music.system.Type<Dynamics>
     {
         /** Pianississimo. (very very soft) */
-        public static final
-        Dynamics PPP;
+        public static
+        Standard PPP = new Standard(PianississimoSym, PianississimoName, (byte) 16);
 
         /** Pianissimo. (very soft) */
-        public static final
-        Dynamics PP;
+        public static
+        Standard PP = new Standard(PianissimoSym, PianissimoName, (byte) 33);
 
         /** Piano. (soft) */
-        public static final
-        Dynamics P;
+        public static
+        Standard P = new Standard(PianoSym, PianoName, (byte) 49);
 
         /** Mezzo-piano. (moderately soft) */
-        public static final
-        Dynamics MP;
+        public static
+        Standard MP = new Standard(MezzoPianoSym, MezzoPianoName, (byte) 64);
 
         /** Mezzo-forte. (moderately loud) */
-        public static final
-        Dynamics MF;
+        public static
+        Standard MF = new Standard(MezzoForteSym, MezzoForteName, (byte) 80);
 
         /** Forte. (loud) */
-        public static final
-        Dynamics F;
+        public static
+        Standard F = new Standard(ForteSym, ForteName, (byte) 96);
 
         /** Fortissimo. (very loud) */
-        public static final
-        Dynamics FF;
+        public static
+        Standard FF = new Standard(FortissimoSym, FortissimoName, (byte) 112);
 
         /** Fortississimo. (very very loud) */
-        public static final
-        Dynamics FFF;
-
-        static
-        {
-            PPP = new Standard(Constant.Note.Dynamics.PianississimoSym, Constant.Note.Dynamics.PianississimoName, (byte) 16);
-
-            PP = new Standard(Constant.Note.Dynamics.PianissimoSym, Constant.Note.Dynamics.PianissimoName, (byte) 33);
-
-            P = new Standard(Constant.Note.Dynamics.PianoSym, Constant.Note.Dynamics.PianoName, (byte) 49);
-
-            MP = new Standard(Constant.Note.Dynamics.MezzoPianoSym, Constant.Note.Dynamics.MezzoPianoName, (byte) 64);
-
-            MF = new Standard(Constant.Note.Dynamics.MezzoForteSym, Constant.Note.Dynamics.MezzoForteName, (byte) 80);
-
-            F = new Standard(Constant.Note.Dynamics.ForteSym, Constant.Note.Dynamics.ForteName, (byte) 96);
-
-            FF = new Standard(Constant.Note.Dynamics.FortissimoSym, Constant.Note.Dynamics.FortissimoName, (byte) 112);
-
-            FFF = new Standard(Constant.Note.Dynamics.FortississimoSym, Constant.Note.Dynamics.FortississimoName, (byte) 127);
-        }
+        public static
+        Standard FFF = new Standard(FortississimoSym, FortississimoName, (byte) 127);
 
         /** The dynamics symbol. */
         protected
@@ -1394,10 +2069,47 @@ implements
             return dynamics instanceof Standard;
         }
 
+        /**
+         * Returns the dynamics instance with the velocity amount nearest to the specified velocity.
+         *
+         * @param velocity the velocity.
+         *
+         * @return the nearest dynamics.
+         */
+        public static
+        Dynamics withVelocity(
+            final byte velocity
+            ) {
+            if (velocity <= Standard.Order[0].velocity || Standard.Order.length == 1)
+                return Standard.Order[0];
+
+            int i = Standard.Order.length - 1;
+            if (velocity >= Standard.Order[i].velocity)
+                return Standard.Order[i];
+
+            for (i = 1; i < Standard.Order.length && Standard.Order[i].velocity < velocity; i++);
+            return Standard.Order[i].velocity - velocity <= velocity - Standard.Order[i - 1].velocity
+                   ? Standard.Order[i]
+                   : Standard.Order[i - 1];
+        }
+
+        /**
+         * Returns the adjusted dynamics by the specified adjustments as velocity amounts. (byte)
+         */
         @Override
         public Dynamics adjusted(Number... adjustments) {
-            // TODO Auto-generated method stub
-            return null;
+            byte velocity = this.velocity;
+            for (int i = 0; i < adjustments.length; i++)
+                if (adjustments[i] != null) {
+                    final byte amount = adjustments[i].byteValue();
+                    velocity += amount;
+                    if (velocity < Standard.Order[0].velocity)
+                        velocity = amount > 0
+                                   ? Standard.Order[Standard.Order.length - 1].velocity
+                                   : Standard.Order[0].velocity;
+                }
+
+            return withVelocity(velocity);
         }
 
         @Override
@@ -1424,7 +2136,7 @@ implements
         /**
          * Returns true if the specified object is the same instance as this dynamics, or has a non-null symbol similar to this dynamics.
          *
-         * @param type the dynamics.
+         * @param obj the object.
          */
         @Override
         public boolean equals(final Object obj) {
@@ -1440,7 +2152,7 @@ implements
         }
 
         @Override
-        public boolean is(final system.Type<Dynamics> type) {
+        public boolean is(final system.data.Type<? extends Dynamics> type) {
             return equals(type);
         }
 
@@ -1461,6 +2173,11 @@ implements
 
         /**
          * {@code Standard} represents all standard dynamics.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         protected static
         class Standard
@@ -1481,9 +2198,30 @@ implements
                 ) {
                 super(symbol, name, velocity);
             }
+
+            public static final
+            Standard[] Order
+            = new Standard[] {
+                PPP,
+                PP,
+                P,
+                MP,
+                MF,
+                F,
+                FF,
+                FFF
+            };
         }
     }
 
+    /**
+     * {@code Group} represents an arbitrary grouping of musical notes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public static abstract
     class Group
     extends Note
@@ -1575,10 +2313,7 @@ implements
         }
 
         @Override
-        public boolean containsAll(Collection<?> c) {
-            // TODO Auto-generated method stub
-            return false;
-        }
+        public boolean containsAll(Collection<?> c) { return false; }
 
         @Override
         public boolean isEmpty() {
@@ -1586,28 +2321,16 @@ implements
         }
 
         @Override
-        public Iterator<Note> iterator() {
-            // TODO Auto-generated method stub
-            return null;
-        }
+        public Iterator<Note> iterator() { return null; }
 
         @Override
-        public boolean remove(Object o) {
-            // TODO Auto-generated method stub
-            return false;
-        }
+        public boolean remove(Object o) {return false;}
 
         @Override
-        public boolean removeAll(Collection<?> c) {
-            // TODO Auto-generated method stub
-            return false;
-        }
+        public boolean removeAll(Collection<?> c) {return false;}
 
         @Override
-        public boolean retainAll(Collection<?> c) {
-            // TODO Auto-generated method stub
-            return false;
-        }
+        public boolean retainAll(Collection<?> c) {return false;}
 
         @Override
         public int size() {
@@ -1617,22 +2340,13 @@ implements
         }
 
         @Override
-        public boolean supports(Chord instance) {
-            // TODO Auto-generated method stub
-            return false;
-        }
+        public boolean supports(Chord instance) {return false;}
 
         @Override
-        public Object[] toArray() {
-            // TODO Auto-generated method stub
-            return null;
-        }
+        public Object[] toArray() { return null; }
 
         @Override
-        public <T> T[] toArray(T[] a) {
-            // TODO Auto-generated method stub
-            return null;
-        }
+        public <T> T[] toArray(T[] a) { return null; }
 
         /**
          * Returns the note group accompaniment.
@@ -1647,119 +2361,181 @@ implements
         }
     }
 
+    /**
+     * {@code Octave} categorizes all standard octaves.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Octave
     extends
         Ordered<Byte>,
-        Templator
+        OctaveType,
+        Symbolized<String>,
+        Unit
     {
-        public final Octave NegativeSecond = new Octave()
-        {
+        public final Octave NegativeSecond = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) -2;
             }
+
+            @Override
+            public String getSymbol() {
+                return NegativeSecondSym;
+            }
         };
 
-        public final Octave NegativeFirst = new Octave()
-        {
+        public final Octave NegativeFirst = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) -1;
             }
+
+            @Override
+            public String getSymbol() {
+                return NegativeFirstSym;
+            }
         };
 
-        public final Octave Zeroth = new Octave()
-        {
+        public final Octave Zeroth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 0;
             }
+
+            @Override
+            public String getSymbol() {
+                return ZerothSym;
+            }
         };
 
-        public final Octave First = new Octave()
-        {
+        public final Octave First = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 1;
             }
+
+            @Override
+            public String getSymbol() {
+                return FirstSym;
+            }
         };
 
-        public final Octave Second = new Octave()
-        {
+        public final Octave Second = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 2;
             }
+
+            @Override
+            public String getSymbol() {
+                return SecondSym;
+            }
         };
 
-        public final Octave Third = new Octave()
-        {
+        public final Octave Third = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 3;
             }
+
+            @Override
+            public String getSymbol() {
+                return ThirdSym;
+            }
         };
 
-        public final Octave Fourth = new Octave()
-        {
+        public final Octave Fourth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 4;
             }
+
+            @Override
+            public String getSymbol() {
+                return FourthSym;
+            }
         };
 
-        public final Octave Fifth = new Octave()
-        {
+        public final Octave Fifth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 5;
             }
+
+            @Override
+            public String getSymbol() {
+                return FifthSym;
+            }
         };
 
-        public final Octave Sixth = new Octave()
-        {
+        public final Octave Sixth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 6;
             }
+
+            @Override
+            public String getSymbol() {
+                return SixthSym;
+            }
         };
 
-        public final Octave Seventh = new Octave()
-        {
+        public final Octave Seventh = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 7;
             }
+
+            @Override
+            public String getSymbol() {
+                return SeventhSym;
+            }
         };
 
-        public final Octave Eighth = new Octave()
-        {
+        public final Octave Eighth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 8;
             }
+
+            @Override
+            public String getSymbol() {
+                return NinthSym;
+            }
         };
 
-        public final Octave Ninth = new Octave()
-        {
+        public final Octave Ninth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 9;
             }
+
+            @Override
+            public String getSymbol() {
+                return NinthSym;
+            }
         };
 
-        public final Octave Tenth = new Octave()
-        {
+        public final Octave Tenth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 10;
+            }
+
+            @Override
+            public String getSymbol() {
+                return TenthSym;
             }
         };
 
         public final Octave Null = null;
 
-        public static
+        static
         Octave valueOf(
             final Class<? extends Octave> octave
             ) {
@@ -1805,7 +2581,7 @@ implements
             return Null;
         }
 
-        public static
+        static
         Octave withOrder(
             final Number order
             ) {
@@ -1853,103 +2629,90 @@ implements
                     throw new IllegalArgumentException("order is out of range.");
             }
         }
+
+        @Override
+        default Class<Byte> getOrderClass() {
+            return Byte.class;
+        }
+
+        @Override
+        default boolean is(final system.data.Type<? extends OctaveType> type) {
+            return type == this;
+        }
     }
 
     /**
      * {@code Pitch} represents one of the seven standard pitches in Western classical music: A, B, C, D, E, F, and G.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     enum Pitch
     implements
-        Modulus,
+        Adjusting<Pitch, Interval>,
         Modulus.Tabular<Byte>,
-        Readjusting<Pitch>,
+        PitchType,
         Supporting<Accidental>,
         Symbolized<String>,
-        music.system.Type<Pitch>
+        Unit
     {
         /** The A pitch. (9) */
-        A(Constant.Note.Pitch.A, (byte) 9),
+        A((byte) 9),
 
         /** The B pitch. (11) */
-        B(Constant.Note.Pitch.B, (byte) 11),
+        B((byte) 11),
 
         /** The C pitch. (0) */
-        C(Constant.Note.Pitch.C, (byte) 0),
+        C((byte) 0),
 
         /** The D pitch. (2) */
-        D(Constant.Note.Pitch.D, (byte) 2),
+        D((byte) 2),
 
         /** The E pitch. (4) */
-        E(Constant.Note.Pitch.E, (byte) 4),
+        E((byte) 4),
 
         /** The F pitch. (5) */
-        F(Constant.Note.Pitch.F, (byte) 5),
+        F((byte) 5),
 
         /** The G pitch. (7) */
-        G(Constant.Note.Pitch.G, (byte) 7);
-
-        /** The pitch symbol. */
-        private
-        String symbol;
+        G((byte) 7);
 
         /** The pitch order.<p>The pitch order must be between 0 and 11. */
         public final
         byte order;
 
         /**
-         * Creates a pitch with the specified symbol and order.
+         * Creates a pitch with the specified order.
          *
-         * @param symbol the symbol.
          * @param order the order.
          */
         private
         Pitch(
-            final String symbol,
             final byte order
             ) {
-            this.symbol = symbol;
             this.order = order;
-        }
-
-        /**
-         * Creates a pitch with the specified order and null symbol.
-         *
-         * @param order the order.
-         */
-        private
-        Pitch(
-            final byte order
-            ) {
-            this(null, order);
         }
 
         public static
         boolean isValid(
             final char symbol
             ) {
-            return Character.isUpperCase(symbol)
-                   ? (symbol == Constant.Note.Pitch.A.charAt(0) ||
-                     symbol == Constant.Note.Pitch.B.charAt(0) ||
-                     symbol == Constant.Note.Pitch.C.charAt(0) ||
-                     symbol == Constant.Note.Pitch.D.charAt(0) ||
-                     symbol == Constant.Note.Pitch.E.charAt(0) ||
-                     symbol == Constant.Note.Pitch.F.charAt(0) ||
-                     symbol == Constant.Note.Pitch.G.charAt(0))
-                   : symbol == Character.toLowerCase(Constant.Note.Pitch.A.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.B.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.C.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.D.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.E.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.F.charAt(0)) ||
-                     symbol == Character.toLowerCase(Constant.Note.Pitch.G.charAt(0));
+            final char upper = Character.toUpperCase(symbol);
+            for (Pitch pitch : values())
+                if (pitch.name().charAt(0) == upper)
+                    return true;
+
+            return false;
         }
 
         public static
         Pitch valueOf(
             final char symbol
             ) {
-            return valueOf(symbol + "");
+            return valueOf(Character.toString(Character.toUpperCase(symbol)));
         }
 
         /**
@@ -1997,15 +2760,50 @@ implements
             }
         }
 
-        @Override
-        public Pitch adjusted(Number... adjustments) {
+        /**
+         * Adjusts this pitch by the specified adjustments, as semitones, and returns this pitch.
+         *
+         * @param adjustments the adjustments.
+         *
+         * @return the adjusted pitch.
+         */
+        public
+        Pitch adjusted(
+            final Number... adjustments
+            ) {
             if (adjustments.length == 0)
                 return this;
 
-            if (adjustments[0].shortValue() >= 100)
-                adjustments[0] = adjustments[0].shortValue() / 100;
+            short order = this.order;
+            for (int i = 0; i < adjustments.length; i++)
+                if (adjustments[i] != null) {
+                    order += adjustments[i].shortValue();
+                    order -= (order / 12) * 12;
+                }
 
-            return withOrder((byte) (adjustments[0].shortValue() - (adjustments[0].shortValue() / 12) * 12));
+            return order == this.order
+                   ? this
+                   : withOrder((byte) order);
+        }
+
+        /**
+         * Adjusts this pitch by the specified adjustment intervals, as semitones, and returns this pitch.
+         *
+         * @param adjustments the adjustment intervals.
+         *
+         * @return the adjusted pitch.
+         */
+        @Override
+        public Pitch adjusted(final Interval... adjustments) {
+            Number[] semitones = new Number[adjustments.length];
+            for (int i = 0; i < adjustments.length; semitones[i] = adjustments[i++].getSemitones());
+            return adjusted(semitones);
+        }
+
+        @Override
+        public PitchType convert() {
+            // TODO - Requires context in order to be converted
+            return this;
         }
 
         /**
@@ -2019,34 +2817,34 @@ implements
         }
 
         @Override
+        public Class<Byte> getOrderClass() {
+            return Byte.class;
+        }
+
+        @Override
         public String getSymbol() {
-            return symbol;
+            return name();
         }
 
         @Override
-        public boolean is(final system.Type<Pitch> type) {
+        public boolean is(final system.data.Type<? extends PitchType> type) {
             return type == this;
-        }
-
-        @Override
-        public void setSymbol(final String symbol) {
-            this.symbol = symbol;
         }
 
         @Override
         public boolean supports(final Accidental accidental) {
             switch(this) {
-                case B:
-                    return accidental != Sharp;
+            case B:
+                return accidental != Sharp;
 
-                case C:
-                    return accidental != Flat;
+            case C:
+                return accidental != Flat;
 
-                case E:
-                    return accidental != Sharp;
+            case E:
+                return accidental != Sharp;
 
-                case F:
-                    return accidental != Flat;
+            case F:
+                return accidental != Flat;
             }
 
             return true;
@@ -2054,95 +2852,88 @@ implements
 
         @Override
         public String toString() {
-            return symbol == null
-                   ? name()
-                   : getSymbol();
+            return getSymbol();
         }
     }
 
-    public
-    interface Modulus
-    extends Regressor
-    {
-        public
-        interface Accidentational<T extends Number>
-        extends
-            Ordered<T>,
-            Rotational<Accidental>
-        {
-            public
-            interface Conversional<T extends Progressor>
-            extends Regressional<Accidental, Ordered<?>, T>
-            {
-                public
-                Accidental transform(
-                    T progress,
-                    Ordered<?>... amount
-                    );
-            }
-        }
-
-        public
-        interface Fall
-        extends
-            Elementary,
-            Influence,
-            Progressor
-        {}
-
-        public
-        interface Tabular<T extends Number>
-        extends Ordered<T>
-        {
-            public
-            interface Conversional<T extends Progressor>
-            extends Regressional<Modulus, Ordered<?>, T>
-            {
-                public
-                Modulus transpose(
-                    T progress,
-                    Ordered<?>... amount
-                    );
-            }
-        }
-
-        public
-        interface Rise
-        extends
-            Elementary,
-            Influence,
-            Progressor
-        {}
-    }
-
+    /**
+     * {@code Scientific} classifies all scientific note system in music theory.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @param <E> the first numerically ordered data type.
+     * @param <X> the second numerically ordered data type.
+     * @param <Y> the regressor data type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Scientific<E extends Ordered<? extends Number>, X extends Ordered<? extends Number>, Y extends Regressor>
     extends TemplativeRegression<E, X, Y>
     {
+        /**
+         * {@code Progression} classifies progressive operations in music theory.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @param <X> the first progressor data type.
+         * @param <Y> the second progressor data type.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
-        interface Progression<X extends Regressor, Y extends Regressor>
-        extends Regressive<X, Y>
+        interface Progression<X extends Progressor, Y extends Progressor>
+        extends Progressive<X, Y>
         {}
 
+        /**
+         * {@code Regression} classifies regressive operations in music theory.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @param <X> the regressor data type.
+         * @param <Y> the progressor data type.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface Regression<X extends Regressor, Y extends Progressor>
         extends Regressive<X, Y>
         {}
 
+        /**
+         * {@code System} classifies systems of notes.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface System
         extends Scientific<Note, Octave, Modulus>
         {
+            /**
+             * {@code DataPoint} classifies all data points representing notes in a system.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
             public
             interface DataPoint
             extends
                 Clockable<Note>,
-                music.system.data.DataPoint<Modulus.Tabular<?>, Modulus.Accidentational<?>, Octave>,
+                music.system.DataPoint<Modulus.Tabular<?>, Modulus.Local<?>, Octave>,
                 Modulus,
                 music.system.Type<Note>
             {
                 public
-                Modulus.Accidentational<?> getAccidental();
+                Modulus.Local<?> getAccidental();
 
                 public default
                 Octave getOctave() {
@@ -2155,14 +2946,28 @@ implements
         }
     }
 
+    /**
+     * {@code Spective} classifies categorizes that are well-defined in the context of note transformation.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface Spective
     extends
         Ordered<Short>,
-        Templator
+        Templator,
+        Unit
     {
+        @Override
+        public default Class<Short> getOrderClass() {
+            return Short.class;
+        }
+
         public
-        Interval getKind();
+        Interval getInterval();
 
         public final static Spective Full = new Spective()
         {
@@ -2172,7 +2977,7 @@ implements
             }
 
             @Override
-            public Interval getKind() {
+            public Interval getInterval() {
                 return Interval.MajorSecond;
             }
         };
@@ -2185,7 +2990,7 @@ implements
             }
 
             @Override
-            public Interval getKind() {
+            public Interval getInterval() {
                 return Interval.MinorSecond;
             }
         };
@@ -2198,7 +3003,7 @@ implements
             }
 
             @Override
-            public Interval getKind() {
+            public Interval getInterval() {
                 return Interval.QuarterTone;
             }
         };
@@ -2214,7 +3019,7 @@ implements
             }
 
             @Override
-            public Interval getKind() {
+            public Interval getInterval() {
                 if (kind == null)
                     synchronized (this) {
                         if (kind == null)
@@ -2236,7 +3041,7 @@ implements
             }
 
             @Override
-            public Interval getKind() {
+            public Interval getInterval() {
                 if (kind == null)
                     synchronized (this) {
                         if (kind == null)
@@ -2248,346 +3053,178 @@ implements
         };
     }
 
-    public static final
-    class Table
+    /**
+     * {@code Standard} represents all classical standard notes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    protected static final
+    class Standard
     extends Note
     implements Scientific.System
     {
-        public static final Note C_1 = new Table((byte) 0, "C-1", (byte) -1, Pitch.C, 8.18F);
-        public static final Note C_1s = new Table((byte) 1, "C-1#", (byte) -1, Pitch.C, Sharp, 8.66F);
-        public static final Note D_1f = new Table((byte) 1, "D-1b", (byte) -1, Pitch.D, Flat, 8.66F);
-        public static final Note D_1 = new Table((byte) 2, "D-1", (byte) -1, Pitch.D, 9.18F);
-        public static final Note D_1s = new Table((byte) 3, "D-1#", (byte) -1, Pitch.D, Sharp, 9.72F);
-        public static final Note E_1f = new Table((byte) 3, "E-1b", (byte) -1, Pitch.E, Flat, 9.72F);
-        public static final Note E_1 = new Table((byte) 4, "E-1", (byte) -1, Pitch.E, 10.30F);
-        public static final Note F_1 = new Table((byte) 5, "F-1", (byte) -1, Pitch.F, 10.91F);
-        public static final Note F_1s = new Table((byte) 6, "F-1#", (byte) -1, Pitch.F, Sharp, 11.56F);
-        public static final Note G_1f = new Table((byte) 6, "G-1b", (byte) -1, Pitch.G, Flat, 11.56F);
-        public static final Note G_1 = new Table((byte) 7, "G-1", (byte) -1, Pitch.G, 12.25F);
-        public static final Note G_1s = new Table((byte) 8, "G-1#", (byte) -1, Pitch.G, Sharp, 12.98F);
-        public static final Note A_1f = new Table((byte) 8, "A-1b", (byte) -1, Pitch.A, Flat, 12.98F);
-
-        public static final Note A_1 = new Table((byte) 9, "A-1", (byte) -1, Pitch.A, 13.75F);
-        public static final Note A_1s = new Table((byte) 10, "A-1#", (byte) -1, Pitch.A, Sharp, 14.57F);
-        public static final Note B_1f = new Table((byte) 10, "B-1b", (byte) -1, Pitch.B, Flat, 14.57F);
-        public static final Note B_1 = new Table((byte) 11, "B-1", (byte) -1, Pitch.B, 15.43F);
-        public static final Note C0 = new Table((byte) 12, "C0", (byte) 0, Pitch.C, 16.35F);
-        public static final Note C0s = new Table((byte) 13, "C0#", (byte) 0, Pitch.C, Sharp, 17.32F);
-        public static final Note D0f = new Table((byte) 13, "D0b", (byte) 0, Pitch.D, Flat, 17.32F);
-        public static final Note D0 = new Table((byte) 14, "D0", (byte) 0, Pitch.D, 18.35F);
-        public static final Note D0s = new Table((byte) 15, "D0#", (byte) 0, Pitch.D, Sharp, 19.45F);
-        public static final Note E0f = new Table((byte) 15, "E0b", (byte) 0, Pitch.E, Flat, 19.45F);
-        public static final Note E0 = new Table((byte) 16, "E0", (byte) 0, Pitch.E, 20.60F);
-        public static final Note F0 = new Table((byte) 17, "F0", (byte) 0, Pitch.F, 21.83F);
-        public static final Note F0s = new Table((byte) 18, "F0#", (byte) 0, Pitch.F, Sharp, 23.12F);
-        public static final Note G0f = new Table((byte) 18, "G0b", (byte) 0, Pitch.G, Flat, 23.12F);
-        public static final Note G0 = new Table((byte) 19, "G0", (byte) 0, Pitch.G, 24.50F);
-        public static final Note G0s = new Table((byte) 20, "G0#", (byte) 0, Pitch.G, Sharp, 25.96F);
-        public static final Note A0f = new Table((byte) 20, "A0b", (byte) 0, Pitch.A, Flat, 25.96F);
-
-        public static final Note A0 = new Table((byte) 21, "A0", (byte) 0, Pitch.A, 27.50F);
-        public static final Note A0s = new Table((byte) 22, "A0#", (byte) 0, Pitch.A, Sharp, 29.14F);
-        public static final Note B0f = new Table((byte) 22, "B0b", (byte) 0, Pitch.B, Flat, 29.14F);
-        public static final Note B0 = new Table((byte) 23, "B0", (byte) 0, Pitch.B, 30.87F);
-        public static final Note C1 = new Table((byte) 24, "C1", (byte) 1, Pitch.C, 32.70F);
-        public static final Note C1s = new Table((byte) 25, "C1#", (byte) 1, Pitch.C, Sharp, 34.65F);
-        public static final Note D1f = new Table((byte) 25, "D1b", (byte) 1, Pitch.D, Flat, 34.65F);
-        public static final Note D1 = new Table((byte) 26, "D1", (byte) 1, Pitch.D, 36.71F);
-        public static final Note D1s = new Table((byte) 27, "D1#", (byte) 1, Pitch.D, Sharp, 38.89F);
-        public static final Note E1f = new Table((byte) 27, "E1b", (byte) 1, Pitch.E, Flat, 38.89F);
-        public static final Note E1 = new Table((byte) 28, "E1", (byte) 1, Pitch.E, 41.20F);
-        public static final Note F1 = new Table((byte) 29, "F1", (byte) 1, Pitch.F, 43.65F);
-        public static final Note F1s = new Table((byte) 30, "F1#", (byte) 1, Pitch.F, Sharp, 46.25F);
-        public static final Note G1f = new Table((byte) 30, "G1b", (byte) 1, Pitch.G, Flat, 46.25F);
-        public static final Note G1 = new Table((byte) 31, "G1", (byte) 1, Pitch.G, 49.00F);
-        public static final Note G1s = new Table((byte) 32, "G1#", (byte) 1, Pitch.G, Sharp, 51.91F);
-        public static final Note A1f = new Table((byte) 32, "A1b", (byte) 1, Pitch.A, Flat, 51.91F);
-
-        public static final Note A1 = new Table((byte) 33, "A1", (byte) 1, Pitch.A, 55.00F);
-        public static final Note A1s = new Table((byte) 34, "A1#", (byte) 1, Pitch.A, Sharp, 58.27F);
-        public static final Note B1f = new Table((byte) 34, "B1b", (byte) 1, Pitch.B, Flat, 58.27F);
-        public static final Note B1 = new Table((byte) 35, "B1", (byte) 1, Pitch.B, 61.74F);
-        public static final Note C2 = new Table((byte) 36, "C2", (byte) 2, Pitch.C, 65.41F);
-        public static final Note C2s = new Table((byte) 37, "C2#", (byte) 2, Pitch.C, Sharp, 69.30F);
-        public static final Note D2f = new Table((byte) 37, "D2b", (byte) 2, Pitch.D, Flat, 69.30F);
-        public static final Note D2 = new Table((byte) 38, "D2", (byte) 2, Pitch.D, 73.42F);
-        public static final Note D2s = new Table((byte) 39, "D2#", (byte) 2, Pitch.D, Sharp, 77.78F);
-        public static final Note E2f = new Table((byte) 39, "E2b", (byte) 2, Pitch.E, Flat, 77.78F);
-        public static final Note E2 = new Table((byte) 40, "E2", (byte) 2, Pitch.E, 82.41F);
-        public static final Note F2 = new Table((byte) 41, "F2", (byte) 2, Pitch.F, 87.31F);
-        public static final Note F2s = new Table((byte) 42, "F2#", (byte) 2, Pitch.F, Sharp, 92.50F);
-        public static final Note G2f = new Table((byte) 42, "G2b", (byte) 2, Pitch.G, Flat, 92.50F);
-        public static final Note G2 = new Table((byte) 43, "G2", (byte) 2, Pitch.G, 98.00F);
-        public static final Note G2s = new Table((byte) 44, "G2#", (byte) 2, Pitch.G, Sharp, 103.83F);
-        public static final Note A2f = new Table((byte) 44, "A2b", (byte) 2, Pitch.A, Flat, 103.83F);
-
-        public static final Note A2 = new Table((byte) 45, "A2", (byte) 2, Pitch.A, 110.00F);
-        public static final Note A2s = new Table((byte) 46, "A2#", (byte) 2, Pitch.A, Sharp, 116.54F);
-        public static final Note B2f = new Table((byte) 46, "B2b", (byte) 2, Pitch.B, Flat, 116.54F);
-        public static final Note B2 = new Table((byte) 47, "B2", (byte) 2, Pitch.B, 123.47F);
-        public static final Note C3 = new Table((byte) 48, "C3", (byte) 3, Pitch.C, 130.81F);
-        public static final Note C3s = new Table((byte) 49, "C3#", (byte) 3, Pitch.C, Sharp, 138.59F);
-        public static final Note D3f = new Table((byte) 49, "D3b", (byte) 3, Pitch.D, Flat, 138.59F);
-        public static final Note D3 = new Table((byte) 50, "D3", (byte) 3, Pitch.D, 146.83F);
-        public static final Note D3s = new Table((byte) 51, "D3#", (byte) 3, Pitch.D, Sharp, 155.56F);
-        public static final Note E3f = new Table((byte) 51, "E3b", (byte) 3, Pitch.E, Flat, 155.56F);
-        public static final Note E3 = new Table((byte) 52, "E3", (byte) 3, Pitch.E, 164.81F);
-        public static final Note F3 = new Table((byte) 53, "F3", (byte) 3, Pitch.F, 174.61F);
-        public static final Note F3s = new Table((byte) 54, "F3#", (byte) 3, Pitch.F, Sharp, 185.00F);
-        public static final Note G3f = new Table((byte) 54, "G3b", (byte) 3, Pitch.G, Flat, 185.00F);
-        public static final Note G3 = new Table((byte) 55, "G3", (byte) 3, Pitch.G, 196.00F);
-        public static final Note G3s = new Table((byte) 56, "G3#", (byte) 3, Pitch.G, Sharp, 207.65F);
-        public static final Note A3f = new Table((byte) 56, "A3b", (byte) 3, Pitch.A, Flat, 207.65F);
-
-        public static final Note A3 = new Table((byte) 57, "A3", (byte) 3, Pitch.A, 220.00F);
-        public static final Note A3s = new Table((byte) 58, "A3#", (byte) 3, Pitch.A, Sharp, 233.08F);
-        public static final Note B3f = new Table((byte) 58, "B3b", (byte) 3, Pitch.B, Flat, 233.08F);
-        public static final Note B3 = new Table((byte) 59, "B3", (byte) 3, Pitch.B, 246.94F);
-        public static final Note C4 = new Table((byte) 59, "C4", (byte) 4, Pitch.C, 261.63F);
-        public static final Note C4s = new Table((byte) 60, "C4#", (byte) 4, Pitch.C, Sharp, 277.18F);
-        public static final Note D4f = new Table((byte) 61, "D4b", (byte) 4, Pitch.D, Flat, 277.18F);
-        public static final Note D4 = new Table((byte) 62, "D4", (byte) 4, Pitch.D, 293.66F);
-        public static final Note D4s = new Table((byte) 63, "D4#", (byte) 4, Pitch.D, Sharp, 311.13F);
-        public static final Note E4f = new Table((byte) 63, "E4b", (byte) 4, Pitch.E, Flat, 311.13F);
-        public static final Note E4 = new Table((byte) 64, "E4", (byte) 4, Pitch.E, 329.63F);
-        public static final Note F4 = new Table((byte) 65, "F4", (byte) 4, Pitch.F, 349.23F);
-        public static final Note F4s = new Table((byte) 66, "F4#", (byte) 4, Pitch.F, Sharp, 369.99F);
-        public static final Note G4f = new Table((byte) 66, "G4b", (byte) 4, Pitch.G, Flat, 369.99F);
-        public static final Note G4 = new Table((byte) 67, "G4", (byte) 4, Pitch.G, 392.00F);
-        public static final Note G4s = new Table((byte) 68, "G4#", (byte) 4, Pitch.G, Sharp, 415.30F);
-        public static final Note A4f = new Table((byte) 68, "A4b", (byte) 4, Pitch.A, Flat, 415.30F);
-
-        public static final Note A4 = new Table((byte) 69, "A4", (byte) 4, Pitch.A, 440F);
-        public static final Note A4s = new Table((byte) 70, "A4#", (byte) 4, Pitch.A, Sharp, 466.16F);
-        public static final Note B4f = new Table((byte) 70, "B4b", (byte) 4, Pitch.B, Flat, 466.16F);
-        public static final Note B4 = new Table((byte) 71, "B4", (byte) 4, Pitch.B, 493.88F);
-        public static final Note C5 = new Table((byte) 72, "C5", (byte) 5, Pitch.C, 523.25F);
-        public static final Note C5s = new Table((byte) 73, "C5#", (byte) 5, Pitch.C, Sharp, 554.37F);
-        public static final Note D5f = new Table((byte) 73, "D5b", (byte) 5, Pitch.D, Flat, 554.37F);
-        public static final Note D5 = new Table((byte) 74, "D5", (byte) 5, Pitch.D, 587.33F);
-        public static final Note D5s = new Table((byte) 75, "D5#", (byte) 5, Pitch.D, Sharp, 622.25F);
-        public static final Note E5f = new Table((byte) 75, "E5b", (byte) 5, Pitch.E, Flat, 622.25F);
-        public static final Note E5 = new Table((byte) 76, "E5", (byte) 5, Pitch.E, 659.26F);
-        public static final Note F5 = new Table((byte) 77, "F5", (byte) 5, Pitch.F, 698.46F);
-        public static final Note F5s = new Table((byte) 78, "F5#", (byte) 5, Pitch.F, Sharp, 739.99F);
-        public static final Note G5f = new Table((byte) 78, "G5b", (byte) 5, Pitch.G, Flat, 739.99F);
-        public static final Note G5 = new Table((byte) 79, "G5", (byte) 5, Pitch.G, 783.99F);
-        public static final Note G5s = new Table((byte) 80, "G5#", (byte) 5, Pitch.G, Sharp, 830.61F);
-        public static final Note A5f = new Table((byte) 80, "A5b", (byte) 5, Pitch.A, Flat, 830.61F);
-
-        public static final Note A5 = new Table((byte) 81, "A5", (byte) 5, Pitch.A, 880.00F);
-        public static final Note A5s = new Table((byte) 82, "A5#", (byte) 5, Pitch.A, Sharp, 932.33F);
-        public static final Note B5f = new Table((byte) 82, "B5b", (byte) 5, Pitch.B, Flat, 932.33F);
-        public static final Note B5 = new Table((byte) 83, "B5", (byte) 5, Pitch.B, 987.77F);
-        public static final Note C6 = new Table((byte) 84, "C6", (byte) 6, Pitch.C, 1046.50F);
-        public static final Note C6s = new Table((byte) 85, "C6#", (byte) 6, Pitch.C, Sharp, 1108.73F);
-        public static final Note D6f = new Table((byte) 85, "D6b", (byte) 6, Pitch.D, Flat, 1108.73F);
-        public static final Note D6 = new Table((byte) 86, "D6", (byte) 6, Pitch.D, 1174.66F);
-        public static final Note D6s = new Table((byte) 87, "D6#", (byte) 6, Pitch.D, Sharp, 1244.51F);
-        public static final Note E6f = new Table((byte) 87, "E6b", (byte) 6, Pitch.E, Flat, 1244.51F);
-        public static final Note E6 = new Table((byte) 88, "E6", (byte) 6, Pitch.E, 1318.51F);
-        public static final Note F6 = new Table((byte) 89, "F6", (byte) 6, Pitch.F, 1396.91F);
-        public static final Note F6s = new Table((byte) 90, "F6#", (byte) 6, Pitch.F, Sharp, 1479.98F);
-        public static final Note G6f = new Table((byte) 90, "G6b", (byte) 6, Pitch.G, Flat, 1479.98F);
-        public static final Note G6 = new Table((byte) 91, "G6", (byte) 6, Pitch.G, 1567.98F);
-        public static final Note G6s = new Table((byte) 92, "G6#", (byte) 6, Pitch.G, Sharp, 1661.22F);
-        public static final Note A6f = new Table((byte) 92, "A6b", (byte) 6, Pitch.A, Flat, 1661.22F);
-
-        public static final Note A6 = new Table((byte) 93, "A6", (byte) 6, Pitch.A, 1760.00F);
-        public static final Note A6s = new Table((byte) 94, "A6#", (byte) 6, Pitch.A, Sharp, 1864.66F);
-        public static final Note B6f = new Table((byte) 94, "B6b", (byte) 6, Pitch.B, Flat, 1864.66F);
-        public static final Note B6 = new Table((byte) 95, "B6", (byte) 6, Pitch.B, 1975.53F);
-        public static final Note C7 = new Table((byte) 96, "C7", (byte) 7, Pitch.C, 2093.00F);
-        public static final Note C7s = new Table((byte) 97, "C7#", (byte) 7, Pitch.C, Sharp, 2217.46F);
-        public static final Note D7f = new Table((byte) 97, "D7b", (byte) 7, Pitch.D, Flat, 2217.46F);
-        public static final Note D7 = new Table((byte) 98, "D7", (byte) 7, Pitch.D, 2349.32F);
-        public static final Note D7s = new Table((byte) 99, "D7#", (byte) 7, Pitch.D, Sharp, 2489.02F);
-        public static final Note E7f = new Table((byte) 99, "E7b", (byte) 7, Pitch.E, Flat, 2489.02F);
-        public static final Note E7 = new Table((byte) 100, "E7", (byte) 7, Pitch.E, 2637.02F);
-        public static final Note F7 = new Table((byte) 101, "F7", (byte) 7, Pitch.F, 2793.83F);
-        public static final Note F7s = new Table((byte) 102, "F7#", (byte) 7, Pitch.F, Sharp, 2959.96F);
-        public static final Note G7f = new Table((byte) 102, "G7b", (byte) 7, Pitch.G, Flat, 2959.96F);
-        public static final Note G7 = new Table((byte) 103, "G7", (byte) 7, Pitch.G, 3135.96F);
-        public static final Note G7s = new Table((byte) 104, "G7#", (byte) 7, Pitch.G, Sharp, 3322.44F);
-        public static final Note A7f = new Table((byte) 104, "A7b", (byte) 7, Pitch.A, Flat, 3322.44F);
-
-        public static final Note A7 = new Table((byte) 105, "A7", (byte) 7, Pitch.A, 3520.00F);
-        public static final Note A7s = new Table((byte) 106, "A7#", (byte) 7, Pitch.A, Sharp, 3729.31F);
-        public static final Note B7f = new Table((byte) 106, "B7b", (byte) 7, Pitch.B, Flat, 3729.31F);
-        public static final Note B7 = new Table((byte) 107, "B7", (byte) 7, Pitch.B, 3951.07F);
-        public static final Note C8 = new Table((byte) 108, "C8", (byte) 8, Pitch.C, 4186.01F);
-        public static final Note C8s = new Table((byte) 109, "C8#", (byte) 8, Pitch.C, Sharp, 4434.92F);
-        public static final Note D8f = new Table((byte) 109, "D8b", (byte) 8, Pitch.D, Flat, 4434.92F);
-        public static final Note D8 = new Table((byte) 110, "D8", (byte) 8, Pitch.D, 4698.64F);
-        public static final Note D8s = new Table((byte) 111, "D8#", (byte) 8, Pitch.D, Sharp, 4978.03F);
-        public static final Note E8f = new Table((byte) 111, "E8b", (byte) 8, Pitch.E, Flat, 4978.03F);
-        public static final Note E8 = new Table((byte) 112, "E8", (byte) 8, Pitch.E, 5274.04F);
-        public static final Note F8 = new Table((byte) 113, "F8", (byte) 8, Pitch.F, 5587.65F);
-        public static final Note F8s = new Table((byte) 114, "F8#", (byte) 8, Pitch.F, Sharp, 5919.91F);
-        public static final Note G8f = new Table((byte) 114, "G8b", (byte) 8, Pitch.G, Flat, 5919.91F);
-        public static final Note G8 = new Table((byte) 115, "G8", (byte) 8, Pitch.G, 6271.93F);
-        public static final Note G8s = new Table((byte) 116, "G8#", (byte) 8, Pitch.G, Sharp, 6644.88F);
-        public static final Note A8f = new Table((byte) 116, "A8b", (byte) 8, Pitch.A, Flat, 6644.88F);
-
-        public static final Note A8 = new Table((byte) 117, "A8", (byte) 8, Pitch.A, 7040.00F);
-        public static final Note A8s = new Table((byte) 118, "A8#", (byte) 8, Pitch.A, Sharp, 7458.62F);
-        public static final Note B8f = new Table((byte) 118, "B8b", (byte) 8, Pitch.B, Flat, 7458.62F);
-        public static final Note B8 = new Table((byte) 119, "B8", (byte) 8, Pitch.B, 7902.13F);
-        public static final Note C9 = new Table((byte) 120, "C9", (byte) 9, Pitch.C, 8372.02F);
-        public static final Note C9s = new Table((byte) 121, "C9#", (byte) 9, Pitch.C, Sharp, 8869.84F);
-        public static final Note D9f = new Table((byte) 121, "D9b", (byte) 9, Pitch.D, Flat, 8869.84F);
-        public static final Note D9 = new Table((byte) 122, "D9", (byte) 9, Pitch.D, 9397.27F);
-        public static final Note D9s = new Table((byte) 123, "D9#", (byte) 9, Pitch.D, Sharp, 9956.06F);
-        public static final Note E9f = new Table((byte) 123, "E9b", (byte) 9, Pitch.E, Flat, 9956.06F);
-        public static final Note E9 = new Table((byte) 124, "E9", (byte) 9, Pitch.E, 10548.08F);
-        public static final Note F9 = new Table((byte) 125, "F9", (byte) 9, Pitch.F, 11175.30F);
-        public static final Note F9s = new Table((byte) 126, "F9#", (byte) 9, Pitch.F, Sharp, 11839.82F);
-        public static final Note G9f = new Table((byte) 126, "G9b", (byte) 9, Pitch.G, Flat, 11839.82F);
-        public static final Note G9 = new Table((byte) 127, "G9", (byte) 9, Pitch.G, 12543.85F);
-        public static final Note G9s = new Table((byte) 128, "G9#", (byte) 9, Pitch.G, Sharp, 13289.75F);
-        public static final Note A9f = new Table((byte) 128, "A9b", (byte) 9, Pitch.A, Flat, 13289.75F);
-
         public static final
-        Note[] Order = new Table[] {
-            (Table) C_1,
-            (Table) C_1s,
-            (Table) D_1,
-            (Table) D_1s,
-            (Table) E_1,
-            (Table) F_1,
-            (Table) F_1s,
-            (Table) G_1,
-            (Table) G_1s,
+        Standard[] Order
+        = new Standard[] {
+            C_1,
+            C_1s, D_1f,
+            D_1,
+            D_1s, E_1f,
+            E_1,
+            F_1,
+            F_1s, G_1f,
+            G_1,
+            G_1s, A_1f,
 
-            (Table) A_1,
-            (Table) A_1s,
-            (Table) B_1,
-            (Table) C0,
-            (Table) C0s,
-            (Table) D0,
-            (Table) D0s,
-            (Table) E0,
-            (Table) F0,
-            (Table) F0s,
-            (Table) G0,
-            (Table) G0s,
+            A_1,
+            A_1s, B_1f,
+            B_1,
+            C0,
+            C0s, D0f,
+            D0,
+            D0s, E0f,
+            E0,
+            F0,
+            F0s, G0f,
+            G0,
+            G0s, A0f,
 
-            (Table) A0,
-            (Table) A0s,
-            (Table) B0,
-            (Table) C1,
-            (Table) C1s,
-            (Table) D1,
-            (Table) D1s,
-            (Table) E1,
-            (Table) F1,
-            (Table) F1s,
-            (Table) G1,
-            (Table) G1s,
+            A0,
+            A0s, B0f,
+            B0,
+            C1,
+            C1s, D1f,
+            D1,
+            D1s, E1f,
+            E1,
+            F1,
+            F1s, G1f,
+            G1,
+            G1s, A1f,
 
-            (Table) A1,
-            (Table) A1s,
-            (Table) B1,
-            (Table) C2,
-            (Table) C2s,
-            (Table) D2,
-            (Table) D2s,
-            (Table) E2,
-            (Table) F2,
-            (Table) F2s,
-            (Table) G2,
-            (Table) G2s,
+            A1,
+            A1s, B1f,
+            B1,
+            C2,
+            C2s, D2f,
+            D2,
+            D2s, E2f,
+            E2,
+            F2,
+            F2s, G2f,
+            G2,
+            G2s, A2f,
 
-            (Table) A2,
-            (Table) A2s,
-            (Table) B2,
-            (Table) C3,
-            (Table) C3s,
-            (Table) D3,
-            (Table) D3s,
-            (Table) E3,
-            (Table) F3,
-            (Table) F3s,
-            (Table) G3,
-            (Table) G3s,
+            A2,
+            A2s, B2f,
+            B2,
+            C3,
+            C3s, D3f,
+            D3,
+            D3s, E3f,
+            E3,
+            F3,
+            F3s, G3f,
+            G3,
+            G3s, A3f,
 
-            (Table) A3,
-            (Table) A3s,
-            (Table) B3,
-            (Table) C4,
-            (Table) C4s,
-            (Table) D4,
-            (Table) D4s,
-            (Table) E4,
-            (Table) F4,
-            (Table) F4s,
-            (Table) G4,
-            (Table) G4s,
+            A3,
+            A3s, B3f,
+            B3,
+            C4,
+            C4s, D4f,
+            D4,
+            D4s, E4f,
+            E4,
+            F4,
+            F4s, G4f,
+            G4,
+            G4s, A4f,
 
-            (Table) A4,
-            (Table) A4s,
-            (Table) B4,
-            (Table) C5,
-            (Table) C5s,
-            (Table) D5,
-            (Table) D5s,
-            (Table) E5,
-            (Table) F5,
-            (Table) F5s,
-            (Table) G5,
-            (Table) G5s,
+            A4,
+            A4s, B4f,
+            B4,
+            C5,
+            C5s, D5f,
+            D5,
+            D5s, E5f,
+            E5,
+            F5,
+            F5s, G5f,
+            G5,
+            G5s, A5f,
 
-            (Table) A5,
-            (Table) A5s,
-            (Table) B5,
-            (Table) C6,
-            (Table) C6s,
-            (Table) D6,
-            (Table) D6s,
-            (Table) E6,
-            (Table) F6,
-            (Table) F6s,
-            (Table) G6,
-            (Table) G6s,
+            A5,
+            A5s, B5f,
+            B5,
+            C6,
+            C6s, D6f,
+            D6,
+            D6s, E6f,
+            E6,
+            F6,
+            F6s, G6f,
+            G6,
+            G6s, A6f,
 
-            (Table) A6,
-            (Table) A6s,
-            (Table) B6,
-            (Table) C7,
-            (Table) C7s,
-            (Table) D7,
-            (Table) D7s,
-            (Table) E7,
-            (Table) F7,
-            (Table) F7s,
-            (Table) G7,
-            (Table) G7s,
+            A6,
+            A6s, B6f,
+            B6,
+            C7,
+            C7s, D7f,
+            D7,
+            D7s, E7f,
+            E7,
+            F7,
+            F7s, G7f,
+            G7,
+            G7s, A7f,
 
-            (Table) A7,
-            (Table) A7s,
-            (Table) B7,
-            (Table) C8,
-            (Table) C8s,
-            (Table) D8,
-            (Table) D8s,
-            (Table) E8,
-            (Table) F8,
-            (Table) F8s,
-            (Table) G8,
-            (Table) G8s,
+            A7,
+            A7s, B7f,
+            B7,
+            C8,
+            C8s, D8f,
+            D8,
+            D8s, E8f,
+            E8,
+            F8,
+            F8s, G8f,
+            G8,
+            G8s, A8f,
 
-            (Table) A8,
-            (Table) A8s,
-            (Table) B8,
-            (Table) C8,
-            (Table) C9s,
-            (Table) D9,
-            (Table) D9s,
-            (Table) E9,
-            (Table) F9,
-            (Table) F9s,
-            (Table) G9,
-            (Table) G9s
+            A8,
+            A8s, B8f,
+            B8,
+            C8,
+            C9s, D9f,
+            D9,
+            D9s, E9f,
+            E9,
+            F9,
+            F9s, G9f,
+            G9,
+            G9s, A9f,
+
+            A9,
+            A9s, B9f,
+            B9,
+            C9,
+            C10s, D10f,
+            D10,
+            D10s, E10f,
+            E10,
+            F10,
+            F10s, G10f,
+            G10,
+            G10s, A10f,
+
+            A10,
+            A10s, B10f,
+            B10,
         };
 
         public final
@@ -2596,14 +3233,14 @@ implements
         private final
         float freq;
 
-        private Table(float number, String symbol, byte octave, Pitch pitch, Accidental accidental, float freq) {
+        private Standard(float number, String symbol, byte octave, Pitch pitch, Accidental accidental, float freq) {
             super(octave, pitch, accidental);
             this.number = number;
             this.freq = freq;
             setSymbol(symbol);
         }
 
-        private Table(float number, String symbol, byte octave, Pitch pitch, float freq) {
+        private Standard(float number, String symbol, byte octave, Pitch pitch, float freq) {
             this(number, symbol, octave, pitch, Accidental.Natural, freq);
         }
 

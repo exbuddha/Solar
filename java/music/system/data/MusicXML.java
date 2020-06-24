@@ -4,15 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Stack;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import system.data.Cache;
 import system.data.XML;
@@ -20,7 +17,14 @@ import system.data.XML;
 /**
  * {@code MusicXML} classifies a MusicXML document.
  * <p>
- * It also holds static members for traversing MusicXML documents.
+ * This class defines static members for validating and traversing MusicXML documents.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @see XML
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class MusicXML
@@ -33,7 +37,7 @@ extends XML
      */
     protected
     MusicXML(
-        final DefaultHandler handler
+        final Document.Handler handler
         ) {
         super(handler);
     }
@@ -82,11 +86,14 @@ extends XML
      */
     public
     MusicXML() {
-        super(Handler.basic(null));
+        super(DocumentHandler.basic());
     }
 
     /**
      * {@code Analysis} classifies any type of analysis done on a music score.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Analysis
@@ -133,6 +140,9 @@ extends XML
 
         /**
          * {@code Type} is the factor of actionability for score analysis.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         enum Type
@@ -156,12 +166,13 @@ extends XML
 
     /**
      * {@code Handler} represents the default handler for MusicXML documents.
-     * <p>
-     * This implementation accepts the minimum number of elements and attributes that are, or can be, used as performance instructions.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Handler
-    extends XML.Handler<org.w3c.dom.Document>
+    extends XML.Handler<MusicXML>
     {
         private static final
         Cache.Table AnalyticLevel2Elements
@@ -224,29 +235,14 @@ extends XML
         private static final
         Restriction Standard
         = new Restriction()
-        {
-            @Override
-            public Conditional apply(String name, Stack<Element> stack) {
-                return null;
-            }
-        };
-
-        /**
-         * Creates a handler for the specified MusicXML document.
-         *
-         * @param document the document.
-         */
-        protected
-        Handler(
-            final org.w3c.dom.Document document
-            ) {
-            super(document);
-        }
+        {};
 
         /**
          * Accepts a subset of data, does not restrict.
          * <p>
          * If a document is not provided, a new document is created and used by the handler.
+         * <p>
+         * This implementation accepts the minimum number of elements and attributes that are, or can be, used as performance instructions.
          *
          * @param document the optional document.
          * @return the analytic handler.
@@ -255,22 +251,19 @@ extends XML
         Handler analytic(
             final org.w3c.dom.Document document
             ) {
-            return new Handler(
-                document == null
-                ? newDocumentBuilder().newDocument()
-                : document)
+            return new Handler()
             {
                 boolean completed;
 
                 final
-                Stack<Element> stack = new Stack<Element>();
+                Stack<org.w3c.dom.Element> stack = new Stack<>();
 
                 int depth;
 
                 protected
                 boolean isAcceptableElement(
                     final int depth,
-                    final Stack<Element> stack,
+                    final Stack<org.w3c.dom.Element> stack,
                     final String qName
                     ) {
                     if (depth != stack.size())
@@ -349,7 +342,7 @@ extends XML
                 protected
                 boolean isAcceptableAttribute(
                     final int depth,
-                    final Stack<Element> stack,
+                    final Stack<org.w3c.dom.Element> stack,
                     final String qName,
                     final String aName,
                     final Attributes attributes,
@@ -454,7 +447,7 @@ extends XML
 
                     // Finalize and close the element in the stack
                     if (stack.size() == depth && qName.equals(stack.peek().getTagName())) {
-                        final Element e = stack.pop();
+                        final org.w3c.dom.Element e = stack.pop();
 
                         if (stack.empty()) {
                             document.appendChild(e);
@@ -468,7 +461,7 @@ extends XML
                 }
 
                 @Override
-                public boolean isUsed() {
+                public boolean isClosed() {
                     return completed;
                 }
 
@@ -492,7 +485,7 @@ extends XML
                     if (isAcceptableElement(depth, stack, qName)) {
 
                         // Create a placeholder element
-                        final Element e = document.createElement(qName);
+                        final org.w3c.dom.Element e = document.createElement(qName);
 
                         // Add the acceptable attributes to the element
                         for (int i = 0; i < attributes.getLength(); i++) {
@@ -524,10 +517,7 @@ extends XML
             final Restriction restriction,
             final org.w3c.dom.Document document
             ) {
-            return new Handler(
-                document == null
-                ? newDocumentBuilder().newDocument()
-                : document)
+            return new Handler()
             {
                 boolean completed;
 
@@ -535,7 +525,7 @@ extends XML
                 Stack<Element> stack = new Stack<Element>();
 
                 @Override
-                public boolean isUsed() {
+                public boolean isClosed() {
                     return completed;
                 }
             };
@@ -557,12 +547,16 @@ extends XML
         }
 
         /**
-         * {@code Restriction} represents MusicXML filters that are classically defined as fine-grained bi-functions of element name and stack of parent elements.
+         * {@code Restriction} represents MusicXML filters that apply restrictions to the document elements and optionally provide validations.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         protected static abstract
         class Restriction
         extends Filter
-        implements BiFunction<String, Stack<Element>, Filter.Conditional>
         {
             /**
              * Creates a new MusicXML restriction.
@@ -576,6 +570,9 @@ extends XML
 
     /**
      * {@code Validation} is a special meta-data representing the result of analyzing a music score for performance.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Validation
@@ -592,8 +589,8 @@ extends XML
 
         /**
          * Creates a MusicXML score validation for the specified document.
-         * <p>
-         * This implementation is empty.
+         *
+         * @param document the document.
          */
         public
         Validation(
@@ -606,6 +603,7 @@ extends XML
          * Passes non-empty documents.
          *
          * @param document the document.
+         *
          * @return true if document is not empty.
          */
         public static
@@ -663,8 +661,11 @@ extends XML
 
     /**
      * {@code Constant} holds all standard MusicXML elements, attribute names, and keywords.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    public final
+    public static final
     class Constant
     {
         public static final String A = "A";
@@ -1628,930 +1629,936 @@ extends XML
 
         /**
          * {@code Dynamics} holds all valid MusicXML dynamics tag names.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
-        public final
-        class Dynamics
+        public
+        interface Dynamics
         {
-            public static final String F = "f";
-            public static final String FF = "ff";
-            public static final String FP = "fp";
-            public static final String FZ = "fz";
-            public static final String FFF = "fff";
-            public static final String FFFF = "ffff";
-            public static final String FFFFF = "fffff";
-            public static final String FFFFFF = "ffffff";
-            public static final String MF = "mf";
-            public static final String MP = "mp";
-            public static final String N = "n";
-            public static final String P = "p";
-            public static final String PF = "pf";
-            public static final String PP = "pp";
-            public static final String PPP = "ppp";
-            public static final String PPPP = "pppp";
-            public static final String PPPPP = "ppppp";
-            public static final String PPPPPP = "pppppp";
-            public static final String RF = "rf";
-            public static final String RFZ = "rfz";
-            public static final String SF = "sf";
-            public static final String SFP = "sfp";
-            public static final String SFPP = "sfpp";
-            public static final String SFZ = "sfz";
-            public static final String SFFZ = "sffz";
-            public static final String SFZP = "sfzp";
+            static final String F = "f";
+            static final String FF = "ff";
+            static final String FP = "fp";
+            static final String FZ = "fz";
+            static final String FFF = "fff";
+            static final String FFFF = "ffff";
+            static final String FFFFF = "fffff";
+            static final String FFFFFF = "ffffff";
+            static final String MF = "mf";
+            static final String MP = "mp";
+            static final String N = "n";
+            static final String P = "p";
+            static final String PF = "pf";
+            static final String PP = "pp";
+            static final String PPP = "ppp";
+            static final String PPPP = "pppp";
+            static final String PPPPP = "ppppp";
+            static final String PPPPPP = "pppppp";
+            static final String RF = "rf";
+            static final String RFZ = "rfz";
+            static final String SF = "sf";
+            static final String SFP = "sfp";
+            static final String SFPP = "sfpp";
+            static final String SFZ = "sfz";
+            static final String SFFZ = "sffz";
+            static final String SFZP = "sfzp";
         }
 
         /**
          * {@code Sounds} holds all standard MusicXML sounds.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
-        public final
-        class Sounds
+        public
+        interface Sounds
         {
-            public static final String BRASS_ALPHORN = "brass.alphorn";
-            public static final String BRASS_ALTO_HORN = "brass.alto-horn";
-            public static final String BRASS_BARITONE_HORN = "brass.baritone-horn";
-            public static final String BRASS_BUGLE = "brass.bugle";
-            public static final String BRASS_BUGLE_ALTO = "brass.bugle.alto";
-            public static final String BRASS_BUGLE_BARITONE = "brass.bugle.baritone";
-            public static final String BRASS_BUGLE_CONTRABASS = "brass.bugle.contrabass";
-            public static final String BRASS_BUGLE_EUPHONIUM_BUGLE = "brass.bugle.euphonium-bugle";
-            public static final String BRASS_BUGLE_MELLOPHONE_BUGLE = "brass.bugle.mellophone-bugle";
-            public static final String BRASS_BUGLE_SOPRANO = "brass.bugle.soprano";
-            public static final String BRASS_CIMBASSO = "brass.cimbasso";
-            public static final String BRASS_CONCH_SHELL = "brass.conch-shell";
-            public static final String BRASS_CORNET = "brass.cornet";
-            public static final String BRASS_CORNET_SOPRANO = "brass.cornet.soprano";
-            public static final String BRASS_CORNETT = "brass.cornett";
-            public static final String BRASS_CORNETT_TENOR = "brass.cornett.tenor";
-            public static final String BRASS_CORNETTINO = "brass.cornettino";
-            public static final String BRASS_DIDGERIDOO = "brass.didgeridoo";
-            public static final String BRASS_EUPHONIUM = "brass.euphonium";
-            public static final String BRASS_FISCORN = "brass.fiscorn";
-            public static final String BRASS_FLUGELHORN = "brass.flugelhorn";
-            public static final String BRASS_FRENCH_HORN = "brass.french-horn";
-            public static final String BRASS_GROUP = "brass.group";
-            public static final String BRASS_GROUP_SYNTH = "brass.group.synth";
-            public static final String BRASS_HELICON = "brass.helicon";
-            public static final String BRASS_HORAGAI = "brass.horagai";
-            public static final String BRASS_KUHLOHORN = "brass.kuhlohorn";
-            public static final String BRASS_MELLOPHONE = "brass.mellophone";
-            public static final String BRASS_NATURAL_HORN = "brass.natural-horn";
-            public static final String BRASS_OPHICLEIDE = "brass.ophicleide";
-            public static final String BRASS_POSTHORN = "brass.posthorn";
-            public static final String BRASS_RAG_DUNG = "brass.rag-dung";
-            public static final String BRASS_SACKBUTT = "brass.sackbutt";
-            public static final String BRASS_SACKBUTT_ALTO = "brass.sackbutt.alto";
-            public static final String BRASS_SACKBUTT_BASS = "brass.sackbutt.bass";
-            public static final String BRASS_SACKBUTT_TENOR = "brass.sackbutt.tenor";
-            public static final String BRASS_SAXHORN = "brass.saxhorn";
-            public static final String BRASS_SERPENT = "brass.serpent";
-            public static final String BRASS_SHOFAR = "brass.shofar";
-            public static final String BRASS_SOUSAPHONE = "brass.sousaphone";
-            public static final String BRASS_TROMBONE = "brass.trombone";
-            public static final String BRASS_TROMBONE_ALTO = "brass.trombone.alto";
-            public static final String BRASS_TROMBONE_BASS = "brass.trombone.bass";
-            public static final String BRASS_TROMBONE_CONTRABASS = "brass.trombone.contrabass";
-            public static final String BRASS_TROMBONE_TENOR = "brass.trombone.tenor";
-            public static final String BRASS_TRUMPET = "brass.trumpet";
-            public static final String BRASS_TRUMPET_BAROQUE = "brass.trumpet.baroque";
-            public static final String BRASS_TRUMPET_BASS = "brass.trumpet.bass";
-            public static final String BRASS_TRUMPET_BFLAT = "brass.trumpet.bflat";
-            public static final String BRASS_TRUMPET_C = "brass.trumpet.c";
-            public static final String BRASS_TRUMPET_D = "brass.trumpet.d";
-            public static final String BRASS_TRUMPET_PICCOLO = "brass.trumpet.piccolo";
-            public static final String BRASS_TRUMPET_POCKET = "brass.trumpet.pocket";
-            public static final String BRASS_TRUMPET_SLIDE = "brass.trumpet.slide";
-            public static final String BRASS_TRUMPET_TENOR = "brass.trumpet.tenor";
-            public static final String BRASS_TUBA = "brass.tuba";
-            public static final String BRASS_TUBA_BASS = "brass.tuba.bass";
-            public static final String BRASS_TUBA_SUBCONTRABASS = "brass.tuba.subcontrabass";
-            public static final String BRASS_VIENNA_HORN = "brass.vienna-horn";
-            public static final String BRASS_VUVUZELA = "brass.vuvuzela";
-            public static final String BRASS_WAGNER_TUBA = "brass.wagner-tuba";
-            public static final String DRUM_APENTEMMA = "drum.apentemma";
-            public static final String DRUM_ASHIKO = "drum.ashiko";
-            public static final String DRUM_ATABAQUE = "drum.atabaque";
-            public static final String DRUM_ATOKE = "drum.atoke";
-            public static final String DRUM_ATSIMEVU = "drum.atsimevu";
-            public static final String DRUM_AXATSE = "drum.axatse";
-            public static final String DRUM_BASS_DRUM = "drum.bass-drum";
-            public static final String DRUM_BATA = "drum.bata";
-            public static final String DRUM_BATA_ITOTELE = "drum.bata.itotele";
-            public static final String DRUM_BATA_IYA = "drum.bata.iya";
-            public static final String DRUM_BATA_OKONKOLO = "drum.bata.okonkolo";
-            public static final String DRUM_BENDIR = "drum.bendir";
-            public static final String DRUM_BODHRAN = "drum.bodhran";
-            public static final String DRUM_BOMBO = "drum.bombo";
-            public static final String DRUM_BONGO = "drum.bongo";
-            public static final String DRUM_BOUGARABOU = "drum.bougarabou";
-            public static final String DRUM_BUFFALO_DRUM = "drum.buffalo-drum";
-            public static final String DRUM_CAJON = "drum.cajon";
-            public static final String DRUM_CHENDA = "drum.chenda";
-            public static final String DRUM_CHU_DAIKO = "drum.chu-daiko";
-            public static final String DRUM_CONGA = "drum.conga";
-            public static final String DRUM_CUICA = "drum.cuica";
-            public static final String DRUM_DABAKAN = "drum.dabakan";
-            public static final String DRUM_DAFF = "drum.daff";
-            public static final String DRUM_DAFLI = "drum.dafli";
-            public static final String DRUM_DAIBYOSI = "drum.daibyosi";
-            public static final String DRUM_DAMROO = "drum.damroo";
-            public static final String DRUM_DARABUKA = "drum.darabuka";
-            public static final String DRUM_DEF = "drum.def";
-            public static final String DRUM_DHOL = "drum.dhol";
-            public static final String DRUM_DHOLAK = "drum.dholak";
-            public static final String DRUM_DJEMBE = "drum.djembe";
-            public static final String DRUM_DOIRA = "drum.doira";
-            public static final String DRUM_DONDO = "drum.dondo";
-            public static final String DRUM_DOUN_DOUN_BA = "drum.doun-doun-ba";
-            public static final String DRUM_DUFF = "drum.duff";
-            public static final String DRUM_DUMBEK = "drum.dumbek";
-            public static final String DRUM_FONTOMFROM = "drum.fontomfrom";
-            public static final String DRUM_FRAME_DRUM = "drum.frame-drum";
-            public static final String DRUM_FRAME_DRUM_ARABIAN = "drum.frame-drum.arabian";
-            public static final String DRUM_GEDUK = "drum.geduk";
-            public static final String DRUM_GHATAM = "drum.ghatam";
-            public static final String DRUM_GOME = "drum.gome";
-            public static final String DRUM_GROUP = "drum.group";
-            public static final String DRUM_GROUP_CHINESE = "drum.group.chinese";
-            public static final String DRUM_GROUP_EWE = "drum.group.ewe";
-            public static final String DRUM_GROUP_INDIAN = "drum.group.indian";
-            public static final String DRUM_GROUP_SET = "drum.group.set";
-            public static final String DRUM_HAND_DRUM = "drum.hand-drum";
-            public static final String DRUM_HIRA_DAIKO = "drum.hira-daiko";
-            public static final String DRUM_IBO = "drum.ibo";
-            public static final String DRUM_IGIHUMURIZO = "drum.igihumurizo";
-            public static final String DRUM_INYAHURA = "drum.inyahura";
-            public static final String DRUM_ISHAKWE = "drum.ishakwe";
-            public static final String DRUM_JANG_GU = "drum.jang-gu";
-            public static final String DRUM_KAGAN = "drum.kagan";
-            public static final String DRUM_KAKKO = "drum.kakko";
-            public static final String DRUM_KANJIRA = "drum.kanjira";
-            public static final String DRUM_KENDHANG = "drum.kendhang";
-            public static final String DRUM_KENDHANG_AGENG = "drum.kendhang.ageng";
-            public static final String DRUM_KENDHANG_CIBLON = "drum.kendhang.ciblon";
-            public static final String DRUM_KENKENI = "drum.kenkeni";
-            public static final String DRUM_KHOL = "drum.khol";
-            public static final String DRUM_KICK_DRUM = "drum.kick-drum";
-            public static final String DRUM_KIDI = "drum.kidi";
-            public static final String DRUM_KO_DAIKO = "drum.ko-daiko";
-            public static final String DRUM_KPANLOGO = "drum.kpanlogo";
-            public static final String DRUM_KUDUM = "drum.kudum";
-            public static final String DRUM_LAMBEG = "drum.lambeg";
-            public static final String DRUM_LION_DRUM = "drum.lion-drum";
-            public static final String DRUM_LOG_DRUM = "drum.log-drum";
-            public static final String DRUM_LOG_DRUM_AFRICAN = "drum.log-drum.african";
-            public static final String DRUM_LOG_DRUM_NATIVE = "drum.log-drum.native";
-            public static final String DRUM_LOG_DRUM_NIGERIAN = "drum.log-drum.nigerian";
-            public static final String DRUM_MADAL = "drum.madal";
-            public static final String DRUM_MADDALE = "drum.maddale";
-            public static final String DRUM_MRIDANGAM = "drum.mridangam";
-            public static final String DRUM_NAAL = "drum.naal";
-            public static final String DRUM_NAGADO_DAIKO = "drum.nagado-daiko";
-            public static final String DRUM_NAGARA = "drum.nagara";
-            public static final String DRUM_NAQARA = "drum.naqara";
-            public static final String DRUM_O_DAIKO = "drum.o-daiko";
-            public static final String DRUM_OKAWA = "drum.okawa";
-            public static final String DRUM_OKEDO_DAIKO = "drum.okedo-daiko";
-            public static final String DRUM_PAHU_HULA = "drum.pahu-hula";
-            public static final String DRUM_PAKHAWAJ = "drum.pakhawaj";
-            public static final String DRUM_PANDEIRO = "drum.pandeiro";
-            public static final String DRUM_PANDERO = "drum.pandero";
-            public static final String DRUM_POWWOW = "drum.powwow";
-            public static final String DRUM_PUEBLO = "drum.pueblo";
-            public static final String DRUM_REPINIQUE = "drum.repinique";
-            public static final String DRUM_RIQ = "drum.riq";
-            public static final String DRUM_ROTOTOM = "drum.rototom";
-            public static final String DRUM_SABAR = "drum.sabar";
-            public static final String DRUM_SAKARA = "drum.sakara";
-            public static final String DRUM_SAMPHO = "drum.sampho";
-            public static final String DRUM_SANGBAN = "drum.sangban";
-            public static final String DRUM_SHIME_DAIKO = "drum.shime-daiko";
-            public static final String DRUM_SLIT_DRUM = "drum.slit-drum";
-            public static final String DRUM_SLIT_DRUM_KRIN = "drum.slit-drum.krin";
-            public static final String DRUM_SNARE_DRUM = "drum.snare-drum";
-            public static final String DRUM_SNARE_DRUM_ELECTRIC = "drum.snare-drum.electric";
-            public static final String DRUM_SOGO = "drum.sogo";
-            public static final String DRUM_SURDO = "drum.surdo";
-            public static final String DRUM_TABLA = "drum.tabla";
-            public static final String DRUM_TABLA_BAYAN = "drum.tabla.bayan";
-            public static final String DRUM_TABLA_DAYAN = "drum.tabla.dayan";
-            public static final String DRUM_TAIKO = "drum.taiko";
-            public static final String DRUM_TALKING = "drum.talking";
-            public static final String DRUM_TAMA = "drum.tama";
-            public static final String DRUM_TAMBORITA = "drum.tamborita";
-            public static final String DRUM_TAMBOURINE = "drum.tambourine";
-            public static final String DRUM_TAMTE = "drum.tamte";
-            public static final String DRUM_TANGKU = "drum.tangku";
-            public static final String DRUM_TAN_TAN = "drum.tan-tan";
-            public static final String DRUM_TAPHON = "drum.taphon";
-            public static final String DRUM_TAR = "drum.tar";
-            public static final String DRUM_TASHA = "drum.tasha";
-            public static final String DRUM_TENOR_DRUM = "drum.tenor-drum";
-            public static final String DRUM_TEPONAXTLI = "drum.teponaxtli";
-            public static final String DRUM_THAVIL = "drum.thavil";
-            public static final String DRUM_THE_BOX = "drum.the-box";
-            public static final String DRUM_TIMBALE = "drum.timbale";
-            public static final String DRUM_TIMPANI = "drum.timpani";
-            public static final String DRUM_TINAJA = "drum.tinaja";
-            public static final String DRUM_TOERE = "drum.toere";
-            public static final String DRUM_TOMBAK = "drum.tombak";
-            public static final String DRUM_TOM_TOM = "drum.tom-tom";
-            public static final String DRUM_TOM_TOM_SYNTH = "drum.tom-tom.synth";
-            public static final String DRUM_TSUZUMI = "drum.tsuzumi";
-            public static final String DRUM_TUMBAK = "drum.tumbak";
-            public static final String DRUM_UCHIWA_DAIKO = "drum.uchiwa-daiko";
-            public static final String DRUM_UDAKU = "drum.udaku";
-            public static final String DRUM_UDU = "drum.udu";
-            public static final String DRUM_ZARB = "drum.zarb";
-            public static final String EFFECT_AEOLIAN_HARP = "effect.aeolian-harp";
-            public static final String EFFECT_AIR_HORN = "effect.air-horn";
-            public static final String EFFECT_APPLAUSE = "effect.applause";
-            public static final String EFFECT_BASS_STRING_SLAP = "effect.bass-string-slap";
-            public static final String EFFECT_BIRD = "effect.bird";
-            public static final String EFFECT_BIRD_NIGHTINGALE = "effect.bird.nightingale";
-            public static final String EFFECT_BIRD_TWEET = "effect.bird.tweet";
-            public static final String EFFECT_BREATH = "effect.breath";
-            public static final String EFFECT_BUBBLE = "effect.bubble";
-            public static final String EFFECT_BULLROARER = "effect.bullroarer";
-            public static final String EFFECT_BURST = "effect.burst";
-            public static final String EFFECT_CAR = "effect.car";
-            public static final String EFFECT_CAR_CRASH = "effect.car.crash";
-            public static final String EFFECT_CAR_ENGINE = "effect.car.engine";
-            public static final String EFFECT_CAR_PASS = "effect.car.pass";
-            public static final String EFFECT_CAR_STOP = "effect.car.stop";
-            public static final String EFFECT_CRICKETS = "effect.crickets";
-            public static final String EFFECT_DOG = "effect.dog";
-            public static final String EFFECT_DOOR_CREAK = "effect.door.creak";
-            public static final String EFFECT_DOOR_SLAM = "effect.door.slam";
-            public static final String EFFECT_EXPLOSION = "effect.explosion";
-            public static final String EFFECT_FLUTE_KEY_CLICK = "effect.flute-key-click";
-            public static final String EFFECT_FOOTSTEPS = "effect.footsteps";
-            public static final String EFFECT_FROGS = "effect.frogs";
-            public static final String EFFECT_GUITAR_CUTTING = "effect.guitar-cutting";
-            public static final String EFFECT_GUITAR_FRET = "effect.guitar-fret";
-            public static final String EFFECT_GUNSHOT = "effect.gunshot";
-            public static final String EFFECT_HAND_CLAP = "effect.hand-clap";
-            public static final String EFFECT_HEARTBEAT = "effect.heartbeat";
-            public static final String EFFECT_HELICOPTER = "effect.helicopter";
-            public static final String EFFECT_HIGH_Q = "effect.high-q";
-            public static final String EFFECT_HORSE_GALLOP = "effect.horse-gallop";
-            public static final String EFFECT_JET_PLANE = "effect.jet-plane";
-            public static final String EFFECT_LASER_GUN = "effect.laser-gun";
-            public static final String EFFECT_LAUGH = "effect.laugh";
-            public static final String EFFECT_LIONS_ROAR = "effect.lions-roar";
-            public static final String EFFECT_MACHINE_GUN = "effect.machine-gun";
-            public static final String EFFECT_MARCHING_MACHINE = "effect.marching-machine";
-            public static final String EFFECT_METRONOME_BELL = "effect.metronome-bell";
-            public static final String EFFECT_METRONOME_CLICK = "effect.metronome-click";
-            public static final String EFFECT_PAT = "effect.pat";
-            public static final String EFFECT_PUNCH = "effect.punch";
-            public static final String EFFECT_RAIN = "effect.rain";
-            public static final String EFFECT_SCRATCH = "effect.scratch";
-            public static final String EFFECT_SCREAM = "effect.scream";
-            public static final String EFFECT_SEASHORE = "effect.seashore";
-            public static final String EFFECT_SIREN = "effect.siren";
-            public static final String EFFECT_SLAP = "effect.slap";
-            public static final String EFFECT_SNAP = "effect.snap";
-            public static final String EFFECT_STAMP = "effect.stamp";
-            public static final String EFFECT_STARSHIP = "effect.starship";
-            public static final String EFFECT_STREAM = "effect.stream";
-            public static final String EFFECT_TELEPHONE_RING = "effect.telephone-ring";
-            public static final String EFFECT_THUNDER = "effect.thunder";
-            public static final String EFFECT_TRAIN = "effect.train";
-            public static final String EFFECT_TRASH_CAN = "effect.trash-can";
-            public static final String EFFECT_WHIP = "effect.whip";
-            public static final String EFFECT_WHISTLE = "effect.whistle";
-            public static final String EFFECT_WHISTLE_MOUTH_SIREN = "effect.whistle.mouth-siren";
-            public static final String EFFECT_WHISTLE_POLICE = "effect.whistle.police";
-            public static final String EFFECT_WHISTLE_SLIDE = "effect.whistle.slide";
-            public static final String EFFECT_WHISTLE_TRAIN = "effect.whistle.train";
-            public static final String EFFECT_WIND = "effect.wind";
-            public static final String KEYBOARD_ACCORDION = "keyboard.accordion";
-            public static final String KEYBOARD_BANDONEON = "keyboard.bandoneon";
-            public static final String KEYBOARD_CELESTA = "keyboard.celesta";
-            public static final String KEYBOARD_CLAVICHORD = "keyboard.clavichord";
-            public static final String KEYBOARD_CLAVICHORD_SYNTH = "keyboard.clavichord.synth";
-            public static final String KEYBOARD_CONCERTINA = "keyboard.concertina";
-            public static final String KEYBOARD_FORTEPIANO = "keyboard.fortepiano";
-            public static final String KEYBOARD_HARMONIUM = "keyboard.harmonium";
-            public static final String KEYBOARD_HARPSICHORD = "keyboard.harpsichord";
-            public static final String KEYBOARD_ONDES_MARTENOT = "keyboard.ondes-martenot";
-            public static final String KEYBOARD_ORGAN = "keyboard.organ";
-            public static final String KEYBOARD_ORGAN_DRAWBAR = "keyboard.organ.drawbar";
-            public static final String KEYBOARD_ORGAN_PERCUSSIVE = "keyboard.organ.percussive";
-            public static final String KEYBOARD_ORGAN_PIPE = "keyboard.organ.pipe";
-            public static final String KEYBOARD_ORGAN_REED = "keyboard.organ.reed";
-            public static final String KEYBOARD_ORGAN_ROTARY = "keyboard.organ.rotary";
-            public static final String KEYBOARD_PIANO = "keyboard.piano";
-            public static final String KEYBOARD_PIANO_ELECTRIC = "keyboard.piano.electric";
-            public static final String KEYBOARD_PIANO_GRAND = "keyboard.piano.grand";
-            public static final String KEYBOARD_PIANO_HONKY_TONK = "keyboard.piano.honky-tonk";
-            public static final String KEYBOARD_PIANO_PREPARED = "keyboard.piano.prepared";
-            public static final String KEYBOARD_PIANO_TOY = "keyboard.piano.toy";
-            public static final String KEYBOARD_PIANO_UPRIGHT = "keyboard.piano.upright";
-            public static final String KEYBOARD_VIRGINAL = "keyboard.virginal";
-            public static final String METAL_ADODO = "metal.adodo";
-            public static final String METAL_ANVIL = "metal.anvil";
-            public static final String METAL_BABENDIL = "metal.babendil";
-            public static final String METAL_BELLS_AGOGO = "metal.bells.agogo";
-            public static final String METAL_BELLS_ALMGLOCKEN = "metal.bells.almglocken";
-            public static final String METAL_BELLS_BELL_PLATE = "metal.bells.bell-plate";
-            public static final String METAL_BELLS_BELL_TREE = "metal.bells.bell-tree";
-            public static final String METAL_BELLS_CARILLON = "metal.bells.carillon";
-            public static final String METAL_BELLS_CHIMES = "metal.bells.chimes";
-            public static final String METAL_BELLS_CHIMTA = "metal.bells.chimta";
-            public static final String METAL_BELLS_CHIPPLI = "metal.bells.chippli";
-            public static final String METAL_BELLS_CHURCH = "metal.bells.church";
-            public static final String METAL_BELLS_COWBELL = "metal.bells.cowbell";
-            public static final String METAL_BELLS_DAWURO = "metal.bells.dawuro";
-            public static final String METAL_BELLS_GANKOKWE = "metal.bells.gankokwe";
-            public static final String METAL_BELLS_GHUNGROO = "metal.bells.ghungroo";
-            public static final String METAL_BELLS_HATHELI = "metal.bells.hatheli";
-            public static final String METAL_BELLS_JINGLE_BELL = "metal.bells.jingle-bell";
-            public static final String METAL_BELLS_KHARTAL = "metal.bells.khartal";
-            public static final String METAL_BELLS_MARK_TREE = "metal.bells.mark-tree";
-            public static final String METAL_BELLS_SISTRUM = "metal.bells.sistrum";
-            public static final String METAL_BELLS_SLEIGH_BELLS = "metal.bells.sleigh-bells";
-            public static final String METAL_BELLS_TEMPLE = "metal.bells.temple";
-            public static final String METAL_BELLS_TIBETAN = "metal.bells.tibetan";
-            public static final String METAL_BELLS_TINKLEBELL = "metal.bells.tinklebell";
-            public static final String METAL_BELLS_TRYCHEL = "metal.bells.trychel";
-            public static final String METAL_BELLS_WIND_CHIMES = "metal.bells.wind-chimes";
-            public static final String METAL_BELLS_ZILLS = "metal.bells.zills";
-            public static final String METAL_BERIMBAU = "metal.berimbau";
-            public static final String METAL_BRAKE_DRUMS = "metal.brake-drums";
-            public static final String METAL_CROTALES = "metal.crotales";
-            public static final String METAL_CYMBAL_BO = "metal.cymbal.bo";
-            public static final String METAL_CYMBAL_CENG_CENG = "metal.cymbal.ceng-ceng";
-            public static final String METAL_CYMBAL_CHABARA = "metal.cymbal.chabara";
-            public static final String METAL_CYMBAL_CHINESE = "metal.cymbal.chinese";
-            public static final String METAL_CYMBAL_CHING = "metal.cymbal.ching";
-            public static final String METAL_CYMBAL_CLASH = "metal.cymbal.clash";
-            public static final String METAL_CYMBAL_CRASH = "metal.cymbal.crash";
-            public static final String METAL_CYMBAL_FINGER = "metal.cymbal.finger";
-            public static final String METAL_CYMBAL_HAND = "metal.cymbal.hand";
-            public static final String METAL_CYMBAL_KESI = "metal.cymbal.kesi";
-            public static final String METAL_CYMBAL_MANJEERA = "metal.cymbal.manjeera";
-            public static final String METAL_CYMBAL_REVERSE = "metal.cymbal.reverse";
-            public static final String METAL_CYMBAL_RIDE = "metal.cymbal.ride";
-            public static final String METAL_CYMBAL_SIZZLE = "metal.cymbal.sizzle";
-            public static final String METAL_CYMBAL_SPLASH = "metal.cymbal.splash";
-            public static final String METAL_CYMBAL_SUSPENDED = "metal.cymbal.suspended";
-            public static final String METAL_CYMBAL_TEBYOSHI = "metal.cymbal.tebyoshi";
-            public static final String METAL_CYMBAL_TIBETAN = "metal.cymbal.tibetan";
-            public static final String METAL_CYMBAL_TINGSHA = "metal.cymbal.tingsha";
-            public static final String METAL_FLEXATONE = "metal.flexatone";
-            public static final String METAL_GONG = "metal.gong";
-            public static final String METAL_GONG_AGENG = "metal.gong.ageng";
-            public static final String METAL_GONG_AGUNG = "metal.gong.agung";
-            public static final String METAL_GONG_CHANCHIKI = "metal.gong.chanchiki";
-            public static final String METAL_GONG_CHINESE = "metal.gong.chinese";
-            public static final String METAL_GONG_GANDINGAN = "metal.gong.gandingan";
-            public static final String METAL_GONG_KEMPUL = "metal.gong.kempul";
-            public static final String METAL_GONG_KEMPYANG = "metal.gong.kempyang";
-            public static final String METAL_GONG_KETUK = "metal.gong.ketuk";
-            public static final String METAL_GONG_KKWENGGWARI = "metal.gong.kkwenggwari";
-            public static final String METAL_GONG_LUO = "metal.gong.luo";
-            public static final String METAL_GONG_SINGING = "metal.gong.singing";
-            public static final String METAL_GONG_THAI = "metal.gong.thai";
-            public static final String METAL_GUIRA = "metal.guira";
-            public static final String METAL_HANG = "metal.hang";
-            public static final String METAL_HI_HAT = "metal.hi-hat";
-            public static final String METAL_JAW_HARP = "metal.jaw-harp";
-            public static final String METAL_KENGONG = "metal.kengong";
-            public static final String METAL_MURCHANG = "metal.murchang";
-            public static final String METAL_MUSICAL_SAW = "metal.musical-saw";
-            public static final String METAL_SINGING_BOWL = "metal.singing-bowl";
-            public static final String METAL_SPOONS = "metal.spoons";
-            public static final String METAL_STEEL_DRUMS = "metal.steel-drums";
-            public static final String METAL_TAMTAM = "metal.tamtam";
-            public static final String METAL_THUNDERSHEET = "metal.thundersheet";
-            public static final String METAL_TRIANGLE = "metal.triangle";
-            public static final String METAL_WASHBOARD = "metal.washboard";
-            public static final String PITCHED_PERCUSSION_ANGKLUNG = "pitched-percussion.angklung";
-            public static final String PITCHED_PERCUSSION_BALAFON = "pitched-percussion.balafon";
-            public static final String PITCHED_PERCUSSION_BELL_LYRE = "pitched-percussion.bell-lyre";
-            public static final String PITCHED_PERCUSSION_BELLS = "pitched-percussion.bells";
-            public static final String PITCHED_PERCUSSION_BIANQING = "pitched-percussion.bianqing";
-            public static final String PITCHED_PERCUSSION_BIANZHONG = "pitched-percussion.bianzhong";
-            public static final String PITCHED_PERCUSSION_BONANG = "pitched-percussion.bonang";
-            public static final String PITCHED_PERCUSSION_CIMBALOM = "pitched-percussion.cimbalom";
-            public static final String PITCHED_PERCUSSION_CRYSTAL_GLASSES = "pitched-percussion.crystal-glasses";
-            public static final String PITCHED_PERCUSSION_DAN_TAM_THAP_LUC = "pitched-percussion.dan-tam-thap-luc";
-            public static final String PITCHED_PERCUSSION_FANGXIANG = "pitched-percussion.fangxiang";
-            public static final String PITCHED_PERCUSSION_GANDINGAN_A_KAYO = "pitched-percussion.gandingan-a-kayo";
-            public static final String PITCHED_PERCUSSION_GANGSA = "pitched-percussion.gangsa";
-            public static final String PITCHED_PERCUSSION_GENDER = "pitched-percussion.gender";
-            public static final String PITCHED_PERCUSSION_GIYING = "pitched-percussion.giying";
-            public static final String PITCHED_PERCUSSION_GLASS_HARMONICA = "pitched-percussion.glass-harmonica";
-            public static final String PITCHED_PERCUSSION_GLOCKENSPIEL = "pitched-percussion.glockenspiel";
-            public static final String PITCHED_PERCUSSION_GLOCKENSPIEL_ALTO = "pitched-percussion.glockenspiel.alto";
-            public static final String PITCHED_PERCUSSION_GLOCKENSPIEL_SOPRANO = "pitched-percussion.glockenspiel.soprano";
-            public static final String PITCHED_PERCUSSION_GYIL = "pitched-percussion.gyil";
-            public static final String PITCHED_PERCUSSION_HAMMER_DULCIMER = "pitched-percussion.hammer-dulcimer";
-            public static final String PITCHED_PERCUSSION_HANDBELLS = "pitched-percussion.handbells";
-            public static final String PITCHED_PERCUSSION_KALIMBA = "pitched-percussion.kalimba";
-            public static final String PITCHED_PERCUSSION_KANTIL = "pitched-percussion.kantil";
-            public static final String PITCHED_PERCUSSION_KHIM = "pitched-percussion.khim";
-            public static final String PITCHED_PERCUSSION_KULINTANG = "pitched-percussion.kulintang";
-            public static final String PITCHED_PERCUSSION_KULINTANG_A_KAYO = "pitched-percussion.kulintang-a-kayo";
-            public static final String PITCHED_PERCUSSION_KULINTANG_A_TINIOK = "pitched-percussion.kulintang-a-tiniok";
-            public static final String PITCHED_PERCUSSION_LIKEMBE = "pitched-percussion.likembe";
-            public static final String PITCHED_PERCUSSION_LUNTANG = "pitched-percussion.luntang";
-            public static final String PITCHED_PERCUSSION_MARIMBA = "pitched-percussion.marimba";
-            public static final String PITCHED_PERCUSSION_MARIMBA_BASS = "pitched-percussion.marimba.bass";
-            public static final String PITCHED_PERCUSSION_MBIRA = "pitched-percussion.mbira";
-            public static final String PITCHED_PERCUSSION_MBIRA_ARRAY = "pitched-percussion.mbira.array";
-            public static final String PITCHED_PERCUSSION_METALLOPHONE = "pitched-percussion.metallophone";
-            public static final String PITCHED_PERCUSSION_METALLOPHONE_ALTO = "pitched-percussion.metallophone.alto";
-            public static final String PITCHED_PERCUSSION_METALLOPHONE_BASS = "pitched-percussion.metallophone.bass";
-            public static final String PITCHED_PERCUSSION_METALLOPHONE_SOPRANO = "pitched-percussion.metallophone.soprano";
-            public static final String PITCHED_PERCUSSION_MUSIC_BOX = "pitched-percussion.music-box";
-            public static final String PITCHED_PERCUSSION_PELOG_PANERUS = "pitched-percussion.pelog-panerus";
-            public static final String PITCHED_PERCUSSION_PEMADE = "pitched-percussion.pemade";
-            public static final String PITCHED_PERCUSSION_PENYACAH = "pitched-percussion.penyacah";
-            public static final String PITCHED_PERCUSSION_RANAT_EK = "pitched-percussion.ranat.ek";
-            public static final String PITCHED_PERCUSSION_RANAT_EK_LEK = "pitched-percussion.ranat.ek-lek";
-            public static final String PITCHED_PERCUSSION_RANAT_THUM = "pitched-percussion.ranat.thum";
-            public static final String PITCHED_PERCUSSION_RANAT_THUM_LEK = "pitched-percussion.ranat.thum-lek";
-            public static final String PITCHED_PERCUSSION_REYONG = "pitched-percussion.reyong";
-            public static final String PITCHED_PERCUSSION_SANZA = "pitched-percussion.sanza";
-            public static final String PITCHED_PERCUSSION_SARON_BARUNG = "pitched-percussion.saron-barung";
-            public static final String PITCHED_PERCUSSION_SARON_DEMONG = "pitched-percussion.saron-demong";
-            public static final String PITCHED_PERCUSSION_SARON_PANERUS = "pitched-percussion.saron-panerus";
-            public static final String PITCHED_PERCUSSION_SLENDRO_PANERUS = "pitched-percussion.slendro-panerus";
-            public static final String PITCHED_PERCUSSION_SLENTEM = "pitched-percussion.slentem";
-            public static final String PITCHED_PERCUSSION_TSYMBALY = "pitched-percussion.tsymbaly";
-            public static final String PITCHED_PERCUSSION_TUBES = "pitched-percussion.tubes";
-            public static final String PITCHED_PERCUSSION_TUBULAR_BELLS = "pitched-percussion.tubular-bells";
-            public static final String PITCHED_PERCUSSION_VIBRAPHONE = "pitched-percussion.vibraphone";
-            public static final String PITCHED_PERCUSSION_XYLOPHONE = "pitched-percussion.xylophone";
-            public static final String PITCHED_PERCUSSION_XYLOPHONE_ALTO = "pitched-percussion.xylophone.alto";
-            public static final String PITCHED_PERCUSSION_XYLOPHONE_BASS = "pitched-percussion.xylophone.bass";
-            public static final String PITCHED_PERCUSSION_XYLOPHONE_SOPRANO = "pitched-percussion.xylophone.soprano";
-            public static final String PITCHED_PERCUSSION_XYLORIMBA = "pitched-percussion.xylorimba";
-            public static final String PITCHED_PERCUSSION_YANGQIN = "pitched-percussion.yangqin";
-            public static final String PLUCK_ARCHLUTE = "pluck.archlute";
-            public static final String PLUCK_AUTOHARP = "pluck.autoharp";
-            public static final String PLUCK_BAGLAMA = "pluck.baglama";
-            public static final String PLUCK_BAJO = "pluck.bajo";
-            public static final String PLUCK_BALALAIKA = "pluck.balalaika";
-            public static final String PLUCK_BALALAIKA_ALTO = "pluck.balalaika.alto";
-            public static final String PLUCK_BALALAIKA_BASS = "pluck.balalaika.bass";
-            public static final String PLUCK_BALALAIKA_CONTRABASS = "pluck.balalaika.contrabass";
-            public static final String PLUCK_BALALAIKA_PICCOLO = "pluck.balalaika.piccolo";
-            public static final String PLUCK_BALALAIKA_PRIMA = "pluck.balalaika.prima";
-            public static final String PLUCK_BALALAIKA_SECUNDA = "pluck.balalaika.secunda";
-            public static final String PLUCK_BANDOLA = "pluck.bandola";
-            public static final String PLUCK_BANDURA = "pluck.bandura";
-            public static final String PLUCK_BANDURRIA = "pluck.bandurria";
-            public static final String PLUCK_BANJO = "pluck.banjo";
-            public static final String PLUCK_BANJO_TENOR = "pluck.banjo.tenor";
-            public static final String PLUCK_BANJOLELE = "pluck.banjolele";
-            public static final String PLUCK_BARBAT = "pluck.barbat";
-            public static final String PLUCK_BASS = "pluck.bass";
-            public static final String PLUCK_BASS_ACOUSTIC = "pluck.bass.acoustic";
-            public static final String PLUCK_BASS_BOLON = "pluck.bass.bolon";
-            public static final String PLUCK_BASS_ELECTRIC = "pluck.bass.electric";
-            public static final String PLUCK_BASS_FRETLESS = "pluck.bass.fretless";
-            public static final String PLUCK_BASS_GUITARRON = "pluck.bass.guitarron";
-            public static final String PLUCK_BASS_SYNTH = "pluck.bass.synth";
-            public static final String PLUCK_BASS_SYNTH_LEAD = "pluck.bass.synth.lead";
-            public static final String PLUCK_BASS_WASHTUB = "pluck.bass.washtub";
-            public static final String PLUCK_BASS_WHAMOLA = "pluck.bass.whamola";
-            public static final String PLUCK_BEGENA = "pluck.begena";
-            public static final String PLUCK_BIWA = "pluck.biwa";
-            public static final String PLUCK_BORDONUA = "pluck.bordonua";
-            public static final String PLUCK_BOUZOUKI = "pluck.bouzouki";
-            public static final String PLUCK_BOUZOUKI_IRISH = "pluck.bouzouki.irish";
-            public static final String PLUCK_CELTIC_HARP = "pluck.celtic-harp";
-            public static final String PLUCK_CHARANGO = "pluck.charango";
-            public static final String PLUCK_CHITARRA_BATTENTE = "pluck.chitarra-battente";
-            public static final String PLUCK_CITHARA = "pluck.cithara";
-            public static final String PLUCK_CITTERN = "pluck.cittern";
-            public static final String PLUCK_CUATRO = "pluck.cuatro";
-            public static final String PLUCK_DAN_BAU = "pluck.dan-bau";
-            public static final String PLUCK_DAN_NGUYET = "pluck.dan-nguyet";
-            public static final String PLUCK_DAN_TRANH = "pluck.dan-tranh";
-            public static final String PLUCK_DAN_TY_BA = "pluck.dan-ty-ba";
-            public static final String PLUCK_DIDDLEY_BOW = "pluck.diddley-bow";
-            public static final String PLUCK_DOMRA = "pluck.domra";
-            public static final String PLUCK_DOMU = "pluck.domu";
-            public static final String PLUCK_DULCIMER = "pluck.dulcimer";
-            public static final String PLUCK_DUTAR = "pluck.dutar";
-            public static final String PLUCK_DUXIANQIN = "pluck.duxianqin";
-            public static final String PLUCK_EKTARA = "pluck.ektara";
-            public static final String PLUCK_GEOMUNGO = "pluck.geomungo";
-            public static final String PLUCK_GOTTUVADHYAM = "pluck.gottuvadhyam";
-            public static final String PLUCK_GUITAR = "pluck.guitar";
-            public static final String PLUCK_GUITAR_ACOUSTIC = "pluck.guitar.acoustic";
-            public static final String PLUCK_GUITAR_ELECTRIC = "pluck.guitar.electric";
-            public static final String PLUCK_GUITAR_NYLON_STRING = "pluck.guitar.nylon-string";
-            public static final String PLUCK_GUITAR_PEDAL_STEEL = "pluck.guitar.pedal-steel";
-            public static final String PLUCK_GUITAR_PORTUGUESE = "pluck.guitar.portuguese";
-            public static final String PLUCK_GUITAR_REQUINTO = "pluck.guitar.requinto";
-            public static final String PLUCK_GUITAR_RESONATOR = "pluck.guitar.resonator";
-            public static final String PLUCK_GUITAR_STEEL_STRING = "pluck.guitar.steel-string";
-            public static final String PLUCK_GUITJO = "pluck.guitjo";
-            public static final String PLUCK_GUITJO_DOUBLE_NECK = "pluck.guitjo.double-neck";
-            public static final String PLUCK_GUQIN = "pluck.guqin";
-            public static final String PLUCK_GUZHENG = "pluck.guzheng";
-            public static final String PLUCK_GUZHENG_CHOAZHOU = "pluck.guzheng.choazhou";
-            public static final String PLUCK_HARP = "pluck.harp";
-            public static final String PLUCK_HARP_GUITAR = "pluck.harp-guitar";
-            public static final String PLUCK_HUAPANGUERA = "pluck.huapanguera";
-            public static final String PLUCK_JARANA_HUASTECA = "pluck.jarana-huasteca";
-            public static final String PLUCK_JARANA_JAROCHA = "pluck.jarana-jarocha";
-            public static final String PLUCK_JARANA_JAROCHA_MOSQUITO = "pluck.jarana-jarocha.mosquito";
-            public static final String PLUCK_JARANA_JAROCHA_PRIMERA = "pluck.jarana-jarocha.primera";
-            public static final String PLUCK_JARANA_JAROCHA_SEGUNDA = "pluck.jarana-jarocha.segunda";
-            public static final String PLUCK_JARANA_JAROCHA_TERCERA = "pluck.jarana-jarocha.tercera";
-            public static final String PLUCK_KABOSY = "pluck.kabosy";
-            public static final String PLUCK_KANTELE = "pluck.kantele";
-            public static final String PLUCK_KANUN = "pluck.kanun";
-            public static final String PLUCK_KAYAGUM = "pluck.kayagum";
-            public static final String PLUCK_KOBZA = "pluck.kobza";
-            public static final String PLUCK_KOMUZ = "pluck.komuz";
-            public static final String PLUCK_KORA = "pluck.kora";
-            public static final String PLUCK_KOTO = "pluck.koto";
-            public static final String PLUCK_KUTIYAPI = "pluck.kutiyapi";
-            public static final String PLUCK_LANGELEIK = "pluck.langeleik";
-            public static final String PLUCK_LAUD = "pluck.laud";
-            public static final String PLUCK_LUTE = "pluck.lute";
-            public static final String PLUCK_LYRE = "pluck.lyre";
-            public static final String PLUCK_MANDOBASS = "pluck.mandobass";
-            public static final String PLUCK_MANDOCELLO = "pluck.mandocello";
-            public static final String PLUCK_MANDOLA = "pluck.mandola";
-            public static final String PLUCK_MANDOLIN = "pluck.mandolin";
-            public static final String PLUCK_MANDOLIN_OCTAVE = "pluck.mandolin.octave";
-            public static final String PLUCK_MANDORA = "pluck.mandora";
-            public static final String PLUCK_MANDORE = "pluck.mandore";
-            public static final String PLUCK_MAROVANY = "pluck.marovany";
-            public static final String PLUCK_MUSICAL_BOW = "pluck.musical-bow";
-            public static final String PLUCK_NGONI = "pluck.ngoni";
-            public static final String PLUCK_OUD = "pluck.oud";
-            public static final String PLUCK_PIPA = "pluck.pipa";
-            public static final String PLUCK_PSALTERY = "pluck.psaltery";
-            public static final String PLUCK_RUAN = "pluck.ruan";
-            public static final String PLUCK_SALLANEH = "pluck.sallaneh";
-            public static final String PLUCK_SANSHIN = "pluck.sanshin";
-            public static final String PLUCK_SANTOOR = "pluck.santoor";
-            public static final String PLUCK_SANXIAN = "pluck.sanxian";
-            public static final String PLUCK_SAROD = "pluck.sarod";
-            public static final String PLUCK_SAUNG = "pluck.saung";
-            public static final String PLUCK_SAZ = "pluck.saz";
-            public static final String PLUCK_SE = "pluck.se";
-            public static final String PLUCK_SETAR = "pluck.setar";
-            public static final String PLUCK_SHAMISEN = "pluck.shamisen";
-            public static final String PLUCK_SITAR = "pluck.sitar";
-            public static final String PLUCK_SYNTH = "pluck.synth";
-            public static final String PLUCK_SYNTH_CHARANG = "pluck.synth.charang";
-            public static final String PLUCK_SYNTH_CHIFF = "pluck.synth.chiff";
-            public static final String PLUCK_SYNTH_STICK = "pluck.synth.stick";
-            public static final String PLUCK_TAMBURA = "pluck.tambura";
-            public static final String PLUCK_TAMBURA_BULGARIAN = "pluck.tambura.bulgarian";
-            public static final String PLUCK_TAMBURA_FEMALE = "pluck.tambura.female";
-            public static final String PLUCK_TAMBURA_MALE = "pluck.tambura.male";
-            public static final String PLUCK_TAR = "pluck.tar";
-            public static final String PLUCK_THEORBO = "pluck.theorbo";
-            public static final String PLUCK_TIMPLE = "pluck.timple";
-            public static final String PLUCK_TIPLE = "pluck.tiple";
-            public static final String PLUCK_TRES = "pluck.tres";
-            public static final String PLUCK_UKULELE = "pluck.ukulele";
-            public static final String PLUCK_UKULELE_TENOR = "pluck.ukulele.tenor";
-            public static final String PLUCK_VALIHA = "pluck.valiha";
-            public static final String PLUCK_VEENA = "pluck.veena";
-            public static final String PLUCK_VEENA_MOHAN = "pluck.veena.mohan";
-            public static final String PLUCK_VEENA_RUDRA = "pluck.veena.rudra";
-            public static final String PLUCK_VEENA_VICHITRA = "pluck.veena.vichitra";
-            public static final String PLUCK_VIHUELA = "pluck.vihuela";
-            public static final String PLUCK_VIHUELA_MEXICAN = "pluck.vihuela.mexican";
-            public static final String PLUCK_XALAM = "pluck.xalam";
-            public static final String PLUCK_YUEQIN = "pluck.yueqin";
-            public static final String PLUCK_ZITHER = "pluck.zither";
-            public static final String PLUCK_ZITHER_OVERTONE = "pluck.zither.overtone";
-            public static final String RATTLE_AFOXE = "rattle.afoxe";
-            public static final String RATTLE_BIRDS = "rattle.birds";
-            public static final String RATTLE_CABASA = "rattle.cabasa";
-            public static final String RATTLE_CAXIXI = "rattle.caxixi";
-            public static final String RATTLE_COG = "rattle.cog";
-            public static final String RATTLE_GANZA = "rattle.ganza";
-            public static final String RATTLE_HOSHO = "rattle.hosho";
-            public static final String RATTLE_JAWBONE = "rattle.jawbone";
-            public static final String RATTLE_KAYAMBA = "rattle.kayamba";
-            public static final String RATTLE_KPOKO_KPOKO = "rattle.kpoko-kpoko";
-            public static final String RATTLE_LAVA_STONES = "rattle.lava-stones";
-            public static final String RATTLE_MARACA = "rattle.maraca";
-            public static final String RATTLE_RAIN_STICK = "rattle.rain-stick";
-            public static final String RATTLE_RATCHET = "rattle.ratchet";
-            public static final String RATTLE_RATTLE = "rattle.rattle";
-            public static final String RATTLE_SHAKER = "rattle.shaker";
-            public static final String RATTLE_SHAKER_EGG = "rattle.shaker.egg";
-            public static final String RATTLE_SHEKERE = "rattle.shekere";
-            public static final String RATTLE_SISTRE = "rattle.sistre";
-            public static final String RATTLE_TELEVI = "rattle.televi";
-            public static final String RATTLE_VIBRASLAP = "rattle.vibraslap";
-            public static final String RATTLE_WASEMBE = "rattle.wasembe";
-            public static final String STRINGS_AJAENG = "strings.ajaeng";
-            public static final String STRINGS_ARPEGGIONE = "strings.arpeggione";
-            public static final String STRINGS_BARYTON = "strings.baryton";
-            public static final String STRINGS_CELLO = "strings.cello";
-            public static final String STRINGS_CELLO_PICCOLO = "strings.cello.piccolo";
-            public static final String STRINGS_CONTRABASS = "strings.contrabass";
-            public static final String STRINGS_CRWTH = "strings.crwth";
-            public static final String STRINGS_DAN_GAO = "strings.dan-gao";
-            public static final String STRINGS_DIHU = "strings.dihu";
-            public static final String STRINGS_ERHU = "strings.erhu";
-            public static final String STRINGS_ERXIAN = "strings.erxian";
-            public static final String STRINGS_ESRAJ = "strings.esraj";
-            public static final String STRINGS_FIDDLE = "strings.fiddle";
-            public static final String STRINGS_FIDDLE_HARDANGER = "strings.fiddle.hardanger";
-            public static final String STRINGS_GADULKA = "strings.gadulka";
-            public static final String STRINGS_GAOHU = "strings.gaohu";
-            public static final String STRINGS_GEHU = "strings.gehu";
-            public static final String STRINGS_GROUP = "strings.group";
-            public static final String STRINGS_GROUP_SYNTH = "strings.group.synth";
-            public static final String STRINGS_HAEGEUM = "strings.haegeum";
-            public static final String STRINGS_HURDY_GURDY = "strings.hurdy-gurdy";
-            public static final String STRINGS_IGIL = "strings.igil";
-            public static final String STRINGS_KAMANCHA = "strings.kamancha";
-            public static final String STRINGS_KOKYU = "strings.kokyu";
-            public static final String STRINGS_LARUAN = "strings.laruan";
-            public static final String STRINGS_LEIQIN = "strings.leiqin";
-            public static final String STRINGS_LIRONE = "strings.lirone";
-            public static final String STRINGS_LYRA_BYZANTINE = "strings.lyra.byzantine";
-            public static final String STRINGS_LYRA_CRETAN = "strings.lyra.cretan";
-            public static final String STRINGS_MORIN_KHUUR = "strings.morin-khuur";
-            public static final String STRINGS_NYCKELHARPA = "strings.nyckelharpa";
-            public static final String STRINGS_OCTOBASS = "strings.octobass";
-            public static final String STRINGS_REBAB = "strings.rebab";
-            public static final String STRINGS_REBEC = "strings.rebec";
-            public static final String STRINGS_SARANGI = "strings.sarangi";
-            public static final String STRINGS_STROH_VIOLIN = "strings.stroh-violin";
-            public static final String STRINGS_TROMBA_MARINA = "strings.tromba-marina";
-            public static final String STRINGS_VIELLE = "strings.vielle";
-            public static final String STRINGS_VIOL = "strings.viol";
-            public static final String STRINGS_VIOL_ALTO = "strings.viol.alto";
-            public static final String STRINGS_VIOL_BASS = "strings.viol.bass";
-            public static final String STRINGS_VIOL_TENOR = "strings.viol.tenor";
-            public static final String STRINGS_VIOL_TREBLE = "strings.viol.treble";
-            public static final String STRINGS_VIOL_VIOLONE = "strings.viol.violone";
-            public static final String STRINGS_VIOLA = "strings.viola";
-            public static final String STRINGS_VIOLA_DAMORE = "strings.viola-damore";
-            public static final String STRINGS_VIOLIN = "strings.violin";
-            public static final String STRINGS_VIOLONO_PICCOLO = "strings.violono.piccolo";
-            public static final String STRINGS_VIOLOTTA = "strings.violotta";
-            public static final String STRINGS_YAYLI_TANBUR = "strings.yayli-tanbur";
-            public static final String STRINGS_YAZHENG = "strings.yazheng";
-            public static final String STRINGS_ZHONGHU = "strings.zhonghu";
-            public static final String SYNTH_EFFECTS = "synth.effects";
-            public static final String SYNTH_EFFECTS_ATMOSPHERE = "synth.effects.atmosphere";
-            public static final String SYNTH_EFFECTS_BRIGHTNESS = "synth.effects.brightness";
-            public static final String SYNTH_EFFECTS_CRYSTAL = "synth.effects.crystal";
-            public static final String SYNTH_EFFECTS_ECHOES = "synth.effects.echoes";
-            public static final String SYNTH_EFFECTS_GOBLINS = "synth.effects.goblins";
-            public static final String SYNTH_EFFECTS_RAIN = "synth.effects.rain";
-            public static final String SYNTH_EFFECTS_SCI_FI = "synth.effects.sci-fi";
-            public static final String SYNTH_EFFECTS_SOUNDTRACK = "synth.effects.soundtrack";
-            public static final String SYNTH_GROUP = "synth.group";
-            public static final String SYNTH_GROUP_FIFTHS = "synth.group.fifths";
-            public static final String SYNTH_GROUP_ORCHESTRA = "synth.group.orchestra";
-            public static final String SYNTH_PAD = "synth.pad";
-            public static final String SYNTH_PAD_BOWED = "synth.pad.bowed";
-            public static final String SYNTH_PAD_CHOIR = "synth.pad.choir";
-            public static final String SYNTH_PAD_HALO = "synth.pad.halo";
-            public static final String SYNTH_PAD_METALLIC = "synth.pad.metallic";
-            public static final String SYNTH_PAD_POLYSYNTH = "synth.pad.polysynth";
-            public static final String SYNTH_PAD_SWEEP = "synth.pad.sweep";
-            public static final String SYNTH_PAD_WARM = "synth.pad.warm";
-            public static final String SYNTH_THEREMIN = "synth.theremin";
-            public static final String SYNTH_TONE_SAWTOOTH = "synth.tone.sawtooth";
-            public static final String SYNTH_TONE_SINE = "synth.tone.sine";
-            public static final String SYNTH_TONE_SQUARE = "synth.tone.square";
-            public static final String VOICE_AA = "voice.aa";
-            public static final String VOICE_ALTO = "voice.alto";
-            public static final String VOICE_AW = "voice.aw";
-            public static final String VOICE_BARITONE = "voice.baritone";
-            public static final String VOICE_BASS = "voice.bass";
-            public static final String VOICE_CHILD = "voice.child";
-            public static final String VOICE_COUNTERTENOR = "voice.countertenor";
-            public static final String VOICE_DOO = "voice.doo";
-            public static final String VOICE_EE = "voice.ee";
-            public static final String VOICE_FEMALE = "voice.female";
-            public static final String VOICE_KAZOO = "voice.kazoo";
-            public static final String VOICE_MALE = "voice.male";
-            public static final String VOICE_MEZZO_SOPRANO = "voice.mezzo-soprano";
-            public static final String VOICE_MM = "voice.mm";
-            public static final String VOICE_OO = "voice.oo";
-            public static final String VOICE_PERCUSSION = "voice.percussion";
-            public static final String VOICE_PERCUSSION_BEATBOX = "voice.percussion.beatbox";
-            public static final String VOICE_SOPRANO = "voice.soprano";
-            public static final String VOICE_SYNTH = "voice.synth";
-            public static final String VOICE_TALK_BOX = "voice.talk-box";
-            public static final String VOICE_TENOR = "voice.tenor";
-            public static final String VOICE_VOCALS = "voice.vocals";
-            public static final String WIND_FLUTES_BANSURI = "wind.flutes.bansuri";
-            public static final String WIND_FLUTES_BLOWN_BOTTLE = "wind.flutes.blown-bottle";
-            public static final String WIND_FLUTES_CALLIOPE = "wind.flutes.calliope";
-            public static final String WIND_FLUTES_DANSO = "wind.flutes.danso";
-            public static final String WIND_FLUTES_DI_ZI = "wind.flutes.di-zi";
-            public static final String WIND_FLUTES_DVOJNICE = "wind.flutes.dvojnice";
-            public static final String WIND_FLUTES_FIFE = "wind.flutes.fife";
-            public static final String WIND_FLUTES_FLAGEOLET = "wind.flutes.flageolet";
-            public static final String WIND_FLUTES_FLUTE = "wind.flutes.flute";
-            public static final String WIND_FLUTES_FLUTE_ALTO = "wind.flutes.flute.alto";
-            public static final String WIND_FLUTES_FLUTE_BASS = "wind.flutes.flute.bass";
-            public static final String WIND_FLUTES_FLUTE_CONTRA_ALTO = "wind.flutes.flute.contra-alto";
-            public static final String WIND_FLUTES_FLUTE_CONTRABASS = "wind.flutes.flute.contrabass";
-            public static final String WIND_FLUTES_FLUTE_DOUBLE_CONTRABASS = "wind.flutes.flute.double-contrabass";
-            public static final String WIND_FLUTES_FLUTE_IRISH = "wind.flutes.flute.irish";
-            public static final String WIND_FLUTES_FLUTE_PICCOLO = "wind.flutes.flute.piccolo";
-            public static final String WIND_FLUTES_FLUTE_SUBCONTRABASS = "wind.flutes.flute.subcontrabass";
-            public static final String WIND_FLUTES_FUJARA = "wind.flutes.fujara";
-            public static final String WIND_FLUTES_GEMSHORN = "wind.flutes.gemshorn";
-            public static final String WIND_FLUTES_HOCCHIKU = "wind.flutes.hocchiku";
-            public static final String WIND_FLUTES_HUN = "wind.flutes.hun";
-            public static final String WIND_FLUTES_KAVAL = "wind.flutes.kaval";
-            public static final String WIND_FLUTES_KAWALA = "wind.flutes.kawala";
-            public static final String WIND_FLUTES_KHLUI = "wind.flutes.khlui";
-            public static final String WIND_FLUTES_KNOTWEED = "wind.flutes.knotweed";
-            public static final String WIND_FLUTES_KONCOVKA_ALTO = "wind.flutes.koncovka.alto";
-            public static final String WIND_FLUTES_KOUDI = "wind.flutes.koudi";
-            public static final String WIND_FLUTES_NEY = "wind.flutes.ney";
-            public static final String WIND_FLUTES_NOHKAN = "wind.flutes.nohkan";
-            public static final String WIND_FLUTES_NOSE = "wind.flutes.nose";
-            public static final String WIND_FLUTES_OCARINA = "wind.flutes.ocarina";
-            public static final String WIND_FLUTES_OVERTONE_TENOR = "wind.flutes.overtone.tenor";
-            public static final String WIND_FLUTES_PALENDAG = "wind.flutes.palendag";
-            public static final String WIND_FLUTES_PANPIPES = "wind.flutes.panpipes";
-            public static final String WIND_FLUTES_QUENA = "wind.flutes.quena";
-            public static final String WIND_FLUTES_RECORDER = "wind.flutes.recorder";
-            public static final String WIND_FLUTES_RECORDER_ALTO = "wind.flutes.recorder.alto";
-            public static final String WIND_FLUTES_RECORDER_BASS = "wind.flutes.recorder.bass";
-            public static final String WIND_FLUTES_RECORDER_CONTRABASS = "wind.flutes.recorder.contrabass";
-            public static final String WIND_FLUTES_RECORDER_DESCANT = "wind.flutes.recorder.descant";
-            public static final String WIND_FLUTES_RECORDER_GARKLEIN = "wind.flutes.recorder.garklein";
-            public static final String WIND_FLUTES_RECORDER_GREAT_BASS = "wind.flutes.recorder.great-bass";
-            public static final String WIND_FLUTES_RECORDER_SOPRANINO = "wind.flutes.recorder.sopranino";
-            public static final String WIND_FLUTES_RECORDER_SOPRANO = "wind.flutes.recorder.soprano";
-            public static final String WIND_FLUTES_RECORDER_TENOR = "wind.flutes.recorder.tenor";
-            public static final String WIND_FLUTES_RYUTEKI = "wind.flutes.ryuteki";
-            public static final String WIND_FLUTES_SHAKUHACHI = "wind.flutes.shakuhachi";
-            public static final String WIND_FLUTES_SHEPHERDS_PIPE = "wind.flutes.shepherds-pipe";
-            public static final String WIND_FLUTES_SHINOBUE = "wind.flutes.shinobue";
-            public static final String WIND_FLUTES_SHVI = "wind.flutes.shvi";
-            public static final String WIND_FLUTES_SULING = "wind.flutes.suling";
-            public static final String WIND_FLUTES_TARKA = "wind.flutes.tarka";
-            public static final String WIND_FLUTES_TUMPONG = "wind.flutes.tumpong";
-            public static final String WIND_FLUTES_VENU = "wind.flutes.venu";
-            public static final String WIND_FLUTES_WHISTLE = "wind.flutes.whistle";
-            public static final String WIND_FLUTES_WHISTLE_ALTO = "wind.flutes.whistle.alto";
-            public static final String WIND_FLUTES_WHISTLE_LOW_IRISH = "wind.flutes.whistle.low-irish";
-            public static final String WIND_FLUTES_WHISTLE_SHIVA = "wind.flutes.whistle.shiva";
-            public static final String WIND_FLUTES_WHISTLE_SLIDE = "wind.flutes.whistle.slide";
-            public static final String WIND_FLUTES_WHISTLE_TIN = "wind.flutes.whistle.tin";
-            public static final String WIND_FLUTES_WHISTLE_TIN_BFLAT = "wind.flutes.whistle.tin.bflat";
-            public static final String WIND_FLUTES_WHISTLE_TIN_D = "wind.flutes.whistle.tin.d";
-            public static final String WIND_FLUTES_XIAO = "wind.flutes.xiao";
-            public static final String WIND_FLUTES_XUN = "wind.flutes.xun";
-            public static final String WIND_GROUP = "wind.group";
-            public static final String WIND_JUG = "wind.jug";
-            public static final String WIND_PIPES_BAGPIPES = "wind.pipes.bagpipes";
-            public static final String WIND_PIPES_GAIDA = "wind.pipes.gaida";
-            public static final String WIND_PIPES_HIGHLAND = "wind.pipes.highland";
-            public static final String WIND_PIPES_UILLEANN = "wind.pipes.uilleann";
-            public static final String WIND_PUNGI = "wind.pungi";
-            public static final String WIND_REED_ALBOGUE = "wind.reed.albogue";
-            public static final String WIND_REED_ALBOKA = "wind.reed.alboka";
-            public static final String WIND_REED_ALGAITA = "wind.reed.algaita";
-            public static final String WIND_REED_ARGHUL = "wind.reed.arghul";
-            public static final String WIND_REED_BASSET_HORN = "wind.reed.basset-horn";
-            public static final String WIND_REED_BASSOON = "wind.reed.bassoon";
-            public static final String WIND_REED_BAWU = "wind.reed.bawu";
-            public static final String WIND_REED_BIFORA = "wind.reed.bifora";
-            public static final String WIND_REED_BOMBARDE = "wind.reed.bombarde";
-            public static final String WIND_REED_CHALUMEAU = "wind.reed.chalumeau";
-            public static final String WIND_REED_CLARINET = "wind.reed.clarinet";
-            public static final String WIND_REED_CLARINET_A = "wind.reed.clarinet.a";
-            public static final String WIND_REED_CLARINET_ALTO = "wind.reed.clarinet.alto";
-            public static final String WIND_REED_CLARINET_BASS = "wind.reed.clarinet.bass";
-            public static final String WIND_REED_CLARINET_BASSET = "wind.reed.clarinet.basset";
-            public static final String WIND_REED_CLARINET_BFLAT = "wind.reed.clarinet.bflat";
-            public static final String WIND_REED_CLARINET_CONTRA_ALTO = "wind.reed.clarinet.contra-alto";
-            public static final String WIND_REED_CLARINET_CONTRABASS = "wind.reed.clarinet.contrabass";
-            public static final String WIND_REED_CLARINET_EFLAT = "wind.reed.clarinet.eflat";
-            public static final String WIND_REED_CLARINET_PICCOLO_AFLAT = "wind.reed.clarinet.piccolo.aflat";
-            public static final String WIND_REED_CLARINETTE_DAMOUR = "wind.reed.clarinette-damour";
-            public static final String WIND_REED_CONTRABASS = "wind.reed.contrabass";
-            public static final String WIND_REED_CONTRABASSOON = "wind.reed.contrabassoon";
-            public static final String WIND_REED_CORNAMUSE = "wind.reed.cornamuse";
-            public static final String WIND_REED_CROMORNE = "wind.reed.cromorne";
-            public static final String WIND_REED_CRUMHORN = "wind.reed.crumhorn";
-            public static final String WIND_REED_CRUMHORN_ALTO = "wind.reed.crumhorn.alto";
-            public static final String WIND_REED_CRUMHORN_BASS = "wind.reed.crumhorn.bass";
-            public static final String WIND_REED_CRUMHORN_GREAT_BASS = "wind.reed.crumhorn.great-bass";
-            public static final String WIND_REED_CRUMHORN_SOPRANO = "wind.reed.crumhorn.soprano";
-            public static final String WIND_REED_CRUMHORN_TENOR = "wind.reed.crumhorn.tenor";
-            public static final String WIND_REED_DIPLE = "wind.reed.diple";
-            public static final String WIND_REED_DIPLICA = "wind.reed.diplica";
-            public static final String WIND_REED_DUDUK = "wind.reed.duduk";
-            public static final String WIND_REED_DULCIAN = "wind.reed.dulcian";
-            public static final String WIND_REED_DULZAINA = "wind.reed.dulzaina";
-            public static final String WIND_REED_ENGLISH_HORN = "wind.reed.english-horn";
-            public static final String WIND_REED_GUANZI = "wind.reed.guanzi";
-            public static final String WIND_REED_HARMONICA = "wind.reed.harmonica";
-            public static final String WIND_REED_HARMONICA_BASS = "wind.reed.harmonica.bass";
-            public static final String WIND_REED_HECKEL_CLARINA = "wind.reed.heckel-clarina";
-            public static final String WIND_REED_HECKELPHONE = "wind.reed.heckelphone";
-            public static final String WIND_REED_HECKELPHONE_PICCOLO = "wind.reed.heckelphone.piccolo";
-            public static final String WIND_REED_HECKELPHONE_CLARINET = "wind.reed.heckelphone-clarinet";
-            public static final String WIND_REED_HICHIRIKI = "wind.reed.hichiriki";
-            public static final String WIND_REED_HIRTENSCHALMEI = "wind.reed.hirtenschalmei";
-            public static final String WIND_REED_HNE = "wind.reed.hne";
-            public static final String WIND_REED_HORNPIPE = "wind.reed.hornpipe";
-            public static final String WIND_REED_HOUGUAN = "wind.reed.houguan";
-            public static final String WIND_REED_HULUSI = "wind.reed.hulusi";
-            public static final String WIND_REED_JOGI_BAJA = "wind.reed.jogi-baja";
-            public static final String WIND_REED_KEN_BAU = "wind.reed.ken-bau";
-            public static final String WIND_REED_KHAEN_MOUTH_ORGAN = "wind.reed.khaen-mouth-organ";
-            public static final String WIND_REED_LAUNEDDAS = "wind.reed.launeddas";
-            public static final String WIND_REED_MAQRUNAH = "wind.reed.maqrunah";
-            public static final String WIND_REED_MELODICA = "wind.reed.melodica";
-            public static final String WIND_REED_MIJWIZ = "wind.reed.mijwiz";
-            public static final String WIND_REED_MIZMAR = "wind.reed.mizmar";
-            public static final String WIND_REED_NADASWARAM = "wind.reed.nadaswaram";
-            public static final String WIND_REED_OBOE = "wind.reed.oboe";
-            public static final String WIND_REED_OBOE_BASS = "wind.reed.oboe.bass";
-            public static final String WIND_REED_OBOE_PICCOLO = "wind.reed.oboe.piccolo";
-            public static final String WIND_REED_OBOE_DA_CACCIA = "wind.reed.oboe-da-caccia";
-            public static final String WIND_REED_OBOE_DAMORE = "wind.reed.oboe-damore";
-            public static final String WIND_REED_OCTAVIN = "wind.reed.octavin";
-            public static final String WIND_REED_PI = "wind.reed.pi";
-            public static final String WIND_REED_PIBGORN = "wind.reed.pibgorn";
-            public static final String WIND_REED_PIRI = "wind.reed.piri";
-            public static final String WIND_REED_RACKETT = "wind.reed.rackett";
-            public static final String WIND_REED_RAUSCHPFEIFE = "wind.reed.rauschpfeife";
-            public static final String WIND_REED_RHAITA = "wind.reed.rhaita";
-            public static final String WIND_REED_ROTHPHONE = "wind.reed.rothphone";
-            public static final String WIND_REED_SARRUSAPHONE = "wind.reed.sarrusaphone";
-            public static final String WIND_REED_SAXONETTE = "wind.reed.saxonette";
-            public static final String WIND_REED_SAXOPHONE = "wind.reed.saxophone";
-            public static final String WIND_REED_SAXOPHONE_ALTO = "wind.reed.saxophone.alto";
-            public static final String WIND_REED_SAXOPHONE_AULOCHROME = "wind.reed.saxophone.aulochrome";
-            public static final String WIND_REED_SAXOPHONE_BARITONE = "wind.reed.saxophone.baritone";
-            public static final String WIND_REED_SAXOPHONE_BASS = "wind.reed.saxophone.bass";
-            public static final String WIND_REED_SAXOPHONE_CONTRABASS = "wind.reed.saxophone.contrabass";
-            public static final String WIND_REED_SAXOPHONE_MELODY = "wind.reed.saxophone.melody";
-            public static final String WIND_REED_SAXOPHONE_MEZZO_SOPRANO = "wind.reed.saxophone.mezzo-soprano";
-            public static final String WIND_REED_SAXOPHONE_SOPRANINO = "wind.reed.saxophone.sopranino";
-            public static final String WIND_REED_SAXOPHONE_SOPRANISSIMO = "wind.reed.saxophone.sopranissimo";
-            public static final String WIND_REED_SAXOPHONE_SOPRANO = "wind.reed.saxophone.soprano";
-            public static final String WIND_REED_SAXOPHONE_SUBCONTRABASS = "wind.reed.saxophone.subcontrabass";
-            public static final String WIND_REED_SAXOPHONE_TENOR = "wind.reed.saxophone.tenor";
-            public static final String WIND_REED_SHAWM = "wind.reed.shawm";
-            public static final String WIND_REED_SHENAI = "wind.reed.shenai";
-            public static final String WIND_REED_SHENG = "wind.reed.sheng";
-            public static final String WIND_REED_SIPSI = "wind.reed.sipsi";
-            public static final String WIND_REED_SOPILA = "wind.reed.sopila";
-            public static final String WIND_REED_SORNA = "wind.reed.sorna";
-            public static final String WIND_REED_SRALAI = "wind.reed.sralai";
-            public static final String WIND_REED_SUONA = "wind.reed.suona";
-            public static final String WIND_REED_SURNAI = "wind.reed.surnai";
-            public static final String WIND_REED_TAEPYEONGSO = "wind.reed.taepyeongso";
-            public static final String WIND_REED_TAROGATO = "wind.reed.tarogato";
-            public static final String WIND_REED_TAROGATO_ANCIENT = "wind.reed.tarogato.ancient";
-            public static final String WIND_REED_TROMPETA_CHINA = "wind.reed.trompeta-china";
-            public static final String WIND_REED_TUBAX = "wind.reed.tubax";
-            public static final String WIND_REED_XAPHOON = "wind.reed.xaphoon";
-            public static final String WIND_REED_ZHALEIKA = "wind.reed.zhaleika";
-            public static final String WIND_REED_ZURLA = "wind.reed.zurla";
-            public static final String WIND_REED_ZURNA = "wind.reed.zurna";
-            public static final String WOOD_AGOGO_BLOCK = "wood.agogo-block";
-            public static final String WOOD_AGUNG_A_TAMLANG = "wood.agung-a-tamlang";
-            public static final String WOOD_AHOKO = "wood.ahoko";
-            public static final String WOOD_BONES = "wood.bones";
-            public static final String WOOD_CASTANETS = "wood.castanets";
-            public static final String WOOD_CLAVES = "wood.claves";
-            public static final String WOOD_DRUM_STICKS = "wood.drum-sticks";
-            public static final String WOOD_GOURD = "wood.gourd";
-            public static final String WOOD_GRANITE_BLOCK = "wood.granite-block";
-            public static final String WOOD_GUBAN = "wood.guban";
-            public static final String WOOD_GUIRO = "wood.guiro";
-            public static final String WOOD_HYOUSHIGI = "wood.hyoushigi";
-            public static final String WOOD_IPU = "wood.ipu";
-            public static final String WOOD_JAM_BLOCK = "wood.jam-block";
-            public static final String WOOD_KAEKEEKE = "wood.kaekeeke";
-            public static final String WOOD_KAGUL = "wood.kagul";
-            public static final String WOOD_KALAAU = "wood.kalaau";
-            public static final String WOOD_KASHIKLAR = "wood.kashiklar";
-            public static final String WOOD_KUBING = "wood.kubing";
-            public static final String WOOD_PAN_CLAPPERS = "wood.pan-clappers";
-            public static final String WOOD_SAND_BLOCK = "wood.sand-block";
-            public static final String WOOD_SLAPSTICK = "wood.slapstick";
-            public static final String WOOD_STIR_DRUM = "wood.stir-drum";
-            public static final String WOOD_TEMPLE_BLOCK = "wood.temple-block";
-            public static final String WOOD_TIC_TOC_BLOCK = "wood.tic-toc-block";
-            public static final String WOOD_TONETANG = "wood.tonetang";
-            public static final String WOOD_WOOD_BLOCK = "wood.wood-block";
+            static final String BRASS_ALPHORN = "brass.alphorn";
+            static final String BRASS_ALTO_HORN = "brass.alto-horn";
+            static final String BRASS_BARITONE_HORN = "brass.baritone-horn";
+            static final String BRASS_BUGLE = "brass.bugle";
+            static final String BRASS_BUGLE_ALTO = "brass.bugle.alto";
+            static final String BRASS_BUGLE_BARITONE = "brass.bugle.baritone";
+            static final String BRASS_BUGLE_CONTRABASS = "brass.bugle.contrabass";
+            static final String BRASS_BUGLE_EUPHONIUM_BUGLE = "brass.bugle.euphonium-bugle";
+            static final String BRASS_BUGLE_MELLOPHONE_BUGLE = "brass.bugle.mellophone-bugle";
+            static final String BRASS_BUGLE_SOPRANO = "brass.bugle.soprano";
+            static final String BRASS_CIMBASSO = "brass.cimbasso";
+            static final String BRASS_CONCH_SHELL = "brass.conch-shell";
+            static final String BRASS_CORNET = "brass.cornet";
+            static final String BRASS_CORNET_SOPRANO = "brass.cornet.soprano";
+            static final String BRASS_CORNETT = "brass.cornett";
+            static final String BRASS_CORNETT_TENOR = "brass.cornett.tenor";
+            static final String BRASS_CORNETTINO = "brass.cornettino";
+            static final String BRASS_DIDGERIDOO = "brass.didgeridoo";
+            static final String BRASS_EUPHONIUM = "brass.euphonium";
+            static final String BRASS_FISCORN = "brass.fiscorn";
+            static final String BRASS_FLUGELHORN = "brass.flugelhorn";
+            static final String BRASS_FRENCH_HORN = "brass.french-horn";
+            static final String BRASS_GROUP = "brass.group";
+            static final String BRASS_GROUP_SYNTH = "brass.group.synth";
+            static final String BRASS_HELICON = "brass.helicon";
+            static final String BRASS_HORAGAI = "brass.horagai";
+            static final String BRASS_KUHLOHORN = "brass.kuhlohorn";
+            static final String BRASS_MELLOPHONE = "brass.mellophone";
+            static final String BRASS_NATURAL_HORN = "brass.natural-horn";
+            static final String BRASS_OPHICLEIDE = "brass.ophicleide";
+            static final String BRASS_POSTHORN = "brass.posthorn";
+            static final String BRASS_RAG_DUNG = "brass.rag-dung";
+            static final String BRASS_SACKBUTT = "brass.sackbutt";
+            static final String BRASS_SACKBUTT_ALTO = "brass.sackbutt.alto";
+            static final String BRASS_SACKBUTT_BASS = "brass.sackbutt.bass";
+            static final String BRASS_SACKBUTT_TENOR = "brass.sackbutt.tenor";
+            static final String BRASS_SAXHORN = "brass.saxhorn";
+            static final String BRASS_SERPENT = "brass.serpent";
+            static final String BRASS_SHOFAR = "brass.shofar";
+            static final String BRASS_SOUSAPHONE = "brass.sousaphone";
+            static final String BRASS_TROMBONE = "brass.trombone";
+            static final String BRASS_TROMBONE_ALTO = "brass.trombone.alto";
+            static final String BRASS_TROMBONE_BASS = "brass.trombone.bass";
+            static final String BRASS_TROMBONE_CONTRABASS = "brass.trombone.contrabass";
+            static final String BRASS_TROMBONE_TENOR = "brass.trombone.tenor";
+            static final String BRASS_TRUMPET = "brass.trumpet";
+            static final String BRASS_TRUMPET_BAROQUE = "brass.trumpet.baroque";
+            static final String BRASS_TRUMPET_BASS = "brass.trumpet.bass";
+            static final String BRASS_TRUMPET_BFLAT = "brass.trumpet.bflat";
+            static final String BRASS_TRUMPET_C = "brass.trumpet.c";
+            static final String BRASS_TRUMPET_D = "brass.trumpet.d";
+            static final String BRASS_TRUMPET_PICCOLO = "brass.trumpet.piccolo";
+            static final String BRASS_TRUMPET_POCKET = "brass.trumpet.pocket";
+            static final String BRASS_TRUMPET_SLIDE = "brass.trumpet.slide";
+            static final String BRASS_TRUMPET_TENOR = "brass.trumpet.tenor";
+            static final String BRASS_TUBA = "brass.tuba";
+            static final String BRASS_TUBA_BASS = "brass.tuba.bass";
+            static final String BRASS_TUBA_SUBCONTRABASS = "brass.tuba.subcontrabass";
+            static final String BRASS_VIENNA_HORN = "brass.vienna-horn";
+            static final String BRASS_VUVUZELA = "brass.vuvuzela";
+            static final String BRASS_WAGNER_TUBA = "brass.wagner-tuba";
+            static final String DRUM_APENTEMMA = "drum.apentemma";
+            static final String DRUM_ASHIKO = "drum.ashiko";
+            static final String DRUM_ATABAQUE = "drum.atabaque";
+            static final String DRUM_ATOKE = "drum.atoke";
+            static final String DRUM_ATSIMEVU = "drum.atsimevu";
+            static final String DRUM_AXATSE = "drum.axatse";
+            static final String DRUM_BASS_DRUM = "drum.bass-drum";
+            static final String DRUM_BATA = "drum.bata";
+            static final String DRUM_BATA_ITOTELE = "drum.bata.itotele";
+            static final String DRUM_BATA_IYA = "drum.bata.iya";
+            static final String DRUM_BATA_OKONKOLO = "drum.bata.okonkolo";
+            static final String DRUM_BENDIR = "drum.bendir";
+            static final String DRUM_BODHRAN = "drum.bodhran";
+            static final String DRUM_BOMBO = "drum.bombo";
+            static final String DRUM_BONGO = "drum.bongo";
+            static final String DRUM_BOUGARABOU = "drum.bougarabou";
+            static final String DRUM_BUFFALO_DRUM = "drum.buffalo-drum";
+            static final String DRUM_CAJON = "drum.cajon";
+            static final String DRUM_CHENDA = "drum.chenda";
+            static final String DRUM_CHU_DAIKO = "drum.chu-daiko";
+            static final String DRUM_CONGA = "drum.conga";
+            static final String DRUM_CUICA = "drum.cuica";
+            static final String DRUM_DABAKAN = "drum.dabakan";
+            static final String DRUM_DAFF = "drum.daff";
+            static final String DRUM_DAFLI = "drum.dafli";
+            static final String DRUM_DAIBYOSI = "drum.daibyosi";
+            static final String DRUM_DAMROO = "drum.damroo";
+            static final String DRUM_DARABUKA = "drum.darabuka";
+            static final String DRUM_DEF = "drum.def";
+            static final String DRUM_DHOL = "drum.dhol";
+            static final String DRUM_DHOLAK = "drum.dholak";
+            static final String DRUM_DJEMBE = "drum.djembe";
+            static final String DRUM_DOIRA = "drum.doira";
+            static final String DRUM_DONDO = "drum.dondo";
+            static final String DRUM_DOUN_DOUN_BA = "drum.doun-doun-ba";
+            static final String DRUM_DUFF = "drum.duff";
+            static final String DRUM_DUMBEK = "drum.dumbek";
+            static final String DRUM_FONTOMFROM = "drum.fontomfrom";
+            static final String DRUM_FRAME_DRUM = "drum.frame-drum";
+            static final String DRUM_FRAME_DRUM_ARABIAN = "drum.frame-drum.arabian";
+            static final String DRUM_GEDUK = "drum.geduk";
+            static final String DRUM_GHATAM = "drum.ghatam";
+            static final String DRUM_GOME = "drum.gome";
+            static final String DRUM_GROUP = "drum.group";
+            static final String DRUM_GROUP_CHINESE = "drum.group.chinese";
+            static final String DRUM_GROUP_EWE = "drum.group.ewe";
+            static final String DRUM_GROUP_INDIAN = "drum.group.indian";
+            static final String DRUM_GROUP_SET = "drum.group.set";
+            static final String DRUM_HAND_DRUM = "drum.hand-drum";
+            static final String DRUM_HIRA_DAIKO = "drum.hira-daiko";
+            static final String DRUM_IBO = "drum.ibo";
+            static final String DRUM_IGIHUMURIZO = "drum.igihumurizo";
+            static final String DRUM_INYAHURA = "drum.inyahura";
+            static final String DRUM_ISHAKWE = "drum.ishakwe";
+            static final String DRUM_JANG_GU = "drum.jang-gu";
+            static final String DRUM_KAGAN = "drum.kagan";
+            static final String DRUM_KAKKO = "drum.kakko";
+            static final String DRUM_KANJIRA = "drum.kanjira";
+            static final String DRUM_KENDHANG = "drum.kendhang";
+            static final String DRUM_KENDHANG_AGENG = "drum.kendhang.ageng";
+            static final String DRUM_KENDHANG_CIBLON = "drum.kendhang.ciblon";
+            static final String DRUM_KENKENI = "drum.kenkeni";
+            static final String DRUM_KHOL = "drum.khol";
+            static final String DRUM_KICK_DRUM = "drum.kick-drum";
+            static final String DRUM_KIDI = "drum.kidi";
+            static final String DRUM_KO_DAIKO = "drum.ko-daiko";
+            static final String DRUM_KPANLOGO = "drum.kpanlogo";
+            static final String DRUM_KUDUM = "drum.kudum";
+            static final String DRUM_LAMBEG = "drum.lambeg";
+            static final String DRUM_LION_DRUM = "drum.lion-drum";
+            static final String DRUM_LOG_DRUM = "drum.log-drum";
+            static final String DRUM_LOG_DRUM_AFRICAN = "drum.log-drum.african";
+            static final String DRUM_LOG_DRUM_NATIVE = "drum.log-drum.native";
+            static final String DRUM_LOG_DRUM_NIGERIAN = "drum.log-drum.nigerian";
+            static final String DRUM_MADAL = "drum.madal";
+            static final String DRUM_MADDALE = "drum.maddale";
+            static final String DRUM_MRIDANGAM = "drum.mridangam";
+            static final String DRUM_NAAL = "drum.naal";
+            static final String DRUM_NAGADO_DAIKO = "drum.nagado-daiko";
+            static final String DRUM_NAGARA = "drum.nagara";
+            static final String DRUM_NAQARA = "drum.naqara";
+            static final String DRUM_O_DAIKO = "drum.o-daiko";
+            static final String DRUM_OKAWA = "drum.okawa";
+            static final String DRUM_OKEDO_DAIKO = "drum.okedo-daiko";
+            static final String DRUM_PAHU_HULA = "drum.pahu-hula";
+            static final String DRUM_PAKHAWAJ = "drum.pakhawaj";
+            static final String DRUM_PANDEIRO = "drum.pandeiro";
+            static final String DRUM_PANDERO = "drum.pandero";
+            static final String DRUM_POWWOW = "drum.powwow";
+            static final String DRUM_PUEBLO = "drum.pueblo";
+            static final String DRUM_REPINIQUE = "drum.repinique";
+            static final String DRUM_RIQ = "drum.riq";
+            static final String DRUM_ROTOTOM = "drum.rototom";
+            static final String DRUM_SABAR = "drum.sabar";
+            static final String DRUM_SAKARA = "drum.sakara";
+            static final String DRUM_SAMPHO = "drum.sampho";
+            static final String DRUM_SANGBAN = "drum.sangban";
+            static final String DRUM_SHIME_DAIKO = "drum.shime-daiko";
+            static final String DRUM_SLIT_DRUM = "drum.slit-drum";
+            static final String DRUM_SLIT_DRUM_KRIN = "drum.slit-drum.krin";
+            static final String DRUM_SNARE_DRUM = "drum.snare-drum";
+            static final String DRUM_SNARE_DRUM_ELECTRIC = "drum.snare-drum.electric";
+            static final String DRUM_SOGO = "drum.sogo";
+            static final String DRUM_SURDO = "drum.surdo";
+            static final String DRUM_TABLA = "drum.tabla";
+            static final String DRUM_TABLA_BAYAN = "drum.tabla.bayan";
+            static final String DRUM_TABLA_DAYAN = "drum.tabla.dayan";
+            static final String DRUM_TAIKO = "drum.taiko";
+            static final String DRUM_TALKING = "drum.talking";
+            static final String DRUM_TAMA = "drum.tama";
+            static final String DRUM_TAMBORITA = "drum.tamborita";
+            static final String DRUM_TAMBOURINE = "drum.tambourine";
+            static final String DRUM_TAMTE = "drum.tamte";
+            static final String DRUM_TANGKU = "drum.tangku";
+            static final String DRUM_TAN_TAN = "drum.tan-tan";
+            static final String DRUM_TAPHON = "drum.taphon";
+            static final String DRUM_TAR = "drum.tar";
+            static final String DRUM_TASHA = "drum.tasha";
+            static final String DRUM_TENOR_DRUM = "drum.tenor-drum";
+            static final String DRUM_TEPONAXTLI = "drum.teponaxtli";
+            static final String DRUM_THAVIL = "drum.thavil";
+            static final String DRUM_THE_BOX = "drum.the-box";
+            static final String DRUM_TIMBALE = "drum.timbale";
+            static final String DRUM_TIMPANI = "drum.timpani";
+            static final String DRUM_TINAJA = "drum.tinaja";
+            static final String DRUM_TOERE = "drum.toere";
+            static final String DRUM_TOMBAK = "drum.tombak";
+            static final String DRUM_TOM_TOM = "drum.tom-tom";
+            static final String DRUM_TOM_TOM_SYNTH = "drum.tom-tom.synth";
+            static final String DRUM_TSUZUMI = "drum.tsuzumi";
+            static final String DRUM_TUMBAK = "drum.tumbak";
+            static final String DRUM_UCHIWA_DAIKO = "drum.uchiwa-daiko";
+            static final String DRUM_UDAKU = "drum.udaku";
+            static final String DRUM_UDU = "drum.udu";
+            static final String DRUM_ZARB = "drum.zarb";
+            static final String EFFECT_AEOLIAN_HARP = "effect.aeolian-harp";
+            static final String EFFECT_AIR_HORN = "effect.air-horn";
+            static final String EFFECT_APPLAUSE = "effect.applause";
+            static final String EFFECT_BASS_STRING_SLAP = "effect.bass-string-slap";
+            static final String EFFECT_BIRD = "effect.bird";
+            static final String EFFECT_BIRD_NIGHTINGALE = "effect.bird.nightingale";
+            static final String EFFECT_BIRD_TWEET = "effect.bird.tweet";
+            static final String EFFECT_BREATH = "effect.breath";
+            static final String EFFECT_BUBBLE = "effect.bubble";
+            static final String EFFECT_BULLROARER = "effect.bullroarer";
+            static final String EFFECT_BURST = "effect.burst";
+            static final String EFFECT_CAR = "effect.car";
+            static final String EFFECT_CAR_CRASH = "effect.car.crash";
+            static final String EFFECT_CAR_ENGINE = "effect.car.engine";
+            static final String EFFECT_CAR_PASS = "effect.car.pass";
+            static final String EFFECT_CAR_STOP = "effect.car.stop";
+            static final String EFFECT_CRICKETS = "effect.crickets";
+            static final String EFFECT_DOG = "effect.dog";
+            static final String EFFECT_DOOR_CREAK = "effect.door.creak";
+            static final String EFFECT_DOOR_SLAM = "effect.door.slam";
+            static final String EFFECT_EXPLOSION = "effect.explosion";
+            static final String EFFECT_FLUTE_KEY_CLICK = "effect.flute-key-click";
+            static final String EFFECT_FOOTSTEPS = "effect.footsteps";
+            static final String EFFECT_FROGS = "effect.frogs";
+            static final String EFFECT_GUITAR_CUTTING = "effect.guitar-cutting";
+            static final String EFFECT_GUITAR_FRET = "effect.guitar-fret";
+            static final String EFFECT_GUNSHOT = "effect.gunshot";
+            static final String EFFECT_HAND_CLAP = "effect.hand-clap";
+            static final String EFFECT_HEARTBEAT = "effect.heartbeat";
+            static final String EFFECT_HELICOPTER = "effect.helicopter";
+            static final String EFFECT_HIGH_Q = "effect.high-q";
+            static final String EFFECT_HORSE_GALLOP = "effect.horse-gallop";
+            static final String EFFECT_JET_PLANE = "effect.jet-plane";
+            static final String EFFECT_LASER_GUN = "effect.laser-gun";
+            static final String EFFECT_LAUGH = "effect.laugh";
+            static final String EFFECT_LIONS_ROAR = "effect.lions-roar";
+            static final String EFFECT_MACHINE_GUN = "effect.machine-gun";
+            static final String EFFECT_MARCHING_MACHINE = "effect.marching-machine";
+            static final String EFFECT_METRONOME_BELL = "effect.metronome-bell";
+            static final String EFFECT_METRONOME_CLICK = "effect.metronome-click";
+            static final String EFFECT_PAT = "effect.pat";
+            static final String EFFECT_PUNCH = "effect.punch";
+            static final String EFFECT_RAIN = "effect.rain";
+            static final String EFFECT_SCRATCH = "effect.scratch";
+            static final String EFFECT_SCREAM = "effect.scream";
+            static final String EFFECT_SEASHORE = "effect.seashore";
+            static final String EFFECT_SIREN = "effect.siren";
+            static final String EFFECT_SLAP = "effect.slap";
+            static final String EFFECT_SNAP = "effect.snap";
+            static final String EFFECT_STAMP = "effect.stamp";
+            static final String EFFECT_STARSHIP = "effect.starship";
+            static final String EFFECT_STREAM = "effect.stream";
+            static final String EFFECT_TELEPHONE_RING = "effect.telephone-ring";
+            static final String EFFECT_THUNDER = "effect.thunder";
+            static final String EFFECT_TRAIN = "effect.train";
+            static final String EFFECT_TRASH_CAN = "effect.trash-can";
+            static final String EFFECT_WHIP = "effect.whip";
+            static final String EFFECT_WHISTLE = "effect.whistle";
+            static final String EFFECT_WHISTLE_MOUTH_SIREN = "effect.whistle.mouth-siren";
+            static final String EFFECT_WHISTLE_POLICE = "effect.whistle.police";
+            static final String EFFECT_WHISTLE_SLIDE = "effect.whistle.slide";
+            static final String EFFECT_WHISTLE_TRAIN = "effect.whistle.train";
+            static final String EFFECT_WIND = "effect.wind";
+            static final String KEYBOARD_ACCORDION = "keyboard.accordion";
+            static final String KEYBOARD_BANDONEON = "keyboard.bandoneon";
+            static final String KEYBOARD_CELESTA = "keyboard.celesta";
+            static final String KEYBOARD_CLAVICHORD = "keyboard.clavichord";
+            static final String KEYBOARD_CLAVICHORD_SYNTH = "keyboard.clavichord.synth";
+            static final String KEYBOARD_CONCERTINA = "keyboard.concertina";
+            static final String KEYBOARD_FORTEPIANO = "keyboard.fortepiano";
+            static final String KEYBOARD_HARMONIUM = "keyboard.harmonium";
+            static final String KEYBOARD_HARPSICHORD = "keyboard.harpsichord";
+            static final String KEYBOARD_ONDES_MARTENOT = "keyboard.ondes-martenot";
+            static final String KEYBOARD_ORGAN = "keyboard.organ";
+            static final String KEYBOARD_ORGAN_DRAWBAR = "keyboard.organ.drawbar";
+            static final String KEYBOARD_ORGAN_PERCUSSIVE = "keyboard.organ.percussive";
+            static final String KEYBOARD_ORGAN_PIPE = "keyboard.organ.pipe";
+            static final String KEYBOARD_ORGAN_REED = "keyboard.organ.reed";
+            static final String KEYBOARD_ORGAN_ROTARY = "keyboard.organ.rotary";
+            static final String KEYBOARD_PIANO = "keyboard.piano";
+            static final String KEYBOARD_PIANO_ELECTRIC = "keyboard.piano.electric";
+            static final String KEYBOARD_PIANO_GRAND = "keyboard.piano.grand";
+            static final String KEYBOARD_PIANO_HONKY_TONK = "keyboard.piano.honky-tonk";
+            static final String KEYBOARD_PIANO_PREPARED = "keyboard.piano.prepared";
+            static final String KEYBOARD_PIANO_TOY = "keyboard.piano.toy";
+            static final String KEYBOARD_PIANO_UPRIGHT = "keyboard.piano.upright";
+            static final String KEYBOARD_VIRGINAL = "keyboard.virginal";
+            static final String METAL_ADODO = "metal.adodo";
+            static final String METAL_ANVIL = "metal.anvil";
+            static final String METAL_BABENDIL = "metal.babendil";
+            static final String METAL_BELLS_AGOGO = "metal.bells.agogo";
+            static final String METAL_BELLS_ALMGLOCKEN = "metal.bells.almglocken";
+            static final String METAL_BELLS_BELL_PLATE = "metal.bells.bell-plate";
+            static final String METAL_BELLS_BELL_TREE = "metal.bells.bell-tree";
+            static final String METAL_BELLS_CARILLON = "metal.bells.carillon";
+            static final String METAL_BELLS_CHIMES = "metal.bells.chimes";
+            static final String METAL_BELLS_CHIMTA = "metal.bells.chimta";
+            static final String METAL_BELLS_CHIPPLI = "metal.bells.chippli";
+            static final String METAL_BELLS_CHURCH = "metal.bells.church";
+            static final String METAL_BELLS_COWBELL = "metal.bells.cowbell";
+            static final String METAL_BELLS_DAWURO = "metal.bells.dawuro";
+            static final String METAL_BELLS_GANKOKWE = "metal.bells.gankokwe";
+            static final String METAL_BELLS_GHUNGROO = "metal.bells.ghungroo";
+            static final String METAL_BELLS_HATHELI = "metal.bells.hatheli";
+            static final String METAL_BELLS_JINGLE_BELL = "metal.bells.jingle-bell";
+            static final String METAL_BELLS_KHARTAL = "metal.bells.khartal";
+            static final String METAL_BELLS_MARK_TREE = "metal.bells.mark-tree";
+            static final String METAL_BELLS_SISTRUM = "metal.bells.sistrum";
+            static final String METAL_BELLS_SLEIGH_BELLS = "metal.bells.sleigh-bells";
+            static final String METAL_BELLS_TEMPLE = "metal.bells.temple";
+            static final String METAL_BELLS_TIBETAN = "metal.bells.tibetan";
+            static final String METAL_BELLS_TINKLEBELL = "metal.bells.tinklebell";
+            static final String METAL_BELLS_TRYCHEL = "metal.bells.trychel";
+            static final String METAL_BELLS_WIND_CHIMES = "metal.bells.wind-chimes";
+            static final String METAL_BELLS_ZILLS = "metal.bells.zills";
+            static final String METAL_BERIMBAU = "metal.berimbau";
+            static final String METAL_BRAKE_DRUMS = "metal.brake-drums";
+            static final String METAL_CROTALES = "metal.crotales";
+            static final String METAL_CYMBAL_BO = "metal.cymbal.bo";
+            static final String METAL_CYMBAL_CENG_CENG = "metal.cymbal.ceng-ceng";
+            static final String METAL_CYMBAL_CHABARA = "metal.cymbal.chabara";
+            static final String METAL_CYMBAL_CHINESE = "metal.cymbal.chinese";
+            static final String METAL_CYMBAL_CHING = "metal.cymbal.ching";
+            static final String METAL_CYMBAL_CLASH = "metal.cymbal.clash";
+            static final String METAL_CYMBAL_CRASH = "metal.cymbal.crash";
+            static final String METAL_CYMBAL_FINGER = "metal.cymbal.finger";
+            static final String METAL_CYMBAL_HAND = "metal.cymbal.hand";
+            static final String METAL_CYMBAL_KESI = "metal.cymbal.kesi";
+            static final String METAL_CYMBAL_MANJEERA = "metal.cymbal.manjeera";
+            static final String METAL_CYMBAL_REVERSE = "metal.cymbal.reverse";
+            static final String METAL_CYMBAL_RIDE = "metal.cymbal.ride";
+            static final String METAL_CYMBAL_SIZZLE = "metal.cymbal.sizzle";
+            static final String METAL_CYMBAL_SPLASH = "metal.cymbal.splash";
+            static final String METAL_CYMBAL_SUSPENDED = "metal.cymbal.suspended";
+            static final String METAL_CYMBAL_TEBYOSHI = "metal.cymbal.tebyoshi";
+            static final String METAL_CYMBAL_TIBETAN = "metal.cymbal.tibetan";
+            static final String METAL_CYMBAL_TINGSHA = "metal.cymbal.tingsha";
+            static final String METAL_FLEXATONE = "metal.flexatone";
+            static final String METAL_GONG = "metal.gong";
+            static final String METAL_GONG_AGENG = "metal.gong.ageng";
+            static final String METAL_GONG_AGUNG = "metal.gong.agung";
+            static final String METAL_GONG_CHANCHIKI = "metal.gong.chanchiki";
+            static final String METAL_GONG_CHINESE = "metal.gong.chinese";
+            static final String METAL_GONG_GANDINGAN = "metal.gong.gandingan";
+            static final String METAL_GONG_KEMPUL = "metal.gong.kempul";
+            static final String METAL_GONG_KEMPYANG = "metal.gong.kempyang";
+            static final String METAL_GONG_KETUK = "metal.gong.ketuk";
+            static final String METAL_GONG_KKWENGGWARI = "metal.gong.kkwenggwari";
+            static final String METAL_GONG_LUO = "metal.gong.luo";
+            static final String METAL_GONG_SINGING = "metal.gong.singing";
+            static final String METAL_GONG_THAI = "metal.gong.thai";
+            static final String METAL_GUIRA = "metal.guira";
+            static final String METAL_HANG = "metal.hang";
+            static final String METAL_HI_HAT = "metal.hi-hat";
+            static final String METAL_JAW_HARP = "metal.jaw-harp";
+            static final String METAL_KENGONG = "metal.kengong";
+            static final String METAL_MURCHANG = "metal.murchang";
+            static final String METAL_MUSICAL_SAW = "metal.musical-saw";
+            static final String METAL_SINGING_BOWL = "metal.singing-bowl";
+            static final String METAL_SPOONS = "metal.spoons";
+            static final String METAL_STEEL_DRUMS = "metal.steel-drums";
+            static final String METAL_TAMTAM = "metal.tamtam";
+            static final String METAL_THUNDERSHEET = "metal.thundersheet";
+            static final String METAL_TRIANGLE = "metal.triangle";
+            static final String METAL_WASHBOARD = "metal.washboard";
+            static final String PITCHED_PERCUSSION_ANGKLUNG = "pitched-percussion.angklung";
+            static final String PITCHED_PERCUSSION_BALAFON = "pitched-percussion.balafon";
+            static final String PITCHED_PERCUSSION_BELL_LYRE = "pitched-percussion.bell-lyre";
+            static final String PITCHED_PERCUSSION_BELLS = "pitched-percussion.bells";
+            static final String PITCHED_PERCUSSION_BIANQING = "pitched-percussion.bianqing";
+            static final String PITCHED_PERCUSSION_BIANZHONG = "pitched-percussion.bianzhong";
+            static final String PITCHED_PERCUSSION_BONANG = "pitched-percussion.bonang";
+            static final String PITCHED_PERCUSSION_CIMBALOM = "pitched-percussion.cimbalom";
+            static final String PITCHED_PERCUSSION_CRYSTAL_GLASSES = "pitched-percussion.crystal-glasses";
+            static final String PITCHED_PERCUSSION_DAN_TAM_THAP_LUC = "pitched-percussion.dan-tam-thap-luc";
+            static final String PITCHED_PERCUSSION_FANGXIANG = "pitched-percussion.fangxiang";
+            static final String PITCHED_PERCUSSION_GANDINGAN_A_KAYO = "pitched-percussion.gandingan-a-kayo";
+            static final String PITCHED_PERCUSSION_GANGSA = "pitched-percussion.gangsa";
+            static final String PITCHED_PERCUSSION_GENDER = "pitched-percussion.gender";
+            static final String PITCHED_PERCUSSION_GIYING = "pitched-percussion.giying";
+            static final String PITCHED_PERCUSSION_GLASS_HARMONICA = "pitched-percussion.glass-harmonica";
+            static final String PITCHED_PERCUSSION_GLOCKENSPIEL = "pitched-percussion.glockenspiel";
+            static final String PITCHED_PERCUSSION_GLOCKENSPIEL_ALTO = "pitched-percussion.glockenspiel.alto";
+            static final String PITCHED_PERCUSSION_GLOCKENSPIEL_SOPRANO = "pitched-percussion.glockenspiel.soprano";
+            static final String PITCHED_PERCUSSION_GYIL = "pitched-percussion.gyil";
+            static final String PITCHED_PERCUSSION_HAMMER_DULCIMER = "pitched-percussion.hammer-dulcimer";
+            static final String PITCHED_PERCUSSION_HANDBELLS = "pitched-percussion.handbells";
+            static final String PITCHED_PERCUSSION_KALIMBA = "pitched-percussion.kalimba";
+            static final String PITCHED_PERCUSSION_KANTIL = "pitched-percussion.kantil";
+            static final String PITCHED_PERCUSSION_KHIM = "pitched-percussion.khim";
+            static final String PITCHED_PERCUSSION_KULINTANG = "pitched-percussion.kulintang";
+            static final String PITCHED_PERCUSSION_KULINTANG_A_KAYO = "pitched-percussion.kulintang-a-kayo";
+            static final String PITCHED_PERCUSSION_KULINTANG_A_TINIOK = "pitched-percussion.kulintang-a-tiniok";
+            static final String PITCHED_PERCUSSION_LIKEMBE = "pitched-percussion.likembe";
+            static final String PITCHED_PERCUSSION_LUNTANG = "pitched-percussion.luntang";
+            static final String PITCHED_PERCUSSION_MARIMBA = "pitched-percussion.marimba";
+            static final String PITCHED_PERCUSSION_MARIMBA_BASS = "pitched-percussion.marimba.bass";
+            static final String PITCHED_PERCUSSION_MBIRA = "pitched-percussion.mbira";
+            static final String PITCHED_PERCUSSION_MBIRA_ARRAY = "pitched-percussion.mbira.array";
+            static final String PITCHED_PERCUSSION_METALLOPHONE = "pitched-percussion.metallophone";
+            static final String PITCHED_PERCUSSION_METALLOPHONE_ALTO = "pitched-percussion.metallophone.alto";
+            static final String PITCHED_PERCUSSION_METALLOPHONE_BASS = "pitched-percussion.metallophone.bass";
+            static final String PITCHED_PERCUSSION_METALLOPHONE_SOPRANO = "pitched-percussion.metallophone.soprano";
+            static final String PITCHED_PERCUSSION_MUSIC_BOX = "pitched-percussion.music-box";
+            static final String PITCHED_PERCUSSION_PELOG_PANERUS = "pitched-percussion.pelog-panerus";
+            static final String PITCHED_PERCUSSION_PEMADE = "pitched-percussion.pemade";
+            static final String PITCHED_PERCUSSION_PENYACAH = "pitched-percussion.penyacah";
+            static final String PITCHED_PERCUSSION_RANAT_EK = "pitched-percussion.ranat.ek";
+            static final String PITCHED_PERCUSSION_RANAT_EK_LEK = "pitched-percussion.ranat.ek-lek";
+            static final String PITCHED_PERCUSSION_RANAT_THUM = "pitched-percussion.ranat.thum";
+            static final String PITCHED_PERCUSSION_RANAT_THUM_LEK = "pitched-percussion.ranat.thum-lek";
+            static final String PITCHED_PERCUSSION_REYONG = "pitched-percussion.reyong";
+            static final String PITCHED_PERCUSSION_SANZA = "pitched-percussion.sanza";
+            static final String PITCHED_PERCUSSION_SARON_BARUNG = "pitched-percussion.saron-barung";
+            static final String PITCHED_PERCUSSION_SARON_DEMONG = "pitched-percussion.saron-demong";
+            static final String PITCHED_PERCUSSION_SARON_PANERUS = "pitched-percussion.saron-panerus";
+            static final String PITCHED_PERCUSSION_SLENDRO_PANERUS = "pitched-percussion.slendro-panerus";
+            static final String PITCHED_PERCUSSION_SLENTEM = "pitched-percussion.slentem";
+            static final String PITCHED_PERCUSSION_TSYMBALY = "pitched-percussion.tsymbaly";
+            static final String PITCHED_PERCUSSION_TUBES = "pitched-percussion.tubes";
+            static final String PITCHED_PERCUSSION_TUBULAR_BELLS = "pitched-percussion.tubular-bells";
+            static final String PITCHED_PERCUSSION_VIBRAPHONE = "pitched-percussion.vibraphone";
+            static final String PITCHED_PERCUSSION_XYLOPHONE = "pitched-percussion.xylophone";
+            static final String PITCHED_PERCUSSION_XYLOPHONE_ALTO = "pitched-percussion.xylophone.alto";
+            static final String PITCHED_PERCUSSION_XYLOPHONE_BASS = "pitched-percussion.xylophone.bass";
+            static final String PITCHED_PERCUSSION_XYLOPHONE_SOPRANO = "pitched-percussion.xylophone.soprano";
+            static final String PITCHED_PERCUSSION_XYLORIMBA = "pitched-percussion.xylorimba";
+            static final String PITCHED_PERCUSSION_YANGQIN = "pitched-percussion.yangqin";
+            static final String PLUCK_ARCHLUTE = "pluck.archlute";
+            static final String PLUCK_AUTOHARP = "pluck.autoharp";
+            static final String PLUCK_BAGLAMA = "pluck.baglama";
+            static final String PLUCK_BAJO = "pluck.bajo";
+            static final String PLUCK_BALALAIKA = "pluck.balalaika";
+            static final String PLUCK_BALALAIKA_ALTO = "pluck.balalaika.alto";
+            static final String PLUCK_BALALAIKA_BASS = "pluck.balalaika.bass";
+            static final String PLUCK_BALALAIKA_CONTRABASS = "pluck.balalaika.contrabass";
+            static final String PLUCK_BALALAIKA_PICCOLO = "pluck.balalaika.piccolo";
+            static final String PLUCK_BALALAIKA_PRIMA = "pluck.balalaika.prima";
+            static final String PLUCK_BALALAIKA_SECUNDA = "pluck.balalaika.secunda";
+            static final String PLUCK_BANDOLA = "pluck.bandola";
+            static final String PLUCK_BANDURA = "pluck.bandura";
+            static final String PLUCK_BANDURRIA = "pluck.bandurria";
+            static final String PLUCK_BANJO = "pluck.banjo";
+            static final String PLUCK_BANJO_TENOR = "pluck.banjo.tenor";
+            static final String PLUCK_BANJOLELE = "pluck.banjolele";
+            static final String PLUCK_BARBAT = "pluck.barbat";
+            static final String PLUCK_BASS = "pluck.bass";
+            static final String PLUCK_BASS_ACOUSTIC = "pluck.bass.acoustic";
+            static final String PLUCK_BASS_BOLON = "pluck.bass.bolon";
+            static final String PLUCK_BASS_ELECTRIC = "pluck.bass.electric";
+            static final String PLUCK_BASS_FRETLESS = "pluck.bass.fretless";
+            static final String PLUCK_BASS_GUITARRON = "pluck.bass.guitarron";
+            static final String PLUCK_BASS_SYNTH = "pluck.bass.synth";
+            static final String PLUCK_BASS_SYNTH_LEAD = "pluck.bass.synth.lead";
+            static final String PLUCK_BASS_WASHTUB = "pluck.bass.washtub";
+            static final String PLUCK_BASS_WHAMOLA = "pluck.bass.whamola";
+            static final String PLUCK_BEGENA = "pluck.begena";
+            static final String PLUCK_BIWA = "pluck.biwa";
+            static final String PLUCK_BORDONUA = "pluck.bordonua";
+            static final String PLUCK_BOUZOUKI = "pluck.bouzouki";
+            static final String PLUCK_BOUZOUKI_IRISH = "pluck.bouzouki.irish";
+            static final String PLUCK_CELTIC_HARP = "pluck.celtic-harp";
+            static final String PLUCK_CHARANGO = "pluck.charango";
+            static final String PLUCK_CHITARRA_BATTENTE = "pluck.chitarra-battente";
+            static final String PLUCK_CITHARA = "pluck.cithara";
+            static final String PLUCK_CITTERN = "pluck.cittern";
+            static final String PLUCK_CUATRO = "pluck.cuatro";
+            static final String PLUCK_DAN_BAU = "pluck.dan-bau";
+            static final String PLUCK_DAN_NGUYET = "pluck.dan-nguyet";
+            static final String PLUCK_DAN_TRANH = "pluck.dan-tranh";
+            static final String PLUCK_DAN_TY_BA = "pluck.dan-ty-ba";
+            static final String PLUCK_DIDDLEY_BOW = "pluck.diddley-bow";
+            static final String PLUCK_DOMRA = "pluck.domra";
+            static final String PLUCK_DOMU = "pluck.domu";
+            static final String PLUCK_DULCIMER = "pluck.dulcimer";
+            static final String PLUCK_DUTAR = "pluck.dutar";
+            static final String PLUCK_DUXIANQIN = "pluck.duxianqin";
+            static final String PLUCK_EKTARA = "pluck.ektara";
+            static final String PLUCK_GEOMUNGO = "pluck.geomungo";
+            static final String PLUCK_GOTTUVADHYAM = "pluck.gottuvadhyam";
+            static final String PLUCK_GUITAR = "pluck.guitar";
+            static final String PLUCK_GUITAR_ACOUSTIC = "pluck.guitar.acoustic";
+            static final String PLUCK_GUITAR_ELECTRIC = "pluck.guitar.electric";
+            static final String PLUCK_GUITAR_NYLON_STRING = "pluck.guitar.nylon-string";
+            static final String PLUCK_GUITAR_PEDAL_STEEL = "pluck.guitar.pedal-steel";
+            static final String PLUCK_GUITAR_PORTUGUESE = "pluck.guitar.portuguese";
+            static final String PLUCK_GUITAR_REQUINTO = "pluck.guitar.requinto";
+            static final String PLUCK_GUITAR_RESONATOR = "pluck.guitar.resonator";
+            static final String PLUCK_GUITAR_STEEL_STRING = "pluck.guitar.steel-string";
+            static final String PLUCK_GUITJO = "pluck.guitjo";
+            static final String PLUCK_GUITJO_DOUBLE_NECK = "pluck.guitjo.double-neck";
+            static final String PLUCK_GUQIN = "pluck.guqin";
+            static final String PLUCK_GUZHENG = "pluck.guzheng";
+            static final String PLUCK_GUZHENG_CHOAZHOU = "pluck.guzheng.choazhou";
+            static final String PLUCK_HARP = "pluck.harp";
+            static final String PLUCK_HARP_GUITAR = "pluck.harp-guitar";
+            static final String PLUCK_HUAPANGUERA = "pluck.huapanguera";
+            static final String PLUCK_JARANA_HUASTECA = "pluck.jarana-huasteca";
+            static final String PLUCK_JARANA_JAROCHA = "pluck.jarana-jarocha";
+            static final String PLUCK_JARANA_JAROCHA_MOSQUITO = "pluck.jarana-jarocha.mosquito";
+            static final String PLUCK_JARANA_JAROCHA_PRIMERA = "pluck.jarana-jarocha.primera";
+            static final String PLUCK_JARANA_JAROCHA_SEGUNDA = "pluck.jarana-jarocha.segunda";
+            static final String PLUCK_JARANA_JAROCHA_TERCERA = "pluck.jarana-jarocha.tercera";
+            static final String PLUCK_KABOSY = "pluck.kabosy";
+            static final String PLUCK_KANTELE = "pluck.kantele";
+            static final String PLUCK_KANUN = "pluck.kanun";
+            static final String PLUCK_KAYAGUM = "pluck.kayagum";
+            static final String PLUCK_KOBZA = "pluck.kobza";
+            static final String PLUCK_KOMUZ = "pluck.komuz";
+            static final String PLUCK_KORA = "pluck.kora";
+            static final String PLUCK_KOTO = "pluck.koto";
+            static final String PLUCK_KUTIYAPI = "pluck.kutiyapi";
+            static final String PLUCK_LANGELEIK = "pluck.langeleik";
+            static final String PLUCK_LAUD = "pluck.laud";
+            static final String PLUCK_LUTE = "pluck.lute";
+            static final String PLUCK_LYRE = "pluck.lyre";
+            static final String PLUCK_MANDOBASS = "pluck.mandobass";
+            static final String PLUCK_MANDOCELLO = "pluck.mandocello";
+            static final String PLUCK_MANDOLA = "pluck.mandola";
+            static final String PLUCK_MANDOLIN = "pluck.mandolin";
+            static final String PLUCK_MANDOLIN_OCTAVE = "pluck.mandolin.octave";
+            static final String PLUCK_MANDORA = "pluck.mandora";
+            static final String PLUCK_MANDORE = "pluck.mandore";
+            static final String PLUCK_MAROVANY = "pluck.marovany";
+            static final String PLUCK_MUSICAL_BOW = "pluck.musical-bow";
+            static final String PLUCK_NGONI = "pluck.ngoni";
+            static final String PLUCK_OUD = "pluck.oud";
+            static final String PLUCK_PIPA = "pluck.pipa";
+            static final String PLUCK_PSALTERY = "pluck.psaltery";
+            static final String PLUCK_RUAN = "pluck.ruan";
+            static final String PLUCK_SALLANEH = "pluck.sallaneh";
+            static final String PLUCK_SANSHIN = "pluck.sanshin";
+            static final String PLUCK_SANTOOR = "pluck.santoor";
+            static final String PLUCK_SANXIAN = "pluck.sanxian";
+            static final String PLUCK_SAROD = "pluck.sarod";
+            static final String PLUCK_SAUNG = "pluck.saung";
+            static final String PLUCK_SAZ = "pluck.saz";
+            static final String PLUCK_SE = "pluck.se";
+            static final String PLUCK_SETAR = "pluck.setar";
+            static final String PLUCK_SHAMISEN = "pluck.shamisen";
+            static final String PLUCK_SITAR = "pluck.sitar";
+            static final String PLUCK_SYNTH = "pluck.synth";
+            static final String PLUCK_SYNTH_CHARANG = "pluck.synth.charang";
+            static final String PLUCK_SYNTH_CHIFF = "pluck.synth.chiff";
+            static final String PLUCK_SYNTH_STICK = "pluck.synth.stick";
+            static final String PLUCK_TAMBURA = "pluck.tambura";
+            static final String PLUCK_TAMBURA_BULGARIAN = "pluck.tambura.bulgarian";
+            static final String PLUCK_TAMBURA_FEMALE = "pluck.tambura.female";
+            static final String PLUCK_TAMBURA_MALE = "pluck.tambura.male";
+            static final String PLUCK_TAR = "pluck.tar";
+            static final String PLUCK_THEORBO = "pluck.theorbo";
+            static final String PLUCK_TIMPLE = "pluck.timple";
+            static final String PLUCK_TIPLE = "pluck.tiple";
+            static final String PLUCK_TRES = "pluck.tres";
+            static final String PLUCK_UKULELE = "pluck.ukulele";
+            static final String PLUCK_UKULELE_TENOR = "pluck.ukulele.tenor";
+            static final String PLUCK_VALIHA = "pluck.valiha";
+            static final String PLUCK_VEENA = "pluck.veena";
+            static final String PLUCK_VEENA_MOHAN = "pluck.veena.mohan";
+            static final String PLUCK_VEENA_RUDRA = "pluck.veena.rudra";
+            static final String PLUCK_VEENA_VICHITRA = "pluck.veena.vichitra";
+            static final String PLUCK_VIHUELA = "pluck.vihuela";
+            static final String PLUCK_VIHUELA_MEXICAN = "pluck.vihuela.mexican";
+            static final String PLUCK_XALAM = "pluck.xalam";
+            static final String PLUCK_YUEQIN = "pluck.yueqin";
+            static final String PLUCK_ZITHER = "pluck.zither";
+            static final String PLUCK_ZITHER_OVERTONE = "pluck.zither.overtone";
+            static final String RATTLE_AFOXE = "rattle.afoxe";
+            static final String RATTLE_BIRDS = "rattle.birds";
+            static final String RATTLE_CABASA = "rattle.cabasa";
+            static final String RATTLE_CAXIXI = "rattle.caxixi";
+            static final String RATTLE_COG = "rattle.cog";
+            static final String RATTLE_GANZA = "rattle.ganza";
+            static final String RATTLE_HOSHO = "rattle.hosho";
+            static final String RATTLE_JAWBONE = "rattle.jawbone";
+            static final String RATTLE_KAYAMBA = "rattle.kayamba";
+            static final String RATTLE_KPOKO_KPOKO = "rattle.kpoko-kpoko";
+            static final String RATTLE_LAVA_STONES = "rattle.lava-stones";
+            static final String RATTLE_MARACA = "rattle.maraca";
+            static final String RATTLE_RAIN_STICK = "rattle.rain-stick";
+            static final String RATTLE_RATCHET = "rattle.ratchet";
+            static final String RATTLE_RATTLE = "rattle.rattle";
+            static final String RATTLE_SHAKER = "rattle.shaker";
+            static final String RATTLE_SHAKER_EGG = "rattle.shaker.egg";
+            static final String RATTLE_SHEKERE = "rattle.shekere";
+            static final String RATTLE_SISTRE = "rattle.sistre";
+            static final String RATTLE_TELEVI = "rattle.televi";
+            static final String RATTLE_VIBRASLAP = "rattle.vibraslap";
+            static final String RATTLE_WASEMBE = "rattle.wasembe";
+            static final String STRINGS_AJAENG = "strings.ajaeng";
+            static final String STRINGS_ARPEGGIONE = "strings.arpeggione";
+            static final String STRINGS_BARYTON = "strings.baryton";
+            static final String STRINGS_CELLO = "strings.cello";
+            static final String STRINGS_CELLO_PICCOLO = "strings.cello.piccolo";
+            static final String STRINGS_CONTRABASS = "strings.contrabass";
+            static final String STRINGS_CRWTH = "strings.crwth";
+            static final String STRINGS_DAN_GAO = "strings.dan-gao";
+            static final String STRINGS_DIHU = "strings.dihu";
+            static final String STRINGS_ERHU = "strings.erhu";
+            static final String STRINGS_ERXIAN = "strings.erxian";
+            static final String STRINGS_ESRAJ = "strings.esraj";
+            static final String STRINGS_FIDDLE = "strings.fiddle";
+            static final String STRINGS_FIDDLE_HARDANGER = "strings.fiddle.hardanger";
+            static final String STRINGS_GADULKA = "strings.gadulka";
+            static final String STRINGS_GAOHU = "strings.gaohu";
+            static final String STRINGS_GEHU = "strings.gehu";
+            static final String STRINGS_GROUP = "strings.group";
+            static final String STRINGS_GROUP_SYNTH = "strings.group.synth";
+            static final String STRINGS_HAEGEUM = "strings.haegeum";
+            static final String STRINGS_HURDY_GURDY = "strings.hurdy-gurdy";
+            static final String STRINGS_IGIL = "strings.igil";
+            static final String STRINGS_KAMANCHA = "strings.kamancha";
+            static final String STRINGS_KOKYU = "strings.kokyu";
+            static final String STRINGS_LARUAN = "strings.laruan";
+            static final String STRINGS_LEIQIN = "strings.leiqin";
+            static final String STRINGS_LIRONE = "strings.lirone";
+            static final String STRINGS_LYRA_BYZANTINE = "strings.lyra.byzantine";
+            static final String STRINGS_LYRA_CRETAN = "strings.lyra.cretan";
+            static final String STRINGS_MORIN_KHUUR = "strings.morin-khuur";
+            static final String STRINGS_NYCKELHARPA = "strings.nyckelharpa";
+            static final String STRINGS_OCTOBASS = "strings.octobass";
+            static final String STRINGS_REBAB = "strings.rebab";
+            static final String STRINGS_REBEC = "strings.rebec";
+            static final String STRINGS_SARANGI = "strings.sarangi";
+            static final String STRINGS_STROH_VIOLIN = "strings.stroh-violin";
+            static final String STRINGS_TROMBA_MARINA = "strings.tromba-marina";
+            static final String STRINGS_VIELLE = "strings.vielle";
+            static final String STRINGS_VIOL = "strings.viol";
+            static final String STRINGS_VIOL_ALTO = "strings.viol.alto";
+            static final String STRINGS_VIOL_BASS = "strings.viol.bass";
+            static final String STRINGS_VIOL_TENOR = "strings.viol.tenor";
+            static final String STRINGS_VIOL_TREBLE = "strings.viol.treble";
+            static final String STRINGS_VIOL_VIOLONE = "strings.viol.violone";
+            static final String STRINGS_VIOLA = "strings.viola";
+            static final String STRINGS_VIOLA_DAMORE = "strings.viola-damore";
+            static final String STRINGS_VIOLIN = "strings.violin";
+            static final String STRINGS_VIOLONO_PICCOLO = "strings.violono.piccolo";
+            static final String STRINGS_VIOLOTTA = "strings.violotta";
+            static final String STRINGS_YAYLI_TANBUR = "strings.yayli-tanbur";
+            static final String STRINGS_YAZHENG = "strings.yazheng";
+            static final String STRINGS_ZHONGHU = "strings.zhonghu";
+            static final String SYNTH_EFFECTS = "synth.effects";
+            static final String SYNTH_EFFECTS_ATMOSPHERE = "synth.effects.atmosphere";
+            static final String SYNTH_EFFECTS_BRIGHTNESS = "synth.effects.brightness";
+            static final String SYNTH_EFFECTS_CRYSTAL = "synth.effects.crystal";
+            static final String SYNTH_EFFECTS_ECHOES = "synth.effects.echoes";
+            static final String SYNTH_EFFECTS_GOBLINS = "synth.effects.goblins";
+            static final String SYNTH_EFFECTS_RAIN = "synth.effects.rain";
+            static final String SYNTH_EFFECTS_SCI_FI = "synth.effects.sci-fi";
+            static final String SYNTH_EFFECTS_SOUNDTRACK = "synth.effects.soundtrack";
+            static final String SYNTH_GROUP = "synth.group";
+            static final String SYNTH_GROUP_FIFTHS = "synth.group.fifths";
+            static final String SYNTH_GROUP_ORCHESTRA = "synth.group.orchestra";
+            static final String SYNTH_PAD = "synth.pad";
+            static final String SYNTH_PAD_BOWED = "synth.pad.bowed";
+            static final String SYNTH_PAD_CHOIR = "synth.pad.choir";
+            static final String SYNTH_PAD_HALO = "synth.pad.halo";
+            static final String SYNTH_PAD_METALLIC = "synth.pad.metallic";
+            static final String SYNTH_PAD_POLYSYNTH = "synth.pad.polysynth";
+            static final String SYNTH_PAD_SWEEP = "synth.pad.sweep";
+            static final String SYNTH_PAD_WARM = "synth.pad.warm";
+            static final String SYNTH_THEREMIN = "synth.theremin";
+            static final String SYNTH_TONE_SAWTOOTH = "synth.tone.sawtooth";
+            static final String SYNTH_TONE_SINE = "synth.tone.sine";
+            static final String SYNTH_TONE_SQUARE = "synth.tone.square";
+            static final String VOICE_AA = "voice.aa";
+            static final String VOICE_ALTO = "voice.alto";
+            static final String VOICE_AW = "voice.aw";
+            static final String VOICE_BARITONE = "voice.baritone";
+            static final String VOICE_BASS = "voice.bass";
+            static final String VOICE_CHILD = "voice.child";
+            static final String VOICE_COUNTERTENOR = "voice.countertenor";
+            static final String VOICE_DOO = "voice.doo";
+            static final String VOICE_EE = "voice.ee";
+            static final String VOICE_FEMALE = "voice.female";
+            static final String VOICE_KAZOO = "voice.kazoo";
+            static final String VOICE_MALE = "voice.male";
+            static final String VOICE_MEZZO_SOPRANO = "voice.mezzo-soprano";
+            static final String VOICE_MM = "voice.mm";
+            static final String VOICE_OO = "voice.oo";
+            static final String VOICE_PERCUSSION = "voice.percussion";
+            static final String VOICE_PERCUSSION_BEATBOX = "voice.percussion.beatbox";
+            static final String VOICE_SOPRANO = "voice.soprano";
+            static final String VOICE_SYNTH = "voice.synth";
+            static final String VOICE_TALK_BOX = "voice.talk-box";
+            static final String VOICE_TENOR = "voice.tenor";
+            static final String VOICE_VOCALS = "voice.vocals";
+            static final String WIND_FLUTES_BANSURI = "wind.flutes.bansuri";
+            static final String WIND_FLUTES_BLOWN_BOTTLE = "wind.flutes.blown-bottle";
+            static final String WIND_FLUTES_CALLIOPE = "wind.flutes.calliope";
+            static final String WIND_FLUTES_DANSO = "wind.flutes.danso";
+            static final String WIND_FLUTES_DI_ZI = "wind.flutes.di-zi";
+            static final String WIND_FLUTES_DVOJNICE = "wind.flutes.dvojnice";
+            static final String WIND_FLUTES_FIFE = "wind.flutes.fife";
+            static final String WIND_FLUTES_FLAGEOLET = "wind.flutes.flageolet";
+            static final String WIND_FLUTES_FLUTE = "wind.flutes.flute";
+            static final String WIND_FLUTES_FLUTE_ALTO = "wind.flutes.flute.alto";
+            static final String WIND_FLUTES_FLUTE_BASS = "wind.flutes.flute.bass";
+            static final String WIND_FLUTES_FLUTE_CONTRA_ALTO = "wind.flutes.flute.contra-alto";
+            static final String WIND_FLUTES_FLUTE_CONTRABASS = "wind.flutes.flute.contrabass";
+            static final String WIND_FLUTES_FLUTE_DOUBLE_CONTRABASS = "wind.flutes.flute.double-contrabass";
+            static final String WIND_FLUTES_FLUTE_IRISH = "wind.flutes.flute.irish";
+            static final String WIND_FLUTES_FLUTE_PICCOLO = "wind.flutes.flute.piccolo";
+            static final String WIND_FLUTES_FLUTE_SUBCONTRABASS = "wind.flutes.flute.subcontrabass";
+            static final String WIND_FLUTES_FUJARA = "wind.flutes.fujara";
+            static final String WIND_FLUTES_GEMSHORN = "wind.flutes.gemshorn";
+            static final String WIND_FLUTES_HOCCHIKU = "wind.flutes.hocchiku";
+            static final String WIND_FLUTES_HUN = "wind.flutes.hun";
+            static final String WIND_FLUTES_KAVAL = "wind.flutes.kaval";
+            static final String WIND_FLUTES_KAWALA = "wind.flutes.kawala";
+            static final String WIND_FLUTES_KHLUI = "wind.flutes.khlui";
+            static final String WIND_FLUTES_KNOTWEED = "wind.flutes.knotweed";
+            static final String WIND_FLUTES_KONCOVKA_ALTO = "wind.flutes.koncovka.alto";
+            static final String WIND_FLUTES_KOUDI = "wind.flutes.koudi";
+            static final String WIND_FLUTES_NEY = "wind.flutes.ney";
+            static final String WIND_FLUTES_NOHKAN = "wind.flutes.nohkan";
+            static final String WIND_FLUTES_NOSE = "wind.flutes.nose";
+            static final String WIND_FLUTES_OCARINA = "wind.flutes.ocarina";
+            static final String WIND_FLUTES_OVERTONE_TENOR = "wind.flutes.overtone.tenor";
+            static final String WIND_FLUTES_PALENDAG = "wind.flutes.palendag";
+            static final String WIND_FLUTES_PANPIPES = "wind.flutes.panpipes";
+            static final String WIND_FLUTES_QUENA = "wind.flutes.quena";
+            static final String WIND_FLUTES_RECORDER = "wind.flutes.recorder";
+            static final String WIND_FLUTES_RECORDER_ALTO = "wind.flutes.recorder.alto";
+            static final String WIND_FLUTES_RECORDER_BASS = "wind.flutes.recorder.bass";
+            static final String WIND_FLUTES_RECORDER_CONTRABASS = "wind.flutes.recorder.contrabass";
+            static final String WIND_FLUTES_RECORDER_DESCANT = "wind.flutes.recorder.descant";
+            static final String WIND_FLUTES_RECORDER_GARKLEIN = "wind.flutes.recorder.garklein";
+            static final String WIND_FLUTES_RECORDER_GREAT_BASS = "wind.flutes.recorder.great-bass";
+            static final String WIND_FLUTES_RECORDER_SOPRANINO = "wind.flutes.recorder.sopranino";
+            static final String WIND_FLUTES_RECORDER_SOPRANO = "wind.flutes.recorder.soprano";
+            static final String WIND_FLUTES_RECORDER_TENOR = "wind.flutes.recorder.tenor";
+            static final String WIND_FLUTES_RYUTEKI = "wind.flutes.ryuteki";
+            static final String WIND_FLUTES_SHAKUHACHI = "wind.flutes.shakuhachi";
+            static final String WIND_FLUTES_SHEPHERDS_PIPE = "wind.flutes.shepherds-pipe";
+            static final String WIND_FLUTES_SHINOBUE = "wind.flutes.shinobue";
+            static final String WIND_FLUTES_SHVI = "wind.flutes.shvi";
+            static final String WIND_FLUTES_SULING = "wind.flutes.suling";
+            static final String WIND_FLUTES_TARKA = "wind.flutes.tarka";
+            static final String WIND_FLUTES_TUMPONG = "wind.flutes.tumpong";
+            static final String WIND_FLUTES_VENU = "wind.flutes.venu";
+            static final String WIND_FLUTES_WHISTLE = "wind.flutes.whistle";
+            static final String WIND_FLUTES_WHISTLE_ALTO = "wind.flutes.whistle.alto";
+            static final String WIND_FLUTES_WHISTLE_LOW_IRISH = "wind.flutes.whistle.low-irish";
+            static final String WIND_FLUTES_WHISTLE_SHIVA = "wind.flutes.whistle.shiva";
+            static final String WIND_FLUTES_WHISTLE_SLIDE = "wind.flutes.whistle.slide";
+            static final String WIND_FLUTES_WHISTLE_TIN = "wind.flutes.whistle.tin";
+            static final String WIND_FLUTES_WHISTLE_TIN_BFLAT = "wind.flutes.whistle.tin.bflat";
+            static final String WIND_FLUTES_WHISTLE_TIN_D = "wind.flutes.whistle.tin.d";
+            static final String WIND_FLUTES_XIAO = "wind.flutes.xiao";
+            static final String WIND_FLUTES_XUN = "wind.flutes.xun";
+            static final String WIND_GROUP = "wind.group";
+            static final String WIND_JUG = "wind.jug";
+            static final String WIND_PIPES_BAGPIPES = "wind.pipes.bagpipes";
+            static final String WIND_PIPES_GAIDA = "wind.pipes.gaida";
+            static final String WIND_PIPES_HIGHLAND = "wind.pipes.highland";
+            static final String WIND_PIPES_UILLEANN = "wind.pipes.uilleann";
+            static final String WIND_PUNGI = "wind.pungi";
+            static final String WIND_REED_ALBOGUE = "wind.reed.albogue";
+            static final String WIND_REED_ALBOKA = "wind.reed.alboka";
+            static final String WIND_REED_ALGAITA = "wind.reed.algaita";
+            static final String WIND_REED_ARGHUL = "wind.reed.arghul";
+            static final String WIND_REED_BASSET_HORN = "wind.reed.basset-horn";
+            static final String WIND_REED_BASSOON = "wind.reed.bassoon";
+            static final String WIND_REED_BAWU = "wind.reed.bawu";
+            static final String WIND_REED_BIFORA = "wind.reed.bifora";
+            static final String WIND_REED_BOMBARDE = "wind.reed.bombarde";
+            static final String WIND_REED_CHALUMEAU = "wind.reed.chalumeau";
+            static final String WIND_REED_CLARINET = "wind.reed.clarinet";
+            static final String WIND_REED_CLARINET_A = "wind.reed.clarinet.a";
+            static final String WIND_REED_CLARINET_ALTO = "wind.reed.clarinet.alto";
+            static final String WIND_REED_CLARINET_BASS = "wind.reed.clarinet.bass";
+            static final String WIND_REED_CLARINET_BASSET = "wind.reed.clarinet.basset";
+            static final String WIND_REED_CLARINET_BFLAT = "wind.reed.clarinet.bflat";
+            static final String WIND_REED_CLARINET_CONTRA_ALTO = "wind.reed.clarinet.contra-alto";
+            static final String WIND_REED_CLARINET_CONTRABASS = "wind.reed.clarinet.contrabass";
+            static final String WIND_REED_CLARINET_EFLAT = "wind.reed.clarinet.eflat";
+            static final String WIND_REED_CLARINET_PICCOLO_AFLAT = "wind.reed.clarinet.piccolo.aflat";
+            static final String WIND_REED_CLARINETTE_DAMOUR = "wind.reed.clarinette-damour";
+            static final String WIND_REED_CONTRABASS = "wind.reed.contrabass";
+            static final String WIND_REED_CONTRABASSOON = "wind.reed.contrabassoon";
+            static final String WIND_REED_CORNAMUSE = "wind.reed.cornamuse";
+            static final String WIND_REED_CROMORNE = "wind.reed.cromorne";
+            static final String WIND_REED_CRUMHORN = "wind.reed.crumhorn";
+            static final String WIND_REED_CRUMHORN_ALTO = "wind.reed.crumhorn.alto";
+            static final String WIND_REED_CRUMHORN_BASS = "wind.reed.crumhorn.bass";
+            static final String WIND_REED_CRUMHORN_GREAT_BASS = "wind.reed.crumhorn.great-bass";
+            static final String WIND_REED_CRUMHORN_SOPRANO = "wind.reed.crumhorn.soprano";
+            static final String WIND_REED_CRUMHORN_TENOR = "wind.reed.crumhorn.tenor";
+            static final String WIND_REED_DIPLE = "wind.reed.diple";
+            static final String WIND_REED_DIPLICA = "wind.reed.diplica";
+            static final String WIND_REED_DUDUK = "wind.reed.duduk";
+            static final String WIND_REED_DULCIAN = "wind.reed.dulcian";
+            static final String WIND_REED_DULZAINA = "wind.reed.dulzaina";
+            static final String WIND_REED_ENGLISH_HORN = "wind.reed.english-horn";
+            static final String WIND_REED_GUANZI = "wind.reed.guanzi";
+            static final String WIND_REED_HARMONICA = "wind.reed.harmonica";
+            static final String WIND_REED_HARMONICA_BASS = "wind.reed.harmonica.bass";
+            static final String WIND_REED_HECKEL_CLARINA = "wind.reed.heckel-clarina";
+            static final String WIND_REED_HECKELPHONE = "wind.reed.heckelphone";
+            static final String WIND_REED_HECKELPHONE_PICCOLO = "wind.reed.heckelphone.piccolo";
+            static final String WIND_REED_HECKELPHONE_CLARINET = "wind.reed.heckelphone-clarinet";
+            static final String WIND_REED_HICHIRIKI = "wind.reed.hichiriki";
+            static final String WIND_REED_HIRTENSCHALMEI = "wind.reed.hirtenschalmei";
+            static final String WIND_REED_HNE = "wind.reed.hne";
+            static final String WIND_REED_HORNPIPE = "wind.reed.hornpipe";
+            static final String WIND_REED_HOUGUAN = "wind.reed.houguan";
+            static final String WIND_REED_HULUSI = "wind.reed.hulusi";
+            static final String WIND_REED_JOGI_BAJA = "wind.reed.jogi-baja";
+            static final String WIND_REED_KEN_BAU = "wind.reed.ken-bau";
+            static final String WIND_REED_KHAEN_MOUTH_ORGAN = "wind.reed.khaen-mouth-organ";
+            static final String WIND_REED_LAUNEDDAS = "wind.reed.launeddas";
+            static final String WIND_REED_MAQRUNAH = "wind.reed.maqrunah";
+            static final String WIND_REED_MELODICA = "wind.reed.melodica";
+            static final String WIND_REED_MIJWIZ = "wind.reed.mijwiz";
+            static final String WIND_REED_MIZMAR = "wind.reed.mizmar";
+            static final String WIND_REED_NADASWARAM = "wind.reed.nadaswaram";
+            static final String WIND_REED_OBOE = "wind.reed.oboe";
+            static final String WIND_REED_OBOE_BASS = "wind.reed.oboe.bass";
+            static final String WIND_REED_OBOE_PICCOLO = "wind.reed.oboe.piccolo";
+            static final String WIND_REED_OBOE_DA_CACCIA = "wind.reed.oboe-da-caccia";
+            static final String WIND_REED_OBOE_DAMORE = "wind.reed.oboe-damore";
+            static final String WIND_REED_OCTAVIN = "wind.reed.octavin";
+            static final String WIND_REED_PI = "wind.reed.pi";
+            static final String WIND_REED_PIBGORN = "wind.reed.pibgorn";
+            static final String WIND_REED_PIRI = "wind.reed.piri";
+            static final String WIND_REED_RACKETT = "wind.reed.rackett";
+            static final String WIND_REED_RAUSCHPFEIFE = "wind.reed.rauschpfeife";
+            static final String WIND_REED_RHAITA = "wind.reed.rhaita";
+            static final String WIND_REED_ROTHPHONE = "wind.reed.rothphone";
+            static final String WIND_REED_SARRUSAPHONE = "wind.reed.sarrusaphone";
+            static final String WIND_REED_SAXONETTE = "wind.reed.saxonette";
+            static final String WIND_REED_SAXOPHONE = "wind.reed.saxophone";
+            static final String WIND_REED_SAXOPHONE_ALTO = "wind.reed.saxophone.alto";
+            static final String WIND_REED_SAXOPHONE_AULOCHROME = "wind.reed.saxophone.aulochrome";
+            static final String WIND_REED_SAXOPHONE_BARITONE = "wind.reed.saxophone.baritone";
+            static final String WIND_REED_SAXOPHONE_BASS = "wind.reed.saxophone.bass";
+            static final String WIND_REED_SAXOPHONE_CONTRABASS = "wind.reed.saxophone.contrabass";
+            static final String WIND_REED_SAXOPHONE_MELODY = "wind.reed.saxophone.melody";
+            static final String WIND_REED_SAXOPHONE_MEZZO_SOPRANO = "wind.reed.saxophone.mezzo-soprano";
+            static final String WIND_REED_SAXOPHONE_SOPRANINO = "wind.reed.saxophone.sopranino";
+            static final String WIND_REED_SAXOPHONE_SOPRANISSIMO = "wind.reed.saxophone.sopranissimo";
+            static final String WIND_REED_SAXOPHONE_SOPRANO = "wind.reed.saxophone.soprano";
+            static final String WIND_REED_SAXOPHONE_SUBCONTRABASS = "wind.reed.saxophone.subcontrabass";
+            static final String WIND_REED_SAXOPHONE_TENOR = "wind.reed.saxophone.tenor";
+            static final String WIND_REED_SHAWM = "wind.reed.shawm";
+            static final String WIND_REED_SHENAI = "wind.reed.shenai";
+            static final String WIND_REED_SHENG = "wind.reed.sheng";
+            static final String WIND_REED_SIPSI = "wind.reed.sipsi";
+            static final String WIND_REED_SOPILA = "wind.reed.sopila";
+            static final String WIND_REED_SORNA = "wind.reed.sorna";
+            static final String WIND_REED_SRALAI = "wind.reed.sralai";
+            static final String WIND_REED_SUONA = "wind.reed.suona";
+            static final String WIND_REED_SURNAI = "wind.reed.surnai";
+            static final String WIND_REED_TAEPYEONGSO = "wind.reed.taepyeongso";
+            static final String WIND_REED_TAROGATO = "wind.reed.tarogato";
+            static final String WIND_REED_TAROGATO_ANCIENT = "wind.reed.tarogato.ancient";
+            static final String WIND_REED_TROMPETA_CHINA = "wind.reed.trompeta-china";
+            static final String WIND_REED_TUBAX = "wind.reed.tubax";
+            static final String WIND_REED_XAPHOON = "wind.reed.xaphoon";
+            static final String WIND_REED_ZHALEIKA = "wind.reed.zhaleika";
+            static final String WIND_REED_ZURLA = "wind.reed.zurla";
+            static final String WIND_REED_ZURNA = "wind.reed.zurna";
+            static final String WOOD_AGOGO_BLOCK = "wood.agogo-block";
+            static final String WOOD_AGUNG_A_TAMLANG = "wood.agung-a-tamlang";
+            static final String WOOD_AHOKO = "wood.ahoko";
+            static final String WOOD_BONES = "wood.bones";
+            static final String WOOD_CASTANETS = "wood.castanets";
+            static final String WOOD_CLAVES = "wood.claves";
+            static final String WOOD_DRUM_STICKS = "wood.drum-sticks";
+            static final String WOOD_GOURD = "wood.gourd";
+            static final String WOOD_GRANITE_BLOCK = "wood.granite-block";
+            static final String WOOD_GUBAN = "wood.guban";
+            static final String WOOD_GUIRO = "wood.guiro";
+            static final String WOOD_HYOUSHIGI = "wood.hyoushigi";
+            static final String WOOD_IPU = "wood.ipu";
+            static final String WOOD_JAM_BLOCK = "wood.jam-block";
+            static final String WOOD_KAEKEEKE = "wood.kaekeeke";
+            static final String WOOD_KAGUL = "wood.kagul";
+            static final String WOOD_KALAAU = "wood.kalaau";
+            static final String WOOD_KASHIKLAR = "wood.kashiklar";
+            static final String WOOD_KUBING = "wood.kubing";
+            static final String WOOD_PAN_CLAPPERS = "wood.pan-clappers";
+            static final String WOOD_SAND_BLOCK = "wood.sand-block";
+            static final String WOOD_SLAPSTICK = "wood.slapstick";
+            static final String WOOD_STIR_DRUM = "wood.stir-drum";
+            static final String WOOD_TEMPLE_BLOCK = "wood.temple-block";
+            static final String WOOD_TIC_TOC_BLOCK = "wood.tic-toc-block";
+            static final String WOOD_TONETANG = "wood.tonetang";
+            static final String WOOD_WOOD_BLOCK = "wood.wood-block";
         }
     }
 }

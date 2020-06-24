@@ -2,6 +2,9 @@ package performance;
 
 /**
  * {@code Awareness} classifies all data types that possess an awareness of the performance execution model such that they are able to provide details about the snapshot instances that relate to performer or instrument states.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Awareness

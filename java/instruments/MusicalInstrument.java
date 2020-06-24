@@ -1,17 +1,23 @@
 package instruments;
 
 import musical.Note;
-import musical.Symbolized;
-import performance.Instrument;
+import system.data.Symbolized;
 
 /**
  * {@code MusicalInstrument} classifies any common musical instrument that can be classified by Hornbostel-Sachs system.
  * <p>
- * Since all classes of musical instrument in Hornbostel-Sachs system include at least one keyboard instrument, this class contains the superclass for all musical instruments played with keyboard.
+ * Since all classes of musical instruments in Hornbostel-Sachs system include at least one keyboard instrument, this class contains the superclass for all musical instruments played with keyboard.
+ * It also defines other part classes that are commonly used among most instrument types.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class MusicalInstrument
-extends Instrument
+extends performance.Instrument
+implements musical.Instrument
 {
     /**
      * Creates the keyboard for the musical instrument once.
@@ -20,36 +26,62 @@ extends Instrument
     void createKeyboard();
 
     @Override
-    public boolean is(final system.Type<Instrument> type) {
-        return ! (type instanceof performance.Human);
+    public boolean is(final system.data.Type<? extends performance.Instrument> type) {
+        return !(type instanceof performance.Human);
     }
 
     /**
-     * {@code Accessory} classifies a musical instrument accessory.
+     * {@code Accessory} represents a musical instrument accessory.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Accessory
-    extends Instrument.Accessory
+    extends performance.Instrument.Accessory
     {
         @Override
-        public boolean is(final system.Type<Part> type) {
+        public boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof Accessory;
         }
     }
 
     /**
      * {@code Bow} represents a musical instrument bow.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Bow
     extends Accessory
     {}
 
+    /**
+     * {@code Brush} represents a musical instrument brush.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Brush
     extends Stick
     {}
 
+    /**
+     * {@code Damper} represents a musical instrument damper.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Damper
     extends Accessory
@@ -57,10 +89,17 @@ extends Instrument
     {}
 
     /**
-     * {@code Keyboard} classifies the common keyboard for all musical instruments.
+     * {@code Keyboard} represents the common keyboard for all musical instruments.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = MusicalInstrument.class)
-    @Category(types = { Keys.class, Pedals.class })
+    @Category
+    @Category.Instance(type = Keys.class)
+    @Category.Instance(type = Pedals.class)
     protected abstract
     class Keyboard
     extends MusicalInstrument
@@ -71,14 +110,18 @@ extends Instrument
         protected
         Keyboard() {
             super();
-
-            createPart(getDefaultConcreteSubclass(Keys.class));
-            createPart(getDefaultConcreteSubclass(Pedals.class));
+            createPart(Keys.class);
+            createPart(Pedals.class);
         }
     }
 
     /**
      * Key classifies a key on the keyboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = MusicalInstrument.class)
     protected abstract
@@ -146,8 +189,13 @@ extends Instrument
     }
 
     /**
-     * {@code Keyboard} classifies instrument parts that are not classified in Hornbostel-Sachs system of musical instruments as an instrument, but is an integral mechanical part of all traditional and modern keyboard instruments that are performed using a set of depressible levers or keys to generate sound.
+     * {@code Keys} represents instrument parts that might or might not be classified in Hornbostel-Sachs system of musical instruments as a part for that specific instrument class, but is an integral mechanical part of all traditional and modern keyboard instruments that are performed using a set of depressible levers or keys to generate sound.
      * The actual sounding instrument part might be varied or physically separated from the keys, but nevertheless it is the keyboard that controls their action via a mechanical change.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Keyboard.class)
     @Category
@@ -159,6 +207,11 @@ extends Instrument
 
     /**
      * {@code Pedal} represents an instrument pedal.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = MusicalInstrument.class)
     protected abstract
@@ -223,14 +276,19 @@ extends Instrument
         }
 
         @Override
-        public boolean is(final system.Type<Part> type) {
+        public boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof Pedal &&
                    ((Pedal) type).getSymbol().equalsIgnoreCase(getSymbol());
         }
     }
 
     /**
-     * {@code Pedals} represents all instrument pedals.
+     * {@code Pedals} represents all of the instrument pedals.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Keyboard.class)
     @Category
@@ -240,17 +298,41 @@ extends Instrument
     implements Universal.ComprehensiveGroup<Pedal, MusicalInstrument>
     {}
 
+    /**
+     * {@code Mallet} represents an instrument mallet.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Mallet
     extends Accessory
     implements instruments.accessory.Mallet
     {}
 
+    /**
+     * {@code Rute} represents an instrument rute.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Rute
     extends Stick
     {}
 
+    /**
+     * {@code Stick} represents an instrument stick.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Stick
     extends Mallet
@@ -258,6 +340,11 @@ extends Instrument
 
     /**
      * {@code Tunable} classifies instrument parts that have specific tune or tunes.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Tunable

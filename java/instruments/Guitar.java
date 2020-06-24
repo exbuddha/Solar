@@ -10,7 +10,12 @@ import system.data.Lambda;
 /**
  * {@code Guitar} classifies the most common form of the guitar instrument.
  * <p>
- * It also acts as the superclass for all other derivatives of this instrument.
+ * This class is the superclass for all other derivatives of this instrument.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Guitar
@@ -51,13 +56,12 @@ extends Lute
     static
     {
         StandardTuning = new ArrayList<Note>();
-
-        StandardTuning.add(Note.Table.E4);
-        StandardTuning.add(Note.Table.B3);
-        StandardTuning.add(Note.Table.G3);
-        StandardTuning.add(Note.Table.D3);
-        StandardTuning.add(Note.Table.A2);
-        StandardTuning.add(Note.Table.E2);
+        StandardTuning.add(Note.E4);
+        StandardTuning.add(Note.B3);
+        StandardTuning.add(Note.G3);
+        StandardTuning.add(Note.D3);
+        StandardTuning.add(Note.A2);
+        StandardTuning.add(Note.E2);
     }
 
     /** The number of strings. */
@@ -75,15 +79,14 @@ extends Lute
     /**
      * Creates a guitar instrument with the specified tuning, fret count, and harmonic node groups; or throws an {@code IllegalArgumentException} if values are out of range.
      * <p>
-     * <ul>
-     * <li>The size of the {@code tuning} list sets the number of strings for the guitar and must be at least 1.
-     * <li>All strings have the same number of frets ({@code fretCount}) and this number cannot be negative.
-     * <li>The minimum number of harmonic node groups ({@code harmonicCount}) also must be larger than 1.
-     * </ul>
+     * The size of the {@code tuning} list sets the number of strings for the guitar and must be at least 1.
+     * All strings have the same number of frets ({@code fretCount}) and this number cannot be negative.
+     * The minimum number of harmonic node groups ({@code harmonicCount}) also must be larger than 1.
      *
      * @param tuning the guitar tuning.
      * @param fretCount the number of frets.
      * @param harmonicCount the maximum harmonic number of audible node groups on the string.
+     *
      * @throws IllegalArgumentException if values are out of range.
      */
     protected
@@ -131,6 +134,7 @@ extends Lute
      *
      * @param tuning the tuning.
      * @param fretCount the number of frets.
+     *
      * @throws IllegalArgumentException if values are out of range.
      */
     protected
@@ -148,6 +152,7 @@ extends Lute
      *
      * @param tuning the tuning.
      * @param fretCount the number of frets.
+     *
      * @throws IllegalArgumentException if values are out of range.
      */
     protected
@@ -269,20 +274,30 @@ extends Lute
     }
 
     /**
-     * {@code Accessory} classifies a guitar accessory.
+     * {@code Accessory} represents a guitar accessory.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Accessory
     extends Lute.Accessory
     {
         @Override
-        public boolean is(final system.Type<Part> type) {
+        public boolean is(final system.data.Type<? extends Part> type) {
             return type instanceof Accessory;
         }
     }
 
     /**
      * {@code Capo} represents the guitar capo.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Capo
@@ -292,6 +307,11 @@ extends Lute
 
     /**
      * {@code Direction} represents all relative directions regarding the guitar instrument.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     enum Direction
@@ -325,17 +345,33 @@ extends Lute
         Perpendicular;
 
         @Override
-        public boolean is(system.Type<MusicalInstrument.Direction> type) {
+        public boolean is(system.data.Type<? extends MusicalInstrument.Direction> type) {
             // Guitar directions are not associated with a different direction type
             return false;
         }
     }
 
+    /**
+     * {@code Fretboard} represents the guitar fretboard.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Fretboard
     extends PartGroup
     {}
 
+    /**
+     * {@code Peg} represents the guitar peg.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Peg
     extends PartGroup
@@ -343,6 +379,11 @@ extends Lute
 
     /**
      * {@code Pick} represents the guitar pick.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Pick
@@ -350,6 +391,14 @@ extends Lute
     implements instruments.accessory.Plectrum
     {}
 
+    /**
+     * {@code Neck} represents the guitar neck.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public abstract
     class Neck
     extends PartGroup
@@ -357,6 +406,11 @@ extends Lute
 
     /**
      * {@code Slide} represents the guitar slide.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class Slide
@@ -366,6 +420,11 @@ extends Lute
 
     /**
      * {@code String} represents the guitar string.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Uniformed(group = Guitar.class)
     protected abstract
@@ -417,6 +476,11 @@ extends Lute
 
         /**
          * {@code Fret} represents a fret point on the guitar string.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         protected abstract
@@ -465,6 +529,11 @@ extends Lute
 
         /**
          * {@code Node} represents a harmonic node point on the guitar string.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         protected abstract
@@ -566,6 +635,11 @@ extends Lute
 
         /**
          * {@code Point} classifies interaction points on the guitar string.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         @Uniformed(group = String.class)
         protected abstract
@@ -598,6 +672,11 @@ extends Lute
 
     /**
      * {@code WhammyBar} represents the guitar whammy bar.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class WhammyBar

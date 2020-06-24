@@ -1,24 +1,27 @@
 package exceptions;
 
 /**
- * Signals that an exception occurred when parsing a JSON file.
+ * Signals that an exception occurred when parsing a JSON file or processing the data in the document.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class InvalidJSONException
 extends Exception
 {
     /**
-     * Constructs an {@code InvalidJSONException} with the specified detail message and original exception.
+     * Constructs an {@code InvalidJSONException} with the specified detail message and cause.
      *
      * @param message the message.
-     * @param e the original exception.
+     * @param cause the cause.
      */
     public
     InvalidJSONException(
         final String message,
-        final Exception e
+        final Throwable cause
         ) {
-        super(message, e);
+        super(message, cause);
     }
 
     /**

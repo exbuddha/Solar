@@ -6,8 +6,13 @@ import java.util.List;
 
 /**
  * {@code Dictionary} is an n-tree dictionary for mapping string keys to value objects.
+ * <p>
+ * This class implementation is in progress.
  *
  * @param <T> the type of value objects.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 class Dictionary<T>
@@ -171,7 +176,7 @@ class Dictionary<T>
      * @param start the index of the starting letter in the n-tree.
      * @param length the number of next letters in the list to lookup.
      * @param ignoreCase the flag indicating if search should ignore the character case.
-     * @return the next letter node, or null if none is found.
+     * @return the next letter node, or null if not found.
      */
     private
     Letter<T> next(
@@ -205,7 +210,7 @@ class Dictionary<T>
      * @param ch the character.
      * @param list the list of next letters in the n-tree.
      * @param ignoreCase the flag indicating if search should ignore the character case.
-     * @return the next letter node or null if none is found.
+     * @return the next letter node or null if not found.
      */
     private
     Letter<T> next(
@@ -218,8 +223,13 @@ class Dictionary<T>
 
     /**
      * {@code MultiKeyMapper} classifies an intermediary object used for mapping multiple keys to a single value object.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <S> the type of value object.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface MultiKeyMapper<S>
@@ -237,8 +247,13 @@ class Dictionary<T>
 
     /**
      * {@code Letter} is a representation of a single node in the n-tree dictionary.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <S> The type of the value objects.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     private final
     class Letter<S>

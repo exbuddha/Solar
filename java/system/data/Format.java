@@ -1,20 +1,31 @@
-package system;
+package system.data;
 
 /**
- * {@code Data} is the super-type for all data types.
+ * {@code Format} is the super-type for all data formats in the system.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
-interface Data
+interface Format
 {
     /**
      * {@code Hierarchical} classifies structures that are constructed, or nested, in hierarchical manner.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Hierarchical
-    extends Data
+    extends
+        Format,
+        system.data.Ordered
     {
         /**
          * {@code Domain} classifies arbitrarily located collections of data points within hierarchical structures.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Domain
@@ -26,7 +37,6 @@ interface Data
              * @param start the start point coordinates.
              * @return the domain type.
              */
-            public
             Domain from(
                 Number... start
                 );
@@ -37,7 +47,6 @@ interface Data
              * @param end the end point coordinates.
              * @return the domain type.
              */
-            public
             Domain until(
                 Number... end
                 );
@@ -46,6 +55,9 @@ interface Data
 
     /**
      * {@code Interpretable} classifies sequences of characters that are logically interpretable.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Interpretable
@@ -53,6 +65,9 @@ interface Data
     {
         /**
          * {@code Document} represents all textual data documents.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public abstract
         class Document
@@ -89,16 +104,50 @@ interface Data
             }
 
             /**
+             * {@code Element} classifies all document elements.
+             * <p>
+             * Document elements are the uniquely recognized atomic units in documents that are meaningful in logical contexts.
+             * They are commonly associated with all data types within a specific documents.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            public
+            interface Element
+            {}
+
+            /**
+             * {@code ElementPart} classifies all document element parts.
+             * <p>
+             * A document element part can be any arbitrary section of an element that can stand alone as a recognized piece in that element.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            public
+            interface ElementPart
+            {}
+
+            /**
              * {@code Filter} represents data types that are constructed in order to filter out parts of documents during traversal.
              * <p>
              * Filters are structures that are in charge of determining whether or not a document part is eligible for the application of filtering.
              * If a filter is designed to use the nested {@link Condition} class it must provide functionality to bind document data to appropriate match conditions.
+             * <p>
+             * Using document filters implies the need for an additional layer of abstraction around the logic for parsing or post-processing documents and their elements.
+             * It is possible to apply filtering in a more efficient way; therefore, this class should be used only when there is a requirement to represent such units of logic in a object-oriented design that allows maintaining the state of filters and their match conditions.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static abstract
             class Filter
             {
                 /**
                  * {@code Condition} represents conditional match-based data that are expressed as boolean predicates.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
                  */
                 public static abstract
                 class Condition
@@ -125,6 +174,8 @@ interface Data
                      * Evaluates that the condition is true for the specified criteria.
                      *
                      * @param criteria the criteria.
+                     *
+                     * @return the result.
                      */
                     public
                     boolean test(
@@ -132,39 +183,22 @@ interface Data
                         ) {
                         return test(criteria, true);
                     }
-
-                    /**
-                     * {@code Result} represents all condition match results.
-                     */
-                    public static abstract
-                    class Result
-                    extends Match
-                    implements java.util.function.UnaryOperator<Boolean>
-                    {
-                        /**
-                         * Attempts to force the condition match result in data to reflect the specified polarity.
-                         * <p>
-                         * By convention, true polarity indicates existence of match and false polarity indicates non-existence of match.
-                         *
-                         * @param polarity the polarity.
-                         * @return true if the attempt was successful, false otherwise.
-                         */
-                        @Override
-                        public abstract
-                        Boolean apply(
-                            Boolean polarity
-                            );
-                    }
                 }
 
                 /**
                  * {@code Conditional} classifies data types that logically define the criteria for expressing document filters.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
                  */
                 public
                 interface Conditional
                 {
                     /**
                      * {@code Operator} classifies conditional data types that are composed of one of many conditional data types.
+                     *
+                     * @since 1.8
+                     * @author Alireza Kamran
                      */
                     public
                     interface Operator
@@ -175,7 +209,6 @@ interface Data
                          *
                          * @return the list of conditionals.
                          */
-                        public
                         java.util.List<Conditional> getConditions();
                     }
                 }
@@ -193,6 +226,9 @@ interface Data
 
                 /**
                  * {@code Expression} represents conditional operators as boolean predicates.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
                  */
                 public static abstract
                 class Expression
@@ -226,6 +262,9 @@ interface Data
 
                     /**
                      * {@code And} represents the logical 'and' operator in conditional expressions.
+                     *
+                     * @since 1.8
+                     * @author Alireza Kamran
                      */
                     public static abstract
                     class And
@@ -234,6 +273,9 @@ interface Data
 
                     /**
                      * {@code Or} represents the logical 'or' operator in conditional expressions.
+                     *
+                     * @since 1.8
+                     * @author Alireza Kamran
                      */
                     public static abstract
                     class Or
@@ -243,6 +285,9 @@ interface Data
 
                 /**
                  * {@code Match} represents all data types that make up conditions in expressions.
+                 *
+                 * @since 1.8
+                 * @author Alireza Kamran
                  */
                 public static abstract
                 class Match
@@ -257,26 +302,71 @@ interface Data
                     boolean holds(
                         Object... subjects
                         );
+
+                    /**
+                     * {@code Result} represents all condition match results.
+                     *
+                     * @since 1.8
+                     * @author Alireza Kamran
+                     */
+                    public abstract
+                    class Result
+                    extends Match
+                    implements java.util.function.UnaryOperator<Boolean>
+                    {
+                        /**
+                         * Attempts to force the condition match result in data to reflect the specified polarity.
+                         * <p>
+                         * By convention, true polarity indicates existence of match and false polarity indicates non-existence of match.
+                         *
+                         * @param polarity the polarity.
+                         * @return true if the attempt was successful, false otherwise.
+                         */
+                        @Override
+                        public abstract
+                        Boolean apply(
+                            Boolean polarity
+                            );
+                    }
                 }
             }
 
             /**
              * {@code Handler} classifies functional interfaces for processing entire, or parts of, documents via parser handling methodologies.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public
             interface Handler
-            {}
+            {
+                /**
+                 * Returns the handler document.
+                 *
+                 * @return the document.
+                 */
+                Object getDocument();
+
+                /**
+                 * Returns true if the handler is closed and accepts no input; otherwise returns false.
+                 *
+                 * @return true if the handler is closed, and false otherwise.
+                 */
+                boolean isClosed();
+            }
         }
     }
 
     /**
-     * {@code Sequential} classifies individually identified data elements within hierarchical documents providing wrapper functionality such as chain calls.
+     * {@code Sequential} classifies individually identified data elements within larger scopes providing wrapper functionality or chained call capability.
      *
      * @param <T> the data element type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Sequential<T>
-    extends Hierarchical
     {
         /**
          * Returns a sequential type after applying the specified coordinates to this sequential type.
@@ -284,7 +374,6 @@ interface Data
          * @param coords the coordinates.
          * @return the located sequential type.
          */
-        public
         Sequential<T> at(
             T coords
             );
@@ -292,10 +381,13 @@ interface Data
 
     /**
      * {@code Writable} classifies data types that can be written to a secondary medium such as disk or memory.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Writable
-    extends Data
+    extends Format
     {
         /**
          * Writes the content to the output stream.
@@ -303,7 +395,7 @@ interface Data
          * @param outputStream the stream.
          * @throws Exception if an error occurs.
          */
-        public abstract
+        abstract
         void write(
             java.io.OutputStream outputStream
             )

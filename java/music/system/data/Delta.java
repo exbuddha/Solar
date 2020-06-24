@@ -1,20 +1,21 @@
 package music.system.data;
 
 /**
- * {@code Delta} classifies musical data types that are distances measured by a known enumerable type.
+ * {@code Delta} classifies musical data types that are distances measured by another unit data type.
  *
- * @param <T> the measure type.
+ * @param <T> the measure data type.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public
 interface Delta<T>
-extends
-    system.Delta,
-    Ordered<T>
+extends system.data.Delta
 {
-    @Override
-    public
-    T getOrder();
-
-    public
-    Class<? super T> getType();
+    /**
+     * Returns the measure unit class.
+     *
+     * @return the measure unit class.
+     */
+    Class<? super T> getUnit();
 }

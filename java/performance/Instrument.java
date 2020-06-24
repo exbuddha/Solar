@@ -1,8 +1,10 @@
 package performance;
 
+import static java.lang.annotation.ElementType.CONSTRUCTOR;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
@@ -33,6 +35,11 @@ import java.util.function.Supplier;
  * The third and final type of instrument parts is the part group that is theoretically different from the former two.
  * It represents an arbitrary group of abstract or concrete parts that are bundled together for a specific purpose and are given an identity.
  * This last type is used only in certain parts of the performance logic where groups of other two part types are of interest.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Instrument
@@ -99,7 +106,7 @@ implements
      * {@code instrument.createPart(partClass)}
      * </pre>
      * <p>
-     * By convention, all overloads of this method, or its returned intermediary object, must call {@link #getDefaultConcreteSubclass(Class)} on the argument part class in order to use the proper definition of the specified part class within the instrument hierarchy. 
+     * By convention, all overloads of this method, or its returned intermediary object, must call {@link #getDefaultConcreteSubclass(Class)} on the argument part class in order to use the proper definition of the specified part class within the instrument hierarchy.
      *
      * @param <T> the part class type.
      * @param partClass the part class.
@@ -261,6 +268,11 @@ implements
 
     /**
      * {@code Accessory} represents all instrument accessories.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class Accessory
@@ -271,6 +283,11 @@ implements
 
     /**
      * {@code AtomicPart} represents a part that doesn't require to be broken down to smaller parts.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class AtomicPart
@@ -287,28 +304,70 @@ implements
      * It also can be applied to single part classes that alternatively rename individual parts or instances of part types.
      * <p>
      * One aim of this annotation type is to resolve runtime unavailability of generated content types within the respective containing part class of a {@link Universal.ComprehensiveGroup} type, when not naturally derivable from inheritance or uniformity in problem space, by revealing those content types.
-     * For such cases, if this annotation type is applied emptily, it implies that the comprehensive group is full meaning that all sub-parts of that group's identified part type class are generated.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Retention(RUNTIME)
     @Target(TYPE)
     public
     @interface Category
     {
-        /** The similar part types. */
-        Class<? extends Part>[] types()
-        default Part.class;
+        /**
+         * {@code Instance} classifies, by annotation, category instances individually for each available type and allows binding of instances among the categorized constructor parameters.
+         * <p>
+         * By design, the {@code values} strings accept multiple parameter values for a single parameter to indicate that the instance constructor parameter is permuted for all specified values.
+         * This saves space by reducing the total number of annotations used but imposes some logical, yet practical, limitations.
+         * Also, if a {@code values} string matches the pattern "p1 -&gt; p2" it indicates that the instance constructor parameter (p1) is inclusively bound to the categorized constructor parameter (p2).
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        @Retention(RUNTIME)
+        @Target(TYPE)
+        @Repeatable(Instances.class)
+        public
+        @interface Instance
+        {
+            /** The similar part type. */
+            Class<? extends Part> type();
 
-        /** The instance definitions. */
-        String[] instances()
-        default "";
+            /** The instance definition. (constructor parameter-value pairs) */
+            String[] values()
+            default "";
 
-        /** The categorized part hashes. */
-        int[] hashes()
-        default Integer.MIN_VALUE;
+            /** The categorized part hash. */
+            int[] hash()
+            default Integer.MIN_VALUE;
+        }
+
+        /**
+         * {@code Instances} is the container for the repeatable {@link Instance} values.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        @Retention(RUNTIME)
+        @Target(TYPE)
+        public
+        @interface Instances
+        {
+            /** The repeating annotated values. */
+            Instance[] value();
+        }
     }
 
     /**
      * {@code Color} represents color for all instrument parts.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     enum Color
@@ -395,7 +454,7 @@ implements
             ) { return null; }
 
         @Override
-        public boolean is(final system.Type<Color> type) {
+        public boolean is(final system.data.Type<? extends Color> type) {
             return type == this;
         }
 
@@ -429,6 +488,11 @@ implements
 
         /**
          * {@code Palette} classifies a combination of colors.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface Palette
@@ -437,11 +501,15 @@ implements
     }
 
     /**
-     * {@code Colored} characterizes an instrument part with a certain color.
+     * {@code Colored} characterizes an instrument unit with a certain color.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Colored
-    extends Part
     {
         public
         Color getColor();
@@ -449,6 +517,11 @@ implements
 
     /**
      * {@code CompositePart} represents a part that is composed of smaller parts.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class CompositePart
@@ -468,6 +541,11 @@ implements
      * {@code ConcretePart} classifies an instrument part that can be individually considered, in the performance logic, as a part having physical shape and characteristics specific to its own class.
      * <p>
      * This interface is used to distinguish between composite parts and part groups.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface ConcretePart
@@ -479,6 +557,11 @@ implements
      * <p>
      * This relativity is defined against an axis, or a set of axes, called the performance axis (or axes) of the instrument which is predefined, by convention, for each instrument class in the context of movement. (or change)
      * Performer classes that are in charge of generating interactions and techniques specific to their musical instrument are aware of the physical interpretation of these directions in the context theirs are used in.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Direction
@@ -487,6 +570,11 @@ implements
 
     /**
      * {@code Grouping} classifies groups of instruments as a single {@link Group}.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Grouping
@@ -494,34 +582,57 @@ implements
     {}
 
     /**
-     * {@code Ordered} represents an instrument part that has an order among similar parts of a composite part or part group.
+     * {@code Ordered} classifies an instrument part, part group, or grouping that has an order among similar parts of a composite part, part group, or another arbitrary containing unit.
+     *
+     * @param <T> the order type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
-    interface Ordered
-    extends Part
+    interface Ordered<T>
+    extends system.data.Ordered
     {
         /**
-         * Returns the order of the part within a larger, usually naturally containing, part, or null if this part is not contained by the specified part.
+         * Returns the order of the part within its natural containing part or containing unit.
          *
-         * @param containingPartClass the containing part class.
-         * @return the order.
+         * @return the part order.
          */
         public
-        Number getOrder(
-            Class<? extends Part> containingPartClass
-            );
+        T getOrder();
 
         /**
-         * Returns the order of the part within its natural containing part.
+         * {@code PerMany} classifies instrument units that have an order among many parts, part groups, or other arbitrary containing units.
          *
-         * @return the order.
+         * @param <T> the order type.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
-        short getOrder();
+        interface PerMany<T>
+        extends system.data.Ordered.PerMany
+        {
+            /**
+             * Returns the order of the unit within a larger unit or part, usually naturally containing the smaller unit.
+             *
+             * @param containingUnitClass the containing unit class.
+             * @return the unit order or null if order does not exist.
+             */
+            public
+            T getOrder(
+                Class<? extends Unit> containingUnitClass
+                );
+        }
     }
 
     /**
      * {@code Part} classifies mapped instrument parts.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Part
@@ -540,7 +651,133 @@ implements
         Instrument getInstrument();
 
         /**
+         * {@code Categorized} classifies, by annotation, constructor parameters giving them pseudo names and ranges that will be used by {@link Category} annotation types or other units of logic.
+         * <p>
+         * This annotation aims to simplify identification of constructor parameters and to resolve ambiguities among instances when there exists more than one part type within a {@code Category} type.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        @Retention(RUNTIME)
+        @Target(CONSTRUCTOR)
+        public
+        @interface Categorized
+        {
+            /** Constructor parameter pseudo names. */
+            String[] parameters()
+            default "";
+
+            /** Constructor parameter ranges. */
+            int[] ranges()
+            default Integer.MIN_VALUE;
+        }
+
+        /**
+         * {@code Connection} classifies, by annotation, parts that connect to other parts of the instrument.
+         * <p>
+         * Since this annotation type is repeatable it is up to the application context to resolve relations among its {@link Definition} annotations by design.
+         * This task can be achieved by the proper use of connection IDs.
+         * The repeating annotations intend to allow more than one connection type for an individual part type and to identify those connections separately in code.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        @Retention(RUNTIME)
+        @Target(TYPE)
+        @Repeatable(Connections.class)
+        public
+        @interface Connection
+        {
+            /** The connection ID. */
+            String id()
+            default "";
+
+            /** The connecting part instance definition. (constructor parameter-value pairs) */
+            String[] instance()
+            default "";
+
+            /** The connecting part hash. */
+            int hash()
+            default Integer.MIN_VALUE;
+
+            /** The connected part types. */
+            Class<? extends Part>[] parts();
+
+            /**
+             * {@code Definition} classifies, by annotation, part types that are connected by another part of the instrument through the use of the {@link Connection} annotation.
+             * <p>
+             * Since this annotation type is repeatable it is up to the application context to resolve relation with the {@code Connection} annotation by design.
+             * This task can be achieved by the proper use of connection IDs.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            @Retention(RUNTIME)
+            @Target(TYPE)
+            @Repeatable(Definitions.class)
+            public
+            @interface Definition
+            {
+                /** The connection definition ID. */
+                String id()
+                default "";
+
+                /** The connected part type index. */
+                int index();
+
+                /** The connected part instance definitions. (constructor parameter-value pairs) */
+                String[] instance()
+                default "";
+
+                /** The categorized part hash. */
+                int hash()
+                default Integer.MIN_VALUE;
+            }
+
+            /**
+             * {@code Definitions} is the container for the repeatable {@link Definition} values.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
+            @Retention(RUNTIME)
+            @Target(TYPE)
+            public
+            @interface Definitions
+            {
+                /** The repeating annotated values. */
+                Definition[] value();
+            }
+        }
+
+        /**
+         * {@code Connections} is the container for the repeatable {@link Connection} values.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        @Retention(RUNTIME)
+        @Target(TYPE)
+        public
+        @interface Connections
+        {
+            /** The repeating annotated values. */
+            Connection[] value();
+        }
+
+        /**
          * {@code Parameter} classifies a predicate for part constructor parameter values or indexes, that is used during part lookup in {@code findPart()} and {@code findParts()} methods, to identify the condition, specific to instrument part's order of creation, that the parameter must fall in for the part object to become eligible for selection in the result.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public static abstract
         class Parameter
@@ -694,6 +931,11 @@ implements
 
             /**
              * {@code Index} represents a parameter index predicate referring to the order that the parameter value was used during part creation.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static
             class Index
@@ -720,6 +962,11 @@ implements
 
             /**
              * {@code Value} represents a parameter value predicate.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
              */
             public static
             class Value
@@ -742,8 +989,13 @@ implements
 
     /**
      * {@code PartCreator} is an intermediary class that facilitates individual part creation.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class PartCreator<T extends Part>
@@ -790,8 +1042,13 @@ implements
 
     /**
      * {@code PartFinder} is an intermediary class that facilitates finding an instrument part by its constructor parameter value used at creation time.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class PartFinder<T extends Part>
@@ -816,6 +1073,8 @@ implements
         /**
          * Sets the comparator function for parts within the part group.
          *
+         * @return the comparator function.
+         *
          * @param comparator the comparator function.
          */
         public abstract
@@ -827,7 +1086,8 @@ implements
          * Returns the instrument part with matching specified parameter values used at creation time, or null if it doesn't exist.
          *
          * @param parameterValues the constructor parameter values or predicates.
-         * @return the matched parts, or null if none is found.
+         *
+         * @return the matched parts, or null if not found.
          */
         public abstract
         T withValues(
@@ -837,11 +1097,16 @@ implements
 
     /**
      * {@code PartGroup} represents an arbitrary group of atomic or composite parts that are uniformly applicable in a certain context.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class PartGroup
     implements
-        Grouping,
+        Group,
         Part
     {
         /**
@@ -861,9 +1126,11 @@ implements
         /**
          * Returns a part creator object for parts with the specified class type within the part group.
          * <p>
-         * By convention, all overloads of this method, or its returned intermediary object, must call {@link #getDefaultConcreteSubclass(Class)} on the argument part class in order to use the proper definition of the specified part class within the instrument hierarchy. 
+         * By convention, all overloads of this method, or its returned intermediary object, must call {@link #getDefaultConcreteSubclass(Class)} on the argument part class in order to use the proper definition of the specified part class within the instrument hierarchy.
          *
          * @param <T> the part class type.
+         * @param partClass the part class.
+         *
          * @return the part creator object.
          */
         public abstract <T extends Part>
@@ -877,6 +1144,8 @@ implements
          * This method calls {@link #createPart(Class)} internally.
          *
          * @param <T> the part class type.
+         * @param partClassSupplier the part class supplier.
+         *
          * @return the part creator object.
          */
         public <T extends Part>
@@ -890,6 +1159,8 @@ implements
          * Returns a part finder object for a part with the specified class type within the part group.
          *
          * @param <T> the part class type.
+         * @param partClass the part class.
+         *
          * @return the part finder object.
          */
         public abstract <T extends Part>
@@ -901,6 +1172,8 @@ implements
          * Returns a part finder object for a part specified by the class supplier within the part group.
          *
          * @param <T> the part class type.
+         * @param partClassSupplier the part class supplier.
+         *
          * @return the part finder object.
          */
         public <T extends Part>
@@ -914,6 +1187,8 @@ implements
          * Returns a part list finder object for parts with the specified class type within the part group.
          *
          * @param <T> the part class type.
+         * @param partClass the part class.
+         *
          * @return the part list finder object.
          */
         public abstract <T extends Part>
@@ -925,6 +1200,8 @@ implements
          * Returns a part list finder object for a part specified by the class supplier within the part group.
          *
          * @param <T> the part class type.
+         * @param partClassSupplier the part class supplier.
+         *
          * @return the part list finder object.
          */
         public <T extends Part>
@@ -937,8 +1214,13 @@ implements
 
     /**
      * {@code PartListFinder} is an intermediary class that facilitates finding lists of instrument parts by their constructor parameter values used at creation time.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class PartListFinder<T extends Part>
@@ -963,6 +1245,8 @@ implements
         /**
          * Sets the comparator function for parts within the part group.
          *
+         * @return the comparator function.
+         *
          * @param comparator the comparator function.
          */
         public abstract
@@ -986,8 +1270,13 @@ implements
      * {@code PartSignature} is a representation of part class constructors that are called to create part objects.
      * <p>
      * It holds various meta-data about constructor parameters to facilitate storing parts in the instrument's map of parts.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected
     class PartSignature<T extends Part>
@@ -1084,8 +1373,13 @@ implements
 
     /**
      * {@code PartSignatureFinder} is the superclass for all intermediary finder classes that are in charge of finding instrument parts.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class PartSignatureFinder<T extends Part>
@@ -1106,8 +1400,13 @@ implements
 
     /**
      * {@code PartSignatureWorker} is the superclass for all intermediary classes that work with a specific part signature to create or lookup instrument parts, and provides methods that guarantee the correct order in chained method calls.
+     * <p>
+     * This class implementation is in progress.
      *
      * @param <T> the part class type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     protected abstract
     class PartSignatureWorker<T extends Part>
@@ -1169,6 +1468,11 @@ implements
      * {@code State} represents all instrument part and group states.
      * <p>
      * One aim of this interface is to allow the instrument states to be distinguishable quickly by type comparison.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public abstract
     class State
@@ -1177,6 +1481,11 @@ implements
 
     /**
      * {@code Uniformed} classifies, by annotation, part class types that belong to a larger natural part group.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     @Retention(RUNTIME)
     @Target(TYPE)
@@ -1188,11 +1497,16 @@ implements
 
         /** The number of other similar parts in the group. */
         int count()
-        default 0;
+        default 1;
     }
 
     /**
      * {@code Universal} identifies instrument-specific universality.
+     * <p>
+     * This class implementation is in progress.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public
     interface Universal
@@ -1202,29 +1516,74 @@ implements
          * <p>
          * If a classified respective containing part class doesn't exist in the problem space, the {@code Instrument} type must be used by convention.
          * If the classified respective containing part class is uniformly contained by a larger group or groups itself, the largest uniform group must be selected in order to reflect, and make applicable by common sense, the naturally associative property of the instrument part hierarchies when available.
+         * <p>
+         * This class implementation is in progress.
          *
          * @param <T> the identified part class type.
          * @param <S> the respective containing part class type.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
          */
         public
         interface ComprehensiveGroup<T extends Instrument.Part, S extends Group>
         {}
 
+        /**
+         * {@code Motion} classifies motion types for all instruments.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface Motion
         {}
 
+        /**
+         * {@code Orientation} classifies orientations for all instruments.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface Orientation
         {}
 
+        /**
+         * {@code Plane} classifies geometrical planes for all instruments.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface Plane
         {}
 
+        /**
+         * {@code Zone} classifies spatial zones for all instruments.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
         public
         interface Zone
         {
+            /**
+             * {@code Characteristic} categorizes all spatial zones.
+             * <p>
+             * This class implementation is in progress.
+             *
+             * @since 1.8
+             * @author Alireza Kamran
+             */
             public
             interface Characteristic
             {}

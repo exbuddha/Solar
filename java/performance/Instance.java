@@ -6,6 +6,11 @@ import musical.Duration;
 
 /**
  * {@code Instance} represents an instance of time in music where the intentions of the score demand an action from, or the attention of, the performer.
+ * <p>
+ * This class implementation is in progress.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Instance
@@ -42,10 +47,10 @@ implements
             return instance.time == null
                    ? 0
                    : 1;
-        else
-            return instance.time == null
-                   ? -1
-                   : time.compareTo(instance.time);
+
+        return instance.time == null
+               ? -1
+               : time.compareTo(instance.time);
     }
 
     @Override
@@ -60,7 +65,7 @@ implements
     }
 
     @Override
-    public boolean is(final system.Type<Temporal> type) {
+    public boolean is(final system.data.Type<? extends Temporal> type) {
         return this == type;
     }
 
