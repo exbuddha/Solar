@@ -172,7 +172,7 @@ extends XML
      */
     public static abstract
     class Handler
-    extends XML.Handler<MusicXML>
+    extends DocumentHandler
     {
         private static final
         Cache.Table AnalyticLevel2Elements
@@ -547,6 +547,21 @@ extends XML
         }
 
         /**
+         * {@code Analytic} is an implementation of a document handler that accepts all standard MusicXML element types and filters out the cosmetic attributes.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @see Standard
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        protected static
+        class Analytic
+        extends Standard
+        {}
+
+        /**
          * {@code Restriction} represents MusicXML filters that apply restrictions to the document elements and optionally provide validations.
          * <p>
          * This class implementation is in progress.
@@ -566,6 +581,19 @@ extends XML
                 super();
             }
         }
+
+        /**
+         * {@code Standard} is an implementation of a document handler that accepts all standard MusicXML element types.
+         * <p>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        protected static
+        class Standard
+        extends DocumentHandler.Standard
+        {}
     }
 
     /**

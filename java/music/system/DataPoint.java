@@ -14,7 +14,6 @@ package music.system;
  */
 public
 interface DataPoint<X, Y, Z>
-extends system.data.Format
 {
     /**
      * Returns the first data coordinate. (x)

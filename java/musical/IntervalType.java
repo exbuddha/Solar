@@ -43,13 +43,6 @@ extends
     }
 
     /**
-     * Returns the unique instance of this interval type defined in the system.
-     *
-     * @return the unique instance.
-     */
-    IntervalType distinct();
-
-    /**
      * Returns the number of cents in this interval type.
      *
      * @return the cents.

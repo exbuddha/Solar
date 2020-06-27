@@ -22,6 +22,17 @@ import system.data.Symbolized;
 
 /**
  * {@code Interval} represents a musical interval which is a measure of distance (pitch difference) between notes.
+ * <p>
+ * Intervals are Java number types and represent their width in cents.
+ * So, the perfect octave interval is a number equal to 1200.
+ * Intervals can be negative.
+ * This class defines the standard interval types in classical music as static objects called singletons.
+ * <p>
+ * Singletons are interval types that will clone automatically, when operated on, into intermediary interval types that can automatically diverge back to a singleton when possible.
+ * This guarantees that operating on singletons will always return a singleton if there is one available that matches the result.
+ * The intermediary interval types are called standard intervals.
+ * <p>
+ * Methods in this class implementation are not thread-safe.
  *
  * @since 1.8
  * @author Alireza Kamran
@@ -31,7 +42,6 @@ class Interval
 extends Number
 implements
     Adjusting<Interval, Number>,
-    Cloneable,
     Delta<Short>,
     IntervalType,
     Invertible,
@@ -154,8 +164,8 @@ implements
         final short cents
         ) {
         super();
-        setSymbol(symbol);
-        setCents(cents);
+        this.symbol = symbol;
+        this.cents = cents;
     }
 
     /**
@@ -201,7 +211,7 @@ implements
     }
 
     /**
-     * Creates an interval with the specified symbol and cents magnitude.
+     * Creates an interval with the specified symbol and cents.
      *
      * @param symbol the symbol.
      * @param cents the cents.
@@ -217,7 +227,7 @@ implements
     }
 
     /**
-     * Creates an interval with the specified cents magnitude and null symbol.
+     * Creates an interval with the specified cents and null symbol.
      *
      * @param cents the cents.
      *
@@ -231,7 +241,7 @@ implements
     }
 
     /**
-     * Creates an interval with the specified symbol and semitones magnitude.
+     * Creates an interval with the specified symbol and semitones.
      * <p>
      * This constructor converts the semitones amount to cents.
      *
@@ -249,7 +259,7 @@ implements
     }
 
     /**
-     * Creates an interval with the specified semitones magnitude and null symbol.
+     * Creates an interval with the specified semitones and null symbol.
      * <p>
      * This constructor converts the semitones amount to cents.
      *
@@ -287,19 +297,19 @@ implements
         if (value == null)
             throw new NullPointerException();
 
-        setSymbol(symbol);
-        Interval interval = Lambda.findFirst(null, new Function<Object, Boolean>() {
-                                                       @Override
-                                                       public Boolean apply(final Object obj) {
-                                                           final Interval interval = (Interval) obj;
-                                                           return value.equals(interval.getSymbol()) ||
-                                                                  value.equals(Short.toString(interval.getCents()));
-                                                       }
-                                                   });
+        this.symbol = symbol;
+        Singleton interval = Lambda.findFirst(Singleton.Order, new Function<Object, Boolean>() {
+                                                                   @Override
+                                                                   public Boolean apply(final Object obj) {
+                                                                       final Singleton interval = (Singleton) obj;
+                                                                       return value.equals(interval.getSymbol()) ||
+                                                                              value.equals(Short.toString(interval.getCents()));
+                                                                   }
+                                                               });
         if (interval == null)
             set(this, value);
         else
-            setCents(interval.getCents());
+            cents = interval.getCents();
     }
 
     /**
@@ -370,25 +380,7 @@ implements
             n = new Fraction(value);
         }
 
-        instance.setCents(n);
-    }
-
-    /**
-     * Returns the specified singleton if it is not null; otherwise returns the specified fallback interval.
-     *
-     * @param singleton the singleton.
-     * @param fallback the fallback.
-     *
-     * @return the singleton, if it is not null, or the fallback.
-     */
-    private static
-    Interval singleton(
-        final Standard singleton,
-        final Interval fallback
-        ) {
-        return singleton == null
-               ? fallback
-               : singleton;
+        instance.cents = n.shortValue();
     }
 
     /**
@@ -522,7 +514,7 @@ implements
     Interval distinct(
         final Comparator<Interval> comparator
         ) {
-        return singleton((Standard) Lambda.sortedFind(this, Singleton.Order, comparator), this);
+        return (Standard) new Lambda.BinaryLocator<Interval>(this, Singleton.Order, comparator).result(this);
     }
 
     /**
@@ -541,11 +533,25 @@ implements
         return distinct(new Comparator<Interval>() {
             @Override
             public int compare(final Interval i1, final Interval i2) {
-                return i1.compareTo(i2) == 0 && Lambda.findFirst(((Standard) i2).getMode(), modes) != null
-                       ? 0
-                       : 1;
+                if (i1.compareTo(i2) == 0) {
+                    for (final Mode mode : modes)
+                        if (((Singleton) i2).mode == mode)
+                            return 0;
+                }
+
+                return 1;
             }
         });
+    }
+
+    /**
+     * Returns the singleton equivalent to this interval or itself if none is found.
+     *
+     * @return the equivalent singleton or this interval.
+     */
+    public
+    Interval distinct() {
+        return (Standard) new Lambda.BinaryComparableLocator<IntervalType>(this, Singleton.Order).result(this);
     }
 
     /**
@@ -826,7 +832,7 @@ implements
      */
     @Override
     public void add(final Number n) {
-        setCents(getCents() + n.shortValue());
+        cents += n.shortValue();
     }
 
     /**
@@ -881,16 +887,6 @@ implements
     }
 
     /**
-     * Returns the singleton equivalent to this interval or itself if none is found.
-     *
-     * @return the equivalent singleton or this interval.
-     */
-    @Override
-    public Interval distinct() {
-        return singleton((Standard) Lambda.sortedFind(this, Singleton.Order), this);
-    }
-
-    /**
      * Divides this interval by the specified number.
      * <p>
      * This implementation calls {@link Number#intValue()} on the number.
@@ -907,7 +903,7 @@ implements
         if (d == 0)
             throw new IllegalArgumentException(DivisionByZero);;
 
-        setCents(getCents() / d);
+        cents /= d;
     }
 
     /**
@@ -917,7 +913,7 @@ implements
      */
     @Override
     public double doubleValue() {
-        return getCents();
+        return cents;
     }
 
     /**
@@ -929,9 +925,13 @@ implements
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof Number &&
-               getCents() == ((Number) obj).shortValue() ||
-               (obj != null && obj.equals(this));
+        if (obj instanceof IntervalType)
+            return cents == ((IntervalType) obj).getCents();
+
+        if (obj instanceof Number)
+            return cents == ((Number) obj).shortValue();
+
+        return obj != null && obj.equals(this);
     }
 
     /**
@@ -941,7 +941,7 @@ implements
      */
     @Override
     public float floatValue() {
-        return getCents();
+        return cents;
     }
 
     /**
@@ -987,23 +987,22 @@ implements
      */
     @Override
     public int intValue() {
-        return getCents();
+        return cents;
     }
 
     /**
      * Inverts the interval.
      * <p>
-     * This implementation returns the smallest interval that completes the octave when added to this interval.
+     * This implementation inverts to the smallest interval that completes the octave when added to this interval.
      * The interval direction is preserved.
      *
      * @throws UnsupportedOperationException if this interval is a singleton.
      */
     @Override
     public void invert() {
-        short cents = getCents();
-        setCents(cents == 0
-                 ? 1200
-                 : (short) (Integer.signum(cents) * (cents % 1200)));
+        cents = cents == 0
+                ? 1200
+                : (short) (Integer.signum(cents) * (cents % 1200));
     }
 
     /**
@@ -1014,6 +1013,8 @@ implements
      * If this is one of the {@link #AugmentedFourth} or {@link #DiminishedFifth} singletons, it will be inverted to its other form.
      *
      * @return the inverted interval or its equivalent singleton if this is a standard type.
+     *
+     * @see #invert()
      */
     @Override
     public Interval inverted() {
@@ -1042,7 +1043,7 @@ implements
      */
     @Override
     public long longValue() {
-        return getCents();
+        return cents;
     }
 
     /**
@@ -1076,7 +1077,7 @@ implements
      */
     @Override
     public void multiply(final Number n) {
-        setCents(getCents() * n.intValue());
+        cents *= n.intValue();
     }
 
     /**
@@ -1103,7 +1104,7 @@ implements
      */
     @Override
     public void reverse() {
-        setCents((short) -getCents());
+        cents = (short) -cents;
     }
 
     /**
@@ -1129,7 +1130,7 @@ implements
      */
     @Override
     public void subtract(final Number n) {
-        setCents(getCents() - n.shortValue());
+        cents -= n.shortValue();
     }
 
     /**
@@ -1158,9 +1159,8 @@ implements
      */
     @Override
     public String toString() {
-        final String symbol = getSymbol();
         if (symbol == null)
-            return Constant.Interval.adjusted(getCents());
+            return Constant.Interval.adjusted(cents);
         else
             return symbol;
     }
@@ -1201,24 +1201,28 @@ implements
      * Sets the number of cents in the interval.
      *
      * @param cents the cents.
+     *
+     * @throws NullPointerException if the cents is null.
      */
     public
     void setCents(
         final Number cents
         ) {
-        setCents(cents.shortValue());
+        this.cents = cents.shortValue();
     }
 
     /**
      * Sets the number of cents in the interval.
      *
      * @param cents the cents.
+     *
+     * @throws NullPointerException if the cents is null.
      */
     public
     void setCents(
         final Cents cents
         ) {
-        setCents(cents.getOrder());
+        this.cents = cents.getOrder();
     }
 
     /**
@@ -1230,31 +1234,35 @@ implements
     void setSemitones(
         final short semitones
         ) {
-        setCents((short) (semitones * 100));
+        cents = (short) (semitones * 100);
     }
 
     /**
      * Sets the number of semitones in the interval.
      *
      * @param semitones the semitones.
+     *
+     * @throws NullPointerException if the semitones is null.
      */
     public
     void setSemitones(
         final Number semitones
         ) {
-        setCents((short) (semitones.shortValue() * 100));
+        cents = (short) (semitones.shortValue() * 100);
     }
 
     /**
      * Sets the number of semitones in the interval.
      *
      * @param semitones the semitones.
+     *
+     * @throws NullPointerException if the semitones is null.
      */
     public
     void setSemitones(
         final Semitones semitones
         ) {
-        setCents(semitones.getCents());
+        cents = semitones.getCents();
     }
 
     /**
@@ -1348,14 +1356,16 @@ implements
     private static final
     class Singleton
     extends Standard
-    implements Symbolized.Singleton<String>
+    implements
+        Operable.Locked<Number>,
+        Symbolized.Singleton<String>
     {
         /** The {@code Class} instance representing the type {@code Singleton}. */
         public static final
         Class<Interval.Singleton> TYPE = Interval.Singleton.class;
 
         /** The array of duration singletons. (ascending) */
-        private static final
+        public static final
         Interval.Singleton[] Order
         = new Interval.Singleton[] {
             Unison,
@@ -1390,20 +1400,6 @@ implements
         }
 
         /**
-         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to zero.
-         *
-         * @param n the number.
-         *
-         * @throws NullPointerException if the number is null.
-         * @throws UnsupportedOperationException if the number is not equal to zero.
-         */
-        @Override
-        public void add(final Number n) {
-            if (!n.equals(0))
-                throw new UnsupportedOperationException(StandardObjectInoperable);
-        }
-
-        /**
          * Clones this singleton and adjusts the copy with the specified adjustments, as cents, and returns it or the equivalent singleton if one exists.
          * <p>
          * This implementation calls {@link Number#shortValue()} on all the adjustment values.
@@ -1434,17 +1430,32 @@ implements
         }
 
         /**
-         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
+         * Returns the singleton with the specified preferred modes, or itself if none is found.
          *
-         * @param n the number.
+         * @param modes the preferred modes.
          *
-         * @throws NullPointerException if the number is null.
-         * @throws UnsupportedOperationException if the number is not equal to 1.
+         * @return the equivalent singleton or this singleton.
          */
         @Override
-        public void divide(final Number n) {
-            if (!n.equals(1))
-                throw new UnsupportedOperationException(StandardObjectInoperable);
+        public Interval distinct(final Mode... modes) {
+            for (final Mode mode : modes)
+                if (mode == Mode.Augmented && this == DiminishedFifth)
+                    return AugmentedFourth;
+                else
+                    if (mode == Mode.Diminished && this == AugmentedFourth)
+                        return DiminishedFifth;
+
+            return this;
+        }
+
+        /**
+         * Returns this singleton.
+         *
+         * @return the singleton.
+         */
+        @Override
+        public Interval distinct() {
+            return this;
         }
 
         /**
@@ -1518,20 +1529,6 @@ implements
         }
 
         /**
-         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
-         *
-         * @param n the number.
-         *
-         * @throws NullPointerException if the number is null.
-         * @throws UnsupportedOperationException if the number is not equal to 1.
-         */
-        @Override
-        public void multiply(final Number n) {
-            if (!n.equals(1))
-                throw new UnsupportedOperationException(StandardObjectInoperable);
-        }
-
-        /**
          * Clones this singleton and adds the specified number to the copy and returns it standard interval or the equivalent singleton if one exists.
          *
          * @param n the number.
@@ -1567,20 +1564,6 @@ implements
         }
 
         /**
-         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
-         *
-         * @param n the number.
-         *
-         * @throws NullPointerException if the number is null.
-         * @throws UnsupportedOperationException if the number is not equal to 1.
-         */
-        @Override
-        public void subtract(final Number n) {
-            if (!n.equals(1))
-                throw new UnsupportedOperationException(StandardObjectInoperable);
-        }
-
-        /**
          * Clones this singleton and multiplies the copy by the specified number and returns it or the equivalent singleton if one exists.
          *
          * @param n the number.
@@ -1603,7 +1586,7 @@ implements
      * @since 1.8
      * @author Alireza Kamran
      */
-    protected static
+    public static
     class Standard
     extends Interval
     {
@@ -1629,7 +1612,7 @@ implements
          * @param symbol the symbol.
          * @param cents the cents.
          */
-        protected
+        public
         Standard(
             final String symbol,
             final int cents
@@ -1646,7 +1629,7 @@ implements
         Standard(
             final short cents
             ) {
-            this(null, cents);
+            super(cents);
         }
 
         /**
@@ -1684,7 +1667,7 @@ implements
         }
 
         /**
-         * Creates a standard interval with the specified symbol and cents magnitude.
+         * Creates a standard interval with the specified symbol and cents.
          *
          * @param symbol the symbol.
          * @param cents the cents.
@@ -1700,7 +1683,7 @@ implements
         }
 
         /**
-         * Creates a standard interval with the specified cents magnitude and null symbol.
+         * Creates a standard interval with the specified cents and null symbol.
          *
          * @param cents the cents.
          *
@@ -1710,11 +1693,11 @@ implements
         Standard(
             final Cents cents
             ) {
-            this(null, cents);
+            super(cents);
         }
 
         /**
-         * Creates a standard interval with the specified symbol and semitones magnitude.
+         * Creates a standard interval with the specified symbol and semitones.
          * <p>
          * This constructor converts the semitones amount to cents.
          *
@@ -1732,7 +1715,7 @@ implements
         }
 
         /**
-         * Creates a standard interval with the specified semitones magnitude and null symbol.
+         * Creates a standard interval with the specified semitones and null symbol.
          * <p>
          * This constructor converts the semitones amount to cents.
          *
@@ -1744,7 +1727,7 @@ implements
         Standard(
             final Semitones semitones
             ) {
-            this(null, semitones);
+            super(semitones);
         }
 
         /**
@@ -1784,7 +1767,7 @@ implements
         Standard(
             final String value
             ) {
-            this(value, value);
+            super(value);
         }
 
         /**
@@ -1870,6 +1853,8 @@ implements
          * If this is equal to one of the {@link #AugmentedFourth} or {@link #DiminishedFifth} singletons, it will be inverted to its other form.
          *
          * @return the inverted standard interval or its equivalent singleton.
+         *
+         * @see Interval#inverted()
          */
         @Override
         public Standard inverted() {

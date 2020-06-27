@@ -757,7 +757,7 @@ implements
         }
 
         /**
-         * {@code Standard} is an implementation of a document handler that accepts all node types.
+         * {@code Standard} is an implementation of a document handler that accepts all standard XML element types.
          * <p>
          * This class implementation is in progress.
          *

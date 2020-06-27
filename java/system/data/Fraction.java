@@ -342,6 +342,20 @@ implements
     }
 
     /**
+     * Returns true if the fraction value is equal to the value of the specified fraction; and false otherwise.
+     *
+     * @param fraction the fraction.
+     *
+     * @return true if the fraction value is equal to the fraction value; and false otherwise.
+     */
+    public
+    boolean equals(
+        final Fraction fraction
+        ) {
+        return compareTo(fraction) == 0;
+    }
+
+    /**
      * Returns true if the denominator matches the default denominator, and false otherwise.
      *
      * @return true if the denominator matches the default denominator, and false otherwise.
@@ -592,12 +606,12 @@ implements
     }
 
     /**
-     * Compares this fraction with the specified fraction and returns a negative integer if this fraction is less than the fraction, 0 if they are equal, and a positive integer otherwise.
+     * Compares this fraction with the specified fraction and returns a negative integer if this fraction is less than the fraction, zero if they are equal, and a positive integer otherwise.
      * If the specified fraction is null, {@link Integer#MAX_VALUE} will be returned.
      *
      * @param fraction the fraction.
      *
-     * @return a negative integer if this fraction is less than the fraction, 0 if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the fraction is null.
+     * @return a negative integer if this fraction is less than the fraction, zero if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the fraction is null.
      */
     @Override
     public int compareTo(final Fraction fraction) {
@@ -670,7 +684,7 @@ implements
     }
 
     /**
-     * Inverts the fraction.
+     * Inverts the fraction into its reciprocal.
      * <p>
      * This implementation performs an unsafe cast from {@code int} to {@code short}.
      *

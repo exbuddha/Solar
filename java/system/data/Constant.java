@@ -17,6 +17,7 @@ class Constant
     public static final String NegativeDuration = "Duration cannot be negative";
     public static final String NullAdjustment = "Adjustment cannot be null";
     public static final String OperationImpossible = "The operation is impossible";
+    public static final String OrderOutOfRange = "order is out of range.";
     public static final String ZeroDenominator = "Denominator is zero";
     public static final String ZeroNumerator = "Numerator is zero";
 

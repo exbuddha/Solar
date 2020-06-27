@@ -1131,9 +1131,7 @@ implements
 
         @Override
         public Accidental clone() {
-            return isStandard(this)
-                   ? ((Standard) this).clone()
-                   : new Accidental(symbol, cents);
+            return new Accidental(symbol, cents);
         }
 
         /**
@@ -1339,6 +1337,14 @@ implements
             adjust();
         }
 
+        public
+        Note(
+            final float number
+            ) {
+            super(number);
+            adjust();
+        }
+
         /**
          * Adjusts the note.
          */
@@ -1530,7 +1536,6 @@ implements
         protected
         Rest() {}
     }
-
 
     /**
      * {@code Rise} classifies all musical rises in a scale.

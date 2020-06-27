@@ -12,4 +12,20 @@ interface AccidentalType
 extends
     Regressor,
     music.system.Type<AccidentalType>
-{}
+{
+    /**
+     * Returns the number cents represented by this accidental type.
+     *
+     * @return the cents.
+     */
+    short
+    getCents();
+
+    /**
+     * Returns the number semitones represented by this accidental type.
+     *
+     * @return the semitones.
+     */
+    byte
+    getSemitones();
+}

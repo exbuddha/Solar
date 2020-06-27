@@ -470,7 +470,7 @@ implements
 
     @Override
     public musical.Note getNote(final Number i) {
-        return Note.withNumber((short) (root.getNumber() + i.shortValue())) ;
+        return new Note(root.getNumber() + i.shortValue()) ;
     }
 
     /**
@@ -500,7 +500,7 @@ implements
                     note = new Note(root);
 
                 else if (step - 1 < intervals.length) {
-                    note = new Note(Note.withNumber((short) (note.getNumber() + intervals[step - 1].getSemitones())));
+                    note = new Note(note.getNumber() + intervals[step - 1].getSemitones());
                     if (adjustments != null && step - 1 < adjustments.length)
                         note.setAdjustment(adjustments[step - 1]);
                 }

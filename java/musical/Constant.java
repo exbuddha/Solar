@@ -498,6 +498,8 @@ class Constant
             static final String EighthSym = "8";
             static final String NinthSym = "9";
             static final String TenthSym = "10";
+
+            static final String NullOctaveSym = "";
         }
 
         /**

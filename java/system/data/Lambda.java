@@ -118,29 +118,6 @@ class Lambda
     }
 
     /**
-     * Returns the first occurrence of element in the array using the specified comparator; or null if element is not found, the array is null, or the comparator is null.
-     * <p>
-     * This implementation calls {@link Comparator#compare(Object, Object)} with null as the first argument and the array elements as second arguments of that method.
-     * Therefore the specified comparator must guarantee to correctly handle this argument order.
-     * Essentially, the first argument of the {@code compare()} method is never used, converting that method into a {@code compareTo()} for the array elements only.
-     *
-     * @param <T> the array and comparator data type.
-     * @param array the array.
-     * @param comparator the comparator.
-     *
-     * @return the array element, or null if not found.
-     */
-    public static <T>
-    T findFirst(
-        final T[] array,
-        final Comparator<T> comparator
-        ) {
-        return array == null
-               ? null
-               : SequentialLocator.forward(null, array, comparator).result(null);
-    }
-
-    /**
      * Returns the first occurrence of element in the array using the specified function as comparator; or null if element is not found, the array is null, or the function is null.
      *
      * @param <T> the array type.
@@ -444,6 +421,33 @@ class Lambda
     }
 
     /**
+     * Returns the first occurrence of element in the sorted array using the specified function as comparator; or null if element is not found, the array is null, or the function is null.
+     *
+     * @param <T> the array type.
+     * @param sortedArray the sorted array.
+     * @param comparator the function.
+     *
+     * @return the array element, or null if not found.
+     */
+    public static <T>
+    T sortedFind(
+        final T[] sortedArray,
+        final Function<Object, Boolean> comparator
+        ) {
+        return sortedArray == null || comparator == null
+               ? null
+               : new BinaryLocator<T>(null, sortedArray, new Comparator<T>() {
+                                                             @Override
+                                                             public int compare(final T n, final T element) {
+                                                                 return comparator.apply(element)
+                                                                        ? 0
+                                                                        : 1;
+                                                             }
+                                                         })
+                 .result(null);
+    }
+
+    /**
      * Returns index of the first encountered occurrence of the specified item in the sorted array using the specified comparator; or null if the item is not found, the array is null, or the comparator is null.
      * <p>
      * This implementation internally calls {@link Comparator#compare(Object, Object)} with the item as the first argument and the array elements as the second arguments.
@@ -453,7 +457,7 @@ class Lambda
      * @param sortedArray the sorted array.
      * @param comparator the comparator.
      *
-     * @return the array element index, or null if the item is not found, the array is null, or the comparator is null.
+     * @return the array element index, or null if not found.
      */
     public static <T>
     Integer sortedFindIndex(
@@ -475,7 +479,7 @@ class Lambda
      * @param item the item.
      * @param sortedArray the sorted array.
      *
-     * @return the array element index, or null if the item is not found or the array is null.
+     * @return the array element index, or null if not found.
      */
     public static <T extends Comparable<T>>
     Integer sortedFindIndex(
@@ -485,6 +489,33 @@ class Lambda
         return sortedArray == null
                ? null
                : new BinaryComparableLocator<T>(item, sortedArray).position(null);
+    }
+
+    /**
+     * Returns index of the first occurrence of element in the sorted array using the specified function as comparator; or null if element is not found, the array is null, or the function is null.
+     *
+     * @param <T> the array type.
+     * @param sortedArray the sorted array.
+     * @param comparator the function.
+     *
+     * @return the array element index, or null if not found.
+     */
+    public static <T>
+    Integer sortedFindIndex(
+        final T[] sortedArray,
+        final Function<Object, Boolean> comparator
+        ) {
+        return sortedArray == null || comparator == null
+               ? null
+               : new BinaryLocator<T>(null, sortedArray, new Comparator<T>() {
+                                                             @Override
+                                                             public int compare(final T n, final T element) {
+                                                                 return comparator.apply(element)
+                                                                        ? 0
+                                                                        : 1;
+                                                             }
+                                                         })
+                 .position(null);
     }
 
     /**
@@ -618,7 +649,7 @@ class Lambda
          * @param end the iteration end index. (exclusive)
          * @param step the iteration step.
          */
-        protected
+        public
         ArrayIterable(
             final T[] array,
             final int start,
@@ -647,6 +678,11 @@ class Lambda
 
                          boolean hasNext = updateHasNext();
 
+                         boolean updateHasNext() {
+                             hasNext = i >= start && i < end;
+                             return hasNext;
+                         }
+
                          @Override
                          public boolean hasNext() {
                              updateHasNext();
@@ -661,11 +697,6 @@ class Lambda
                              final T element = array[i];
                              i += step;
                              return element;
-                         }
-
-                         boolean updateHasNext() {
-                             hasNext = i >= start && i < end;
-                             return hasNext();
                          }
                      }
                    : new Iterator<T>() {
@@ -697,6 +728,26 @@ class Lambda
     extends BinaryLocator<T>
     {
         /**
+         * Creates a binary locator with the specified comparable item, sorted array, and ascending flag.
+         * <p>
+         * This implementation calls the item's {@link Comparable#compareTo(Object)} method internally, unless the item is null; in that case, the same method is called on each array element instead.
+         *
+         * @param item the locator item.
+         * @param array the sorted array.
+         *
+         * @throws IllegalArgumentException if the array is null.
+         */
+        public
+        BinaryComparableLocator(
+            final T item,
+            final T[] array,
+            final boolean ascending
+            ) {
+            super(item, array, ascending, null);
+            ComparatorAdjuster.reset(this, item);
+        }
+
+        /**
          * Creates a binary locator with the specified comparable item and sorted array.
          * <p>
          * This implementation calls the item's {@link Comparable#compareTo(Object)} method internally, unless the item is null; in that case, the same method is called on each array element instead.
@@ -706,6 +757,7 @@ class Lambda
          *
          * @throws IllegalArgumentException if the array is null.
          */
+        public
         BinaryComparableLocator(
             final T item,
             final T[] array
@@ -765,17 +817,20 @@ class Lambda
         boolean ascending;
 
         /**
-         * Creates a binary locator with the specified item, sorted array, and comparator.
+         * Creates a binary locator with the specified item, sorted array, ascending flag, and comparator.
          *
          * @param item the locator item.
          * @param array the sorted array.
+         * @param ascending the ascending flag.
          * @param comparator the comparator.
          *
          * @throws IllegalArgumentException if the array or the comparator is null.
          */
+        public
         BinaryLocator(
             final T item,
             final T[] array,
+            final boolean ascending,
             final Comparator<T> comparator
             ) {
             super(array, comparator);
@@ -783,8 +838,28 @@ class Lambda
             setStartIndex(0);
             setEndIndex(array.length);
             setIndex((lo + hi) / 2);
-            ascending = array.length > 1 || comparator.compare(array[0], array[array.length - 1]) < 0;
+            this.ascending = ascending;
             resetComparatorSupplier(comparator);
+        }
+
+        /**
+         * Creates a binary locator with the specified item, sorted array, and comparator.
+         * <p>
+         * This constructor automatically sets the ascending flag by comparing the first and last array elements.
+         *
+         * @param item the locator item.
+         * @param array the sorted array.
+         * @param comparator the comparator.
+         *
+         * @throws IllegalArgumentException if the array or the comparator is null.
+         */
+        public
+        BinaryLocator(
+            final T item,
+            final T[] array,
+            final Comparator<T> comparator
+            ) {
+            this(item, array, array.length > 1 && comparator.compare(array[0], array[array.length - 1]) < 0, comparator);
         }
 
         /**
@@ -1537,9 +1612,7 @@ class Lambda
             throw new NoSuchElementException();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         protected void updateHasNext() {
             hasNext = i >= start && i < end;
