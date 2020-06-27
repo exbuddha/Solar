@@ -9,6 +9,8 @@ import static musical.Constant.Note.Octave.*;
 import static musical.Note.Accidental.Flat;
 import static musical.Note.Accidental.Natural;
 import static musical.Note.Accidental.Sharp;
+import static musical.Scale.Accidental.DoubleFlat;
+import static musical.Scale.Accidental.DoubleSharp;
 import static system.data.Constant.OperationImpossible;
 import static system.data.Constant.OrderOutOfRange;
 
@@ -65,7 +67,6 @@ implements
     Adjustable,
     Adjusting<Note, Number>,
     Clockable<Note>,
-    Cloneable,
     Comparable<Note>,
     Invertible,
     Inverting<Note>,
@@ -2389,9 +2390,9 @@ implements
      */
     @Override
     public int compareTo(final Note note) {
-        return note == null
+        return (int) (note == null
                ? Integer.MAX_VALUE
-               : (int) getDistance(note);
+               : Math.signum(getDistance(note)));
     }
 
     /**
@@ -2816,6 +2817,16 @@ implements
         public static final
         Accidental Sharp = new Standard(SharpSym, (short) 100);
 
+        /** The adjustment array. */
+        private static final
+        Accidental[][] Adjusted = new Accidental[][] {
+            { null, null, null, null, DoubleFlat, Flat, Natural, Sharp, DoubleSharp },
+            { null, null, null, DoubleFlat, Flat, Natural, Sharp, DoubleSharp, null },
+            { null, null, DoubleFlat, Flat, Natural, Sharp, DoubleSharp, null, null },
+            { null, DoubleFlat, Flat, Natural, Sharp, DoubleSharp, null, null, null },
+            { DoubleFlat, Flat, Natural, Sharp, DoubleSharp, null, null, null, null }
+        };
+
         /** The accidental symbol. */
         protected
         String symbol;
@@ -2842,6 +2853,25 @@ implements
             this.symbol = symbol;
             this.cents = cents;
             order = getSemitones();
+        }
+
+        /**
+         * Returns the added amount of semitones in the specified adjustments.
+         *
+         * @param adjustments the adjustments.
+         *
+         * @return the added adjustments.
+         */
+        protected static
+        byte addedAdjustments(final Number... adjustments) {
+            byte semitones = 0;
+            for (final Number adj : adjustments)
+                if (adj != null)
+                    semitones += adj instanceof Interval
+                                 ? ((Interval) adj).getSemitones()
+                                 : adj.byteValue();
+
+            return semitones;
         }
 
         /**
@@ -2891,6 +2921,8 @@ implements
 
         /**
          * Returns the standard accidental adjusted by the specified adjustments as whole semitone amounts.
+         * <p>
+         * The accepted adjustment range is [-4, 4] depending on the order of this accidental.
          *
          * @param adjustments the adjustments.
          *
@@ -2898,91 +2930,7 @@ implements
          */
         @Override
         public Accidental adjusted(final Number... adjustments) {
-            byte semitones = getSemitones();
-            for (final Number adj : adjustments)
-                if (adj != null)
-                    semitones += adj instanceof Interval
-                                 ? ((Interval) adj).getSemitones()
-                                 : adj.byteValue();
-
-            if (semitones == 0)
-                return this;
-
-            if (this == Sharp)
-                switch(semitones) {
-                case 1:
-                    return Scale.Accidental.DoubleSharp;
-
-                case -1:
-                    return Natural;
-
-                case -2:
-                    return Flat;
-
-                case -3:
-                    return Scale.Accidental.DoubleFlat;
-                }
-            else
-                if (this == Flat)
-                    switch(semitones) {
-                    case 3:
-                        return Scale.Accidental.DoubleSharp;
-
-                    case 2:
-                        return Sharp;
-
-                    case 1:
-                        return Natural;
-
-                    case -1:
-                        return Scale.Accidental.DoubleFlat;
-                    }
-                else
-                    if (this == Natural)
-                        switch(semitones) {
-                        case 2:
-                            return Scale.Accidental.DoubleSharp;
-
-                        case 1:
-                            return Sharp;
-
-                        case -1:
-                            return Flat;
-
-                        case -2:
-                            return Scale.Accidental.DoubleFlat;
-                        }
-                    else
-                        if (this == Scale.Accidental.DoubleSharp)
-                            switch(semitones) {
-                            case -1:
-                                return Sharp;
-
-                            case -2:
-                                return Natural;
-
-                            case -3:
-                                return Flat;
-
-                            case -4:
-                                return Scale.Accidental.DoubleFlat;
-                            }
-                        else
-                            if (this == Scale.Accidental.DoubleFlat)
-                                switch(semitones) {
-                                case 4:
-                                    return Scale.Accidental.DoubleSharp;
-
-                                case 3:
-                                    return Sharp;
-
-                                case 2:
-                                    return Natural;
-
-                                case 1:
-                                    return Flat;
-                                }
-            return null;
+            return Adjusted[order + 2][(order + addedAdjustments(adjustments) + 4) % 8];
         }
 
         /** {@inheritDoc} */
@@ -5697,8 +5645,8 @@ implements
          * @see Note#unadjusted()
          */
         @Override
-        public Note unadjusted() {
-            return super.unadjusted().distinct();
+        public Standard unadjusted() {
+            return (Standard) super.unadjusted().distinct();
         }
     }
 }

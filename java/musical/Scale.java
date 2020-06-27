@@ -1206,24 +1206,9 @@ implements
     {
         public
         Chord(
-            final Pitch pitch,
-            final Accidental accidental
-            ) {
-            super(null, pitch, accidental, null);
-        }
-
-        public
-        Chord(
-            final Pitch pitch
-            ) {
-            super(null, pitch, Accidental.Natural, null);
-        }
-
-        public
-        Chord(
             final musical.Note note
             ) {
-            super(note.octave, note.pitch, note.accidental, note.adjustment);
+            super(note);
         }
 
         /**
