@@ -83,21 +83,54 @@ interface Format
             public abstract
             CharSequence getCharSequence();
 
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation calls {@link #getCharSequence()} internally.
+             *
+             * @param index the character index.
+             *
+             * @return the character.
+             */
             @Override
             public char charAt(final int index) {
                 return getCharSequence().charAt(index);
             }
 
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation calls {@link #getCharSequence()} internally.
+             *
+             * @return the character sequence length.
+             */
             @Override
             public int length() {
                 return getCharSequence().length();
             }
 
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation calls {@link #getCharSequence()} internally.
+             *
+             * @param start the subsequence start index. (inclusive)
+             * @param start the subsequence end index. (exclusive)
+             *
+             * @return the character subsequence.
+             */
             @Override
             public CharSequence subSequence(final int start, final int end) {
                 return getCharSequence().subSequence(start, end);
             }
 
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation calls {@link #getCharSequence()} internally.
+             *
+             * @return the character sequence as string.
+             */
             @Override
             public String toString() {
                 return getCharSequence().toString();

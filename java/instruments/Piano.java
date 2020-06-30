@@ -118,7 +118,7 @@ implements Keyboard
             final short lowestNoteNumber = (short) firstKeyNote.getNumber();
             for (short semitone = (short) 0; semitone < this.keyCount; semitone++)
                 stringCreator
-                .withValues(Note.withNumber((short) (lowestNoteNumber + semitone)));
+                .withValues(new Note(lowestNoteNumber + semitone));
         }
     }
 
@@ -328,7 +328,7 @@ implements Keyboard
             final short lowestNoteNumber = (short) firstKeyTune.getNumber();
             for (int semitone = 0; semitone < numOfKeys.intValue(); semitone++)
                 keyCreator
-                .withValues(Note.withNumber((short) (lowestNoteNumber + semitone)));
+                .withValues(new Note(lowestNoteNumber + semitone));
         }
     }
 

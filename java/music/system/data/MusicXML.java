@@ -3,7 +3,6 @@ package music.system.data;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -37,21 +36,9 @@ extends XML
      */
     protected
     MusicXML(
-        final Document.Handler handler
+        final DocumentHandler handler
         ) {
         super(handler);
-    }
-
-    /**
-     * Accepts the specified XML document as a MusicXML document.
-     *
-     * @param xml the XML document.
-     */
-    public
-    MusicXML(
-        final XML xml
-        ) {
-        super(xml.getHandler());
     }
 
     /**
@@ -82,11 +69,11 @@ extends XML
     }
 
     /**
-     * Creates an empty MusicXML document using the basic implementation of {@link Handler}.
+     * Creates an empty MusicXML document using the standard implementation of {@link Handler}.
      */
     public
     MusicXML() {
-        super(DocumentHandler.basic());
+        super(Handler.standard((org.w3c.dom.Document) Element.of(newDocumentBuilder().newDocument())));
     }
 
     /**
@@ -165,78 +152,15 @@ extends XML
     }
 
     /**
-     * {@code Handler} represents the default handler for MusicXML documents.
+     * {@code Handler} classifies the document handler for MusicXML documents.
      *
      * @since 1.8
      * @author Alireza Kamran
      */
-    public static abstract
-    class Handler
-    extends DocumentHandler
+    public
+    interface Handler
+    extends Document.Handler
     {
-        private static final
-        Cache.Table AnalyticLevel2Elements
-        = new Cache.Table(
-            Constant.WORK,
-            Constant.MOVEMENT_TITLE,
-            Constant.MOVEMENT_NUMBER,
-            Constant.IDENTIFICATION,
-            Constant.PART_LIST
-            );
-
-        private static final
-        Cache.Table AnalyticMusicElements
-        = new Cache.Table(
-            Constant.ATTRIBUTES,
-            Constant.BACKUP,
-            Constant.BARLINE,
-            Constant.BOOKMARK,
-            Constant.DIRECTION,
-            Constant.FIGURED_BASS,
-            Constant.FORWARD,
-            Constant.GROUPING,
-            Constant.HARMONY,
-            Constant.LINK,
-            Constant.NOTE,
-            Constant.SOUND
-            );
-
-        private static final
-        Cache.Table AnalyticUnacceptedAttributes
-        = new Cache.Table(
-            Constant.BEZIER_OFFSET,
-            Constant.BEZIER_OFFSET2,
-            Constant.BEZIER_X,
-            Constant.BEZIER_X2,
-            Constant.BEZIER_Y,
-            Constant.BEZIER_Y2,
-            Constant.COLOR,
-            Constant.DASH_LENGTH,
-            Constant.DEFAULT_X,
-            Constant.DEFAULT_Y,
-            Constant.FONT_FAMILY,
-            Constant.FONT_SIZE,
-            Constant.FONT_STYLE,
-            Constant.FONT_WEIGHT,
-            Constant.HEIGHT,
-            Constant.LETTER_SPACING,
-            Constant.LINE_HEIGHT,
-            Constant.PRINT_DOT,
-            Constant.PRINT_LYRIC,
-            Constant.PRINT_OBJECT,
-            Constant.PRINT_SPACING,
-            Constant.RELATIVE_X,
-            Constant.RELATIVE_Y,
-            Constant.SPACE_LENGTH,
-            Constant.WIDTH,
-            Constant.XML_SPACE
-            );
-
-        private static final
-        Restriction Standard
-        = new Restriction()
-        {};
-
         /**
          * Accepts a subset of data, does not restrict.
          * <p>
@@ -247,260 +171,11 @@ extends XML
          * @param document the optional document.
          * @return the analytic handler.
          */
-        public static final
-        Handler analytic(
+        static
+        DocumentHandler analytic(
             final org.w3c.dom.Document document
             ) {
-            return new Handler()
-            {
-                boolean completed;
-
-                final
-                Stack<org.w3c.dom.Element> stack = new Stack<>();
-
-                int depth;
-
-                protected
-                boolean isAcceptableElement(
-                    final int depth,
-                    final Stack<org.w3c.dom.Element> stack,
-                    final String qName
-                    ) {
-                    if (depth != stack.size())
-                        return false;
-
-                    switch (depth) {
-                        // ---------- Level 1
-                        // acceptable if element is <score-partwise> or <score-timewise>
-                        case 0:
-                            return qName.equals(Constant.SCORE_PARTWISE) ||
-                                   qName.equals(Constant.SCORE_TIMEWISE);
-
-                        // ---------- Level 2
-                        // acceptable if element is <work>, <movement-title>, <movement-number>, <identification> or <part-list>
-                        //         or if element is <part> or <measure> depending on the the score type
-                        case 1:
-                            String parent = stack.peek().getTagName();
-                            return AnalyticLevel2Elements.contains(qName) ||
-
-                                   (parent.equals(Constant.SCORE_PARTWISE) &&
-                                     (qName.equals(Constant.PART)) ||
-
-                                   (parent.equals(Constant.SCORE_TIMEWISE) &&
-                                     qName.equals(Constant.MEASURE)));
-
-                        // ---------- Level 3
-                        // acceptable if element is <work-title> or <work-number> and the parent element is <work>
-                        //         or if element is <creator> or <rights> and the parent element is <identification>
-                        //         or if element is <score-part> and the parent element is <part-list>
-                        //         or if element is <measure> and the parent element is <part> or vice versa
-                        case 2:
-                            parent = stack.peek().getTagName();
-                            return (parent.equals(Constant.WORK) &&
-                                     (qName.equals(Constant.WORK_TITLE) ||
-                                     qName.equals(Constant.WORK_NUMBER))) ||
-
-                                   (parent.equals(Constant.IDENTIFICATION) &&
-                                     (qName.equals(Constant.CREATOR) ||
-                                     qName.equals(Constant.RIGHTS))) ||
-
-                                   (parent.equals(Constant.PART_LIST) &&
-                                     qName.equals(Constant.SCORE_PART)) ||
-
-                                   ((parent.equals(Constant.PART) &&
-                                     qName.equals(Constant.MEASURE)) ||
-
-                                   (parent.equals(Constant.MEASURE) &&
-                                     qName.equals(Constant.PART)));
-
-                        // ---------- Level 4
-                        // acceptable if element is <part-name> or <score-instrument> and the parent element is <score-part>
-                        //         or if element is not <print> and the parent element is <measure> or <part>
-                        case 3:
-                            parent = stack.peek().getTagName();
-                            return (parent.equals(Constant.SCORE_PART) &&
-                                     (qName.equals(Constant.PART_NAME) ||
-                                     qName.equals(Constant.SCORE_INSTRUMENT))) ||
-
-                                   ((parent.equals(Constant.MEASURE) ||
-                                   parent.equals(Constant.PART)) &&
-                                     AnalyticMusicElements.contains(qName));
-
-                        // ---------- Other levels
-                        // acceptable if level is 5 and element is <instrument-name> or <instrument-sound> and the parent element is <score-instrument>
-                        //         or if the level-4th ancestor of element is an acceptable music data element
-                        default:
-                            return (depth == 4 &&
-                                     stack.peek().getTagName().equals(Constant.SCORE_INSTRUMENT) &&
-                                       (qName.equals(Constant.INSTRUMENT_NAME) ||
-                                       qName.equals(Constant.INSTRUMENT_SOUND))) ||
-
-                                   AnalyticMusicElements.contains(stack.get(3).getTagName());
-                    }
-                }
-
-                protected
-                boolean isAcceptableAttribute(
-                    final int depth,
-                    final Stack<org.w3c.dom.Element> stack,
-                    final String qName,
-                    final String aName,
-                    final Attributes attributes,
-                    final int n
-                    ) {
-                    switch (depth) {
-                        // ---------- Level 2
-                        // acceptable if element is <part> and attribute name is 'id'
-                        //            or element is <measure> and attribute name is 'number'
-                        case 1:
-                            return (qName.equals(Constant.PART) &&
-                                     aName.equals(Constant.ID)) ||
-
-                                   (qName.equals(Constant.MEASURE) &&
-                                     aName.equals(Constant.NUMBER));
-
-                        // ---------- Level 3
-                        // acceptable if element is <creator> and attribute name is 'type'
-                        //            or element is <score-part> and attribute name is 'id'
-                        case 2:
-                            return (qName.equals(Constant.CREATOR) &&
-                                     aName.equals(Constant.TYPE)) ||
-
-                                   (qName.equals(Constant.SCORE_PART) &&
-                                     aName.equals(Constant.ID)) ||
-
-                                   (qName.equals(Constant.MEASURE) &&
-                                     aName.equals(Constant.NUMBER)) ||
-
-                                   (qName.equals(Constant.PART) &&
-                                     aName.equals(Constant.ID));
-
-                        // ---------- Level 4
-                        // acceptable if element is <score-instrument> and attribute name is 'id'
-                        //            or element is <sound> and attribute name is 'tempo'
-                        case 3:
-                            return (qName.equals(Constant.SCORE_INSTRUMENT) &&
-                                     aName.equals(Constant.ID)) ||
-
-                                   (qName.equals(Constant.SOUND) &&
-                                     aName.equals(Constant.TEMPO));
-
-                        // ---------- Other levels
-                        // filter out the unacceptable attributes
-                        default:
-                            return ! AnalyticUnacceptedAttributes.contains(aName);
-                    }
-                }
-
-                @Override
-                public void characters(final char[] ch, final int start, final int length) throws SAXException {
-                    if (completed || stack.empty() || stack.size() != depth)
-                        return;
-
-                    final String parent = stack.peek().getTagName();
-
-                    // If characters are for an acceptable elements at...
-                    if ((
-                       // ---------- Level 3
-                       (depth == 2 &&
-                         (parent.equals(Constant.MOVEMENT_TITLE) ||
-                         parent.equals(Constant.MOVEMENT_NUMBER))) ||
-
-                       // ---------- Level 4
-                       (depth == 3 &&
-                         (parent.equals(Constant.WORK_TITLE) ||
-                         parent.equals(Constant.WORK_NUMBER) ||
-                         parent.equals(Constant.CREATOR) ||
-                         parent.equals(Constant.RIGHTS))) ||
-
-                       // ---------- Level 5
-                       (depth == 4 &&
-                         parent.equals(Constant.PART_NAME)) ||
-
-                       // ---------- Level 6
-                       (depth == 5 &&
-                         (parent.equals(Constant.INSTRUMENT_NAME) ||
-                         parent.equals(Constant.INSTRUMENT_SOUND))) ||
-
-                       // ---------- Level 6 or higher
-                       (depth >= 5 &&
-                         (stack.get(1).getTagName().equals(Constant.PART) ||
-                         stack.get(1).getTagName().equals(Constant.MEASURE))))) {
-
-                        // Append the characters to the element at the top of the stack
-                        String s = "";
-                        for (int i = start; i < start + length; i++)
-                            s += ch[i];
-                        stack.peek().appendChild(document.createTextNode(s));
-                    }
-                }
-
-                @Override
-                public void endDocument() {
-                    completed = true;
-                }
-
-                @Override
-                public void endElement(final String uri, final String localName, final String qName) throws SAXException {
-                    if (completed)
-                        return;
-
-                    // Finalize and close the element in the stack
-                    if (stack.size() == depth && qName.equals(stack.peek().getTagName())) {
-                        final org.w3c.dom.Element e = stack.pop();
-
-                        if (stack.empty()) {
-                            document.appendChild(e);
-                            endDocument();
-                        }
-                        else
-                            stack.peek().appendChild(e);
-                    }
-
-                    depth--;
-                }
-
-                @Override
-                public boolean isClosed() {
-                    return completed;
-                }
-
-                @Override
-                public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
-                    // To avoid DTD validation
-                    return new InputSource(new ByteArrayInputStream(new byte[] {}));
-                }
-
-                @Override
-                public void startDocument() throws SAXException {
-                    depth = 0;
-                }
-
-                @Override
-                public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-                    if (completed)
-                        return;
-
-                    // If the element is acceptable...
-                    if (isAcceptableElement(depth, stack, qName)) {
-
-                        // Create a placeholder element
-                        final org.w3c.dom.Element e = document.createElement(qName);
-
-                        // Add the acceptable attributes to the element
-                        for (int i = 0; i < attributes.getLength(); i++) {
-                            final String aName = attributes.getQName(i);
-                            if (isAcceptableAttribute(depth, stack, qName, aName, attributes, i))
-                                e.setAttribute(aName, attributes.getValue(i));
-                        }
-
-                        // Push the element to the stack
-                        stack.push(e);
-                    }
-
-                    depth++;
-                }
-            };
+            return new Analytic();
         }
 
         /**
@@ -512,24 +187,11 @@ extends XML
          * @param document the optional document.
          * @return the restrictive handler.
          */
-        public static final
-        Handler restrictive(
+        static
+        DocumentHandler restrictive(
             final Restriction restriction,
             final org.w3c.dom.Document document
-            ) {
-            return new Handler()
-            {
-                boolean completed;
-
-                final
-                Stack<Element> stack = new Stack<Element>();
-
-                @Override
-                public boolean isClosed() {
-                    return completed;
-                }
-            };
-        }
+            ) { return null; }
 
         /**
          * Accepts valid data only.
@@ -539,15 +201,15 @@ extends XML
          * @param document the optional document.
          * @return the restrictive handler.
          */
-        public static final
-        Handler standard(
+        static
+        DocumentHandler standard(
             final org.w3c.dom.Document document
             ) {
-            return restrictive(Standard, document);
+            return restrictive(Restriction.Standard, document);
         }
 
         /**
-         * {@code Analytic} is an implementation of a document handler that accepts all standard MusicXML element types and filters out the cosmetic attributes.
+         * {@code Analytic} is an implementation of a standard document handler that only accepts MusicXML elements and filters out the cosmetic attributes.
          * <p>
          * This class implementation is in progress.
          *
@@ -556,8 +218,320 @@ extends XML
          * @since 1.8
          * @author Alireza Kamran
          */
-        protected static
+        public static
         class Analytic
+        extends Standard
+        {
+            private static final
+            Cache.Table AnalyticLevel2Elements
+            = new Cache.Table(
+                Constant.WORK,
+                Constant.MOVEMENT_TITLE,
+                Constant.MOVEMENT_NUMBER,
+                Constant.IDENTIFICATION,
+                Constant.PART_LIST
+                );
+
+            private static final
+            Cache.Table AnalyticMusicElements
+            = new Cache.Table(
+                Constant.ATTRIBUTES,
+                Constant.BACKUP,
+                Constant.BARLINE,
+                Constant.BOOKMARK,
+                Constant.DIRECTION,
+                Constant.FIGURED_BASS,
+                Constant.FORWARD,
+                Constant.GROUPING,
+                Constant.HARMONY,
+                Constant.LINK,
+                Constant.NOTE,
+                Constant.SOUND
+                );
+
+            private static final
+            Cache.Table AnalyticUnacceptedAttributes
+            = new Cache.Table(
+                Constant.BEZIER_OFFSET,
+                Constant.BEZIER_OFFSET2,
+                Constant.BEZIER_X,
+                Constant.BEZIER_X2,
+                Constant.BEZIER_Y,
+                Constant.BEZIER_Y2,
+                Constant.COLOR,
+                Constant.DASH_LENGTH,
+                Constant.DEFAULT_X,
+                Constant.DEFAULT_Y,
+                Constant.FONT_FAMILY,
+                Constant.FONT_SIZE,
+                Constant.FONT_STYLE,
+                Constant.FONT_WEIGHT,
+                Constant.HEIGHT,
+                Constant.LETTER_SPACING,
+                Constant.LINE_HEIGHT,
+                Constant.PRINT_DOT,
+                Constant.PRINT_LYRIC,
+                Constant.PRINT_OBJECT,
+                Constant.PRINT_SPACING,
+                Constant.RELATIVE_X,
+                Constant.RELATIVE_Y,
+                Constant.SPACE_LENGTH,
+                Constant.WIDTH,
+                Constant.XML_SPACE
+                );
+
+            protected
+            boolean isAcceptableElement(
+                final int depth,
+                final LinkedList<org.w3c.dom.Element> stack,
+                final String qName
+                ) {
+                if (depth != stack.size())
+                    return false;
+
+                switch (depth) {
+                    // ---------- Level 1
+                    // acceptable if element is <score-partwise> or <score-timewise>
+                    case 0:
+                        return qName.equals(Constant.SCORE_PARTWISE) ||
+                               qName.equals(Constant.SCORE_TIMEWISE);
+
+                    // ---------- Level 2
+                    // acceptable if element is <work>, <movement-title>, <movement-number>, <identification> or <part-list>
+                    //         or if element is <part> or <measure> depending on the the score type
+                    case 1:
+                        String parent = stack.peek().getTagName();
+                        return AnalyticLevel2Elements.contains(qName) ||
+
+                               (parent.equals(Constant.SCORE_PARTWISE) &&
+                                 (qName.equals(Constant.PART)) ||
+
+                               (parent.equals(Constant.SCORE_TIMEWISE) &&
+                                 qName.equals(Constant.MEASURE)));
+
+                    // ---------- Level 3
+                    // acceptable if element is <work-title> or <work-number> and the parent element is <work>
+                    //         or if element is <creator> or <rights> and the parent element is <identification>
+                    //         or if element is <score-part> and the parent element is <part-list>
+                    //         or if element is <measure> and the parent element is <part> or vice versa
+                    case 2:
+                        parent = stack.peek().getTagName();
+                        return (parent.equals(Constant.WORK) &&
+                                 (qName.equals(Constant.WORK_TITLE) ||
+                                 qName.equals(Constant.WORK_NUMBER))) ||
+
+                               (parent.equals(Constant.IDENTIFICATION) &&
+                                 (qName.equals(Constant.CREATOR) ||
+                                 qName.equals(Constant.RIGHTS))) ||
+
+                               (parent.equals(Constant.PART_LIST) &&
+                                 qName.equals(Constant.SCORE_PART)) ||
+
+                               ((parent.equals(Constant.PART) &&
+                                 qName.equals(Constant.MEASURE)) ||
+
+                               (parent.equals(Constant.MEASURE) &&
+                                 qName.equals(Constant.PART)));
+
+                    // ---------- Level 4
+                    // acceptable if element is <part-name> or <score-instrument> and the parent element is <score-part>
+                    //         or if element is not <print> and the parent element is <measure> or <part>
+                    case 3:
+                        parent = stack.peek().getTagName();
+                        return (parent.equals(Constant.SCORE_PART) &&
+                                 (qName.equals(Constant.PART_NAME) ||
+                                 qName.equals(Constant.SCORE_INSTRUMENT))) ||
+
+                               ((parent.equals(Constant.MEASURE) ||
+                               parent.equals(Constant.PART)) &&
+                                 AnalyticMusicElements.contains(qName));
+
+                    // ---------- Other levels
+                    // acceptable if level is 5 and element is <instrument-name> or <instrument-sound> and the parent element is <score-instrument>
+                    //         or if the level-4th ancestor of element is an acceptable music data element
+                    default:
+                        return (depth == 4 &&
+                                 stack.peek().getTagName().equals(Constant.SCORE_INSTRUMENT) &&
+                                   (qName.equals(Constant.INSTRUMENT_NAME) ||
+                                   qName.equals(Constant.INSTRUMENT_SOUND))) ||
+
+                               AnalyticMusicElements.contains(stack.get(3).getTagName());
+                }
+            }
+
+            protected
+            boolean isAcceptableAttribute(
+                final int depth,
+                final LinkedList<org.w3c.dom.Element> stack,
+                final String qName,
+                final String aName,
+                final Attributes attributes,
+                final int n
+                ) {
+                switch (depth) {
+                    // ---------- Level 2
+                    // acceptable if element is <part> and attribute name is 'id'
+                    //            or element is <measure> and attribute name is 'number'
+                    case 1:
+                        return (qName.equals(Constant.PART) &&
+                                 aName.equals(Constant.ID)) ||
+
+                               (qName.equals(Constant.MEASURE) &&
+                                 aName.equals(Constant.NUMBER));
+
+                    // ---------- Level 3
+                    // acceptable if element is <creator> and attribute name is 'type'
+                    //            or element is <score-part> and attribute name is 'id'
+                    case 2:
+                        return (qName.equals(Constant.CREATOR) &&
+                                 aName.equals(Constant.TYPE)) ||
+
+                               (qName.equals(Constant.SCORE_PART) &&
+                                 aName.equals(Constant.ID)) ||
+
+                               (qName.equals(Constant.MEASURE) &&
+                                 aName.equals(Constant.NUMBER)) ||
+
+                               (qName.equals(Constant.PART) &&
+                                 aName.equals(Constant.ID));
+
+                    // ---------- Level 4
+                    // acceptable if element is <score-instrument> and attribute name is 'id'
+                    //            or element is <sound> and attribute name is 'tempo'
+                    case 3:
+                        return (qName.equals(Constant.SCORE_INSTRUMENT) &&
+                                 aName.equals(Constant.ID)) ||
+
+                               (qName.equals(Constant.SOUND) &&
+                                 aName.equals(Constant.TEMPO));
+
+                    // ---------- Other levels
+                    // filter out the unacceptable attributes
+                    default:
+                        return ! AnalyticUnacceptedAttributes.contains(aName);
+                }
+            }
+
+            @Override
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
+                if (closed || stack.isEmpty() || stack.size() != depth)
+                    return;
+
+                final String parent = stack.peek().getTagName();
+
+                // If characters are for an acceptable elements at...
+                if ((
+                   // ---------- Level 3
+                   (depth == 2 &&
+                     (parent.equals(Constant.MOVEMENT_TITLE) ||
+                     parent.equals(Constant.MOVEMENT_NUMBER))) ||
+
+                   // ---------- Level 4
+                   (depth == 3 &&
+                     (parent.equals(Constant.WORK_TITLE) ||
+                     parent.equals(Constant.WORK_NUMBER) ||
+                     parent.equals(Constant.CREATOR) ||
+                     parent.equals(Constant.RIGHTS))) ||
+
+                   // ---------- Level 5
+                   (depth == 4 &&
+                     parent.equals(Constant.PART_NAME)) ||
+
+                   // ---------- Level 6
+                   (depth == 5 &&
+                     (parent.equals(Constant.INSTRUMENT_NAME) ||
+                     parent.equals(Constant.INSTRUMENT_SOUND))) ||
+
+                   // ---------- Level 6 or higher
+                   (depth >= 5 &&
+                     (stack.get(1).getTagName().equals(Constant.PART) ||
+                     stack.get(1).getTagName().equals(Constant.MEASURE))))) {
+
+                    // Append the characters to the element at the top of the stack
+                    String s = "";
+                    for (int i = start; i < start + length; i++)
+                        s += ch[i];
+                    stack.peek().appendChild(document.createTextNode(s));
+                }
+            }
+
+            @Override
+            public void endDocument() {
+                closed = true;
+            }
+
+            @Override
+            public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+                if (closed)
+                    return;
+
+                // Finalize and close the element in the stack
+                if (stack.size() == depth && qName.equals(stack.peek().getTagName())) {
+                    final org.w3c.dom.Element e = stack.pop();
+
+                    if (stack.isEmpty()) {
+                        document.appendChild(e);
+                        endDocument();
+                    }
+                    else
+                        stack.peek().appendChild(e);
+                }
+
+                depth--;
+            }
+
+            @Override
+            public boolean isClosed() {
+                return closed;
+            }
+
+            @Override
+            public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
+                // To avoid DTD validation
+                return new InputSource(new ByteArrayInputStream(new byte[] {}));
+            }
+
+            @Override
+            public void startDocument() throws SAXException {
+                depth = 0;
+            }
+
+            @Override
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
+                if (closed)
+                    return;
+
+                // If the element is acceptable...
+                if (isAcceptableElement(depth, stack, qName)) {
+
+                    // Create a placeholder element
+                    final org.w3c.dom.Element e = document.createElement(qName);
+
+                    // Add the acceptable attributes to the element
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        final String aName = attributes.getQName(i);
+                        if (isAcceptableAttribute(depth, stack, qName, aName, attributes, i))
+                            e.setAttribute(aName, attributes.getValue(i));
+                    }
+
+                    // Push the element to the stack
+                    stack.push(e);
+                }
+
+                depth++;
+            }
+        }
+
+        /**
+         * {@code Basic} is an implementation of a standard document handler that only accepts MusicXML elements, attributes, and text nodes.
+         *
+         * @see Standard
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public static
+        class Basic
         extends Standard
         {}
 
@@ -569,10 +543,15 @@ extends XML
          * @since 1.8
          * @author Alireza Kamran
          */
-        protected static abstract
+        public static abstract
         class Restriction
         extends Filter
         {
+            private static final
+            Restriction Standard
+            = new Restriction()
+            {};
+
             /**
              * Creates a new MusicXML restriction.
              */
@@ -583,16 +562,19 @@ extends XML
         }
 
         /**
-         * {@code Standard} is an implementation of a document handler that accepts all standard MusicXML element types.
+         * {@code Standard} is an implementation of a standard document handler that only accepts MusicXML elements.
          * <p>
          * This class implementation is in progress.
+         *
+         * @see DocumentHandler.Standard
          *
          * @since 1.8
          * @author Alireza Kamran
          */
-        protected static
+        public static
         class Standard
         extends DocumentHandler.Standard
+        implements Handler
         {}
     }
 

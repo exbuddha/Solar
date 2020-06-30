@@ -377,6 +377,20 @@ class Lambda
     }
 
     /**
+     * Rounds the number away from zero and returns it.
+     *
+     * @param number the number.
+     *
+     * @return the rounded number.
+     */
+    public static
+    int round(
+        final float number
+        ) {
+        return (int) (Math.signum(number) * Math.round(Math.abs(number) / 100));
+    }
+
+    /**
      * Returns the first encountered occurrence of the specified item in the sorted array using the specified comparator; or null if item is not found, the array is null, or the comparator is null.
      * <p>
      * This implementation calls {@link Comparator#compare(Object, Object)} with the item as the first argument and the array elements as second arguments of that method.
@@ -731,9 +745,13 @@ class Lambda
          * Creates a binary locator with the specified comparable item, sorted array, and ascending flag.
          * <p>
          * This implementation calls the item's {@link Comparable#compareTo(Object)} method internally, unless the item is null; in that case, the same method is called on each array element instead.
+         * <p>
+         * If the ascending flag is null, the comparator will not be reset.
+         * If the flag is true, the {@link Comparable#compareTo(Object)} result will be used; otherwise the result will be negated.
          *
          * @param item the locator item.
          * @param array the sorted array.
+         * @param ascending the ascending flag.
          *
          * @throws IllegalArgumentException if the array is null.
          */
@@ -741,10 +759,11 @@ class Lambda
         BinaryComparableLocator(
             final T item,
             final T[] array,
-            final boolean ascending
+            final Boolean ascending
             ) {
-            super(item, array, ascending, null);
+            super(item, array, ascending);
             ComparatorAdjuster.reset(this, item);
+            resetComparatorSupplier(comparator);
         }
 
         /**
@@ -762,9 +781,14 @@ class Lambda
             final T item,
             final T[] array
             ) {
-            super(item, array, null);
-            ComparatorAdjuster.reset(this, item);
+            this(item, array, null);
         }
+
+        /**
+         * This implementation is empty.
+         */
+        @Override
+        protected void validateComparator() {}
 
         /**
          * Sets the item and resets the comparator.
@@ -814,23 +838,49 @@ class Lambda
 
         /** The array sort order. */
         protected final
-        boolean ascending;
+        Boolean ascending;
+
+        /**
+         * Creates a binary locator with the specified item, sorted array, ascending flag, and null comparator.
+         *
+         * @param item the item.
+         * @param array the sorted array.
+         * @param ascending the ascending flag.
+         */
+        protected
+        BinaryLocator(
+            final T item,
+            final T[] array,
+            final Boolean ascending
+            ) {
+            super(array, null);
+            setItem(item);
+            setStartIndex(0);
+            setEndIndex(array.length);
+            setIndex((lo + hi) / 2);
+            this.ascending = ascending;
+        }
 
         /**
          * Creates a binary locator with the specified item, sorted array, ascending flag, and comparator.
+         * <p>
+         * If the ascending flag is null, the comparator will not be reset.
+         * If the flag is true, the {@link Comparator#compare(Object, Object)} will receive the item as the first argument and the array element as the second argument; otherwise the order is reversed.
          *
          * @param item the locator item.
          * @param array the sorted array.
          * @param ascending the ascending flag.
          * @param comparator the comparator.
          *
-         * @throws IllegalArgumentException if the array or the comparator is null.
+         * @throws IllegalArgumentException if the array or comparator is null.
+         *
+         * @see #resetComparatorSupplier(Comparator)
          */
         public
         BinaryLocator(
             final T item,
             final T[] array,
-            final boolean ascending,
+            final Boolean ascending,
             final Comparator<T> comparator
             ) {
             super(array, comparator);
@@ -851,7 +901,7 @@ class Lambda
          * @param array the sorted array.
          * @param comparator the comparator.
          *
-         * @throws IllegalArgumentException if the array or the comparator is null.
+         * @throws IllegalArgumentException if the array or comparator is null.
          */
         public
         BinaryLocator(
@@ -866,24 +916,27 @@ class Lambda
          * Creates and sets the comparator supplier based on the sort order of the array.
          *
          * @param comparator the comparator.
+         *
+         * @throws NullPointerException if the comparator is null.
          */
-        private
+        protected
         void resetComparatorSupplier(
             final Comparator<T> comparator
             ) {
-            comp = ascending
-                   ? new Supplier<Integer>() {
-                         @Override
-                         public Integer get() {
-                             return comparator.compare(BinaryLocator.this.item, array[getIndex()]);
+            if (ascending != null)
+                comp = ascending
+                       ? new Supplier<Integer>() {
+                             @Override
+                             public Integer get() {
+                                 return comparator.compare(BinaryLocator.this.item, array[getIndex()]);
+                             }
                          }
-                     }
-                   : new Supplier<Integer>() {
-                         @Override
-                         public Integer get() {
-                             return comparator.compare(array[getIndex()], BinaryLocator.this.item);
-                         }
-                     };
+                       : new Supplier<Integer>() {
+                             @Override
+                             public Integer get() {
+                                 return comparator.compare(array[getIndex()], BinaryLocator.this.item);
+                             }
+                         };
         }
 
         /**
@@ -964,8 +1017,13 @@ class Lambda
 
         /**
          * {@inheritDoc}
+         * <p>
+         * This implementation resets the comparator to according to the array sort order.
          *
          * @param comparator the comparator.
+         *
+         * @see #validateComparator()
+         * @see #resetComparatorSupplier(Comparator)
          */
         public
         void setComparator(
@@ -1047,21 +1105,21 @@ class Lambda
             final Locator<T> locator,
             final T item
             ) {
-            locator.setComparator(item == null
-                                  ? new Comparator<T>() {
-                                        @Override
-                                        public int compare(final T item, final T element) {
-                                            return element == null
-                                                   ? 0
-                                                   : -element.compareTo(item);
-                                        }
-                                    }
-                                  : new Comparator<T>() {
-                                        @Override
-                                        public int compare(final T item, final T element) {
-                                            return item.compareTo(element);
-                                        }
-                                    });
+            locator.comparator = item == null
+                                 ? new Comparator<T>() {
+                                       @Override
+                                       public int compare(final T item, final T element) {
+                                           return element == null
+                                                  ? 0
+                                                  : -element.compareTo(item);
+                                       }
+                                   }
+                                 : new Comparator<T>() {
+                                       @Override
+                                       public int compare(final T item, final T element) {
+                                           return item.compareTo(element);
+                                       }
+                                   };
         }
     }
 

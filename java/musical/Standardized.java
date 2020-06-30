@@ -14,13 +14,10 @@ public
 interface Standardized<T>
 {
     /**
-     * Returns true if the specified instance is standard, and false otherwise.
+     * Returns true if this instance is standard; otherwise returns false.
      *
-     * @param instance the instance.
-     * @return true if instance is standard, and false otherwise.
+     * @return true if this instance is standard, and false otherwise.
      */
     public
-    boolean isStandard(
-        T instance
-        );
+    boolean isStandard();
 }

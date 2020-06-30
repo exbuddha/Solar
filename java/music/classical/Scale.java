@@ -513,14 +513,13 @@ implements
     }
 
     /**
-     * Returns true if the specified scale is standard, and false otherwise.
+     * Returns true if this scale is standard; otherwise returns false.
      *
-     * @param scale the scale.
-     * @return true if scale is standard, and false otherwise.
+     * @return true if this scale is standard, and false otherwise.
      */
     @Override
-    public boolean isStandard(final musical.Scale scale) {
-        return scale instanceof Standard;
+    public boolean isStandard() {
+        return this instanceof Standard;
     }
 
     /**

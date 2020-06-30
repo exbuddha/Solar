@@ -16,6 +16,7 @@ import system.data.Fraction;
 import system.data.Lambda;
 import system.data.Operable;
 import system.data.Symbolized;
+import system.data.Unique;
 
 /**
  * {@code Duration} represents a time interval in music relative to the whole note time value.
@@ -513,7 +514,7 @@ implements
     Duration distinct(
         final Comparator<Fraction> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Fraction>(this, Singleton.Order, comparator).result(this);
+        return (Standard) new Lambda.BinaryLocator<Fraction>(this, Singleton.Order, false, comparator).result(this);
     }
 
     /**
@@ -550,7 +551,7 @@ implements
      */
     public
     Duration distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<Fraction>(this, Singleton.Order).result(this);
+        return (Standard) new Lambda.BinaryComparableLocator<Fraction>(this, Singleton.Order, false).result(this);
     }
 
     /**
@@ -947,7 +948,8 @@ implements
     extends Standard
     implements
         Operable.Locked<Number>,
-        Symbolized.Singleton<String>
+        Symbolized.Singleton<String>,
+        Unique
     {
         /** A constant holding the maximum value a {@code Singleton} can have, 15. */
         public static final

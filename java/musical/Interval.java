@@ -19,6 +19,7 @@ import system.data.Operable;
 import system.data.Reversible;
 import system.data.Reversing;
 import system.data.Symbolized;
+import system.data.Unique;
 
 /**
  * {@code Interval} represents a musical interval which is a measure of distance (pitch difference) between notes.
@@ -30,7 +31,7 @@ import system.data.Symbolized;
  * <p>
  * Singletons are interval types that will clone automatically, when operated on, into intermediary interval types that can automatically diverge back to a singleton when possible.
  * This guarantees that operating on singletons will always return a singleton if there is one available that matches the result.
- * The intermediary interval types are called standard intervals.
+ * The intermediary interval types are called standard intervals that all singletons are sub-types of.
  * <p>
  * Methods in this class implementation are not thread-safe.
  *
@@ -514,7 +515,7 @@ implements
     Interval distinct(
         final Comparator<Interval> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Interval>(this, Singleton.Order, comparator).result(this);
+        return (Standard) new Lambda.BinaryLocator<Interval>(this, Singleton.Order, true, comparator).result(this);
     }
 
     /**
@@ -551,7 +552,7 @@ implements
      */
     public
     Interval distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<IntervalType>(this, Singleton.Order).result(this);
+        return (Standard) new Lambda.BinaryComparableLocator<IntervalType>(this, Singleton.Order, true).result(this);
     }
 
     /**
@@ -1358,7 +1359,8 @@ implements
     extends Standard
     implements
         Operable.Locked<Number>,
-        Symbolized.Singleton<String>
+        Symbolized.Singleton<String>,
+        Unique
     {
         /** The {@code Class} instance representing the type {@code Singleton}. */
         public static final

@@ -112,9 +112,6 @@ extends java.lang.reflect.Type
             public default Object object() { return null; }
 
             @Override
-            public default Class<?> objectType() { return null; }
-
-            @Override
             public default CharSequence subSequence(int start, int end) { return null; }
         }
     }

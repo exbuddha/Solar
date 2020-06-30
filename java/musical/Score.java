@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import exceptions.InvalidMusicXMLException;
 import exceptions.UnsupportedClefException;
@@ -40,27 +38,28 @@ implements
      * Creates a score from the specified input stream and default SAX event handler, parses the input, then performs basic validation if handler is {@link MusicXML.Handler} type.
      *
      * @param inputStream the input stream.
-     * @param handler the default handler.
-     * @throws InvalidMusicXMLException if the stream content is not a valid MusicXML document.
+     * @param handler the document handler.
+     *
      * @throws IOException if any I/O errors occur.
-     * @throws ParserConfigurationException if a serious configuration error occurs.
      * @throws SAXException if a processing error occurs.
+     * @throws InvalidMusicXMLException if the stream content is not a valid MusicXML document.
+     *
+     * @see #parse(InputStream, DefaultHandler)
      */
     public
     Score(
         final InputStream inputStream,
-        final DefaultHandler handler
+        final DocumentHandler handler
         )
     throws
-        InvalidMusicXMLException,
         IOException,
-        ParserConfigurationException,
+        InvalidMusicXMLException,
         SAXException
     {
-        super((Document.Handler) handler);
+        super(handler);
         if (handler instanceof Handler) {
-            ((DocumentHandler) handler).setDocument((org.w3c.dom.Document) parse(inputStream, handler));
-            Validation.basic(((Handler) handler).getDocument());
+            handler.setDocument((org.w3c.dom.Document) parse(inputStream, handler));
+            Validation.basic((org.w3c.dom.Document) ((Handler) handler).getDocument());
         }
         else
             parse(inputStream, handler);
@@ -105,33 +104,35 @@ implements
     }
 
     /**
-     * Converts a timewise MusicXML document to a new partwise equivalent document.
+     * Creates and returns a partwise MusicXML document equivalent to the specified timewise document.
      *
      * @return the partwise document.
      *
+     * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     * @throws NullPointerException if a document cannot be instantiated.
      * @throws DOMException if an error occurs while cloning nodes.
-     * @throws InvalidMusicXMLException if an unexpected node type is found while cloning nodes.
-     * @throws ParserConfigurationException if a serious configuration error occurs.
+     * @throws InvalidMusicXMLException if an unexpected element type is found while cloning the partwise document.
+     *
+     * @see XML#newDocumentBuilder()
      */
     public
-    MusicXML convertToPartwise()
+    org.w3c.dom.Document convertToPartwise()
     throws
         DOMException,
-        InvalidMusicXMLException,
-        ParserConfigurationException
+        InvalidMusicXMLException
     {
         // Create a new document and a new root node with all the attributes of the original document's root
-        final org.w3c.dom.Document document = MusicXML.newDocumentBuilder().newDocument();
-        final org.w3c.dom.Node root = getDocument().getChildNodes().item(0);
-        final org.w3c.dom.Node newRoot = document.appendChild(cloneAttributes((Element) Element.of(root), (Element) Element.of(document.createElement(MusicXML.Constant.SCORE_PARTWISE))));
+        final org.w3c.dom.Document document = newDocumentBuilder().newDocument();
+        final Node root = getDocument().getChildNodes().item(0);
+        final Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(MusicXML.Constant.SCORE_PARTWISE)));
 
         // Create a placeholder map for the new parts in the new document
-        final Dictionary<org.w3c.dom.Node> newParts = new Dictionary<>();
+        final Dictionary<Node> newParts = new Dictionary<>();
 
         // Iterate through the timewise document's nodes and...
         final NodeList nodes = root.getChildNodes();
         for (int n = 0; n < nodes.getLength(); n++) {
-            final org.w3c.dom.Node node = nodes.item(n);
+            final Node node = nodes.item(n);
 
             // For the <measure> nodes...
             if (node.getNodeName().equals(MusicXML.Constant.MEASURE)) {
@@ -139,60 +140,62 @@ implements
 
                 // Iterate through all <part> nodes...
                 for (int p = 0; p < parts.getLength(); p++) {
-                    final org.w3c.dom.Node part = parts.item(p);
+                    final Node part = parts.item(p);
 
                     // Find an already created new <part> with the same part ID in the new document
                     //   or create a new <part> in the new document and append it to the new root
                     final String partId = Locator.findAttributeValue(part, MusicXML.Constant.ID);
-                    org.w3c.dom.Node newPart = newParts.find(partId);
+                    Node newPart = newParts.find(partId);
                     if (newPart == null) {
-                        newPart = cloneAttributes((Element) Element.of(part), (Element) Element.of(document.createElement(MusicXML.Constant.PART)));
+                        newPart = cloneAttributes(part, document.createElement(MusicXML.Constant.PART));
                         newParts.add(partId, newRoot.appendChild(newPart));
                     }
 
                     // Clone the <measure> node and append it to the new <part>
                     //   and recursively clone all the nodes in the child node and append to the cloned <measure>
                     //   and add the cloned <measure> to the new document
-                    cloneChildren((Element) Element.of(part), clone((Element) Element.of(node), (Element) Element.of(newPart)));
+                    cloneChildren(part, cloneChild(node, newPart));
                 }
             }
 
             // For other nodes recursively clone and add them to the new document
             else
-                cloneChildren((Element) Element.of(node), (Element) Element.of(clone((Element) Element.of(node), (Element) Element.of(newRoot))));
+                cloneChildren(node, cloneChild(node, newRoot));
         }
 
-        return (MusicXML) document;
+        return document;
     }
 
     /**
-     * Converts a partwise MusicXML document to a new timewise equivalent document.
+     * Creates and returns a timewise MusicXML document equivalent to the specified partwise document.
      *
      * @return the timewise document.
      *
+     * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     * @throws NullPointerException if a document cannot be instantiated.
      * @throws DOMException if an error occurs while cloning nodes.
-     * @throws InvalidMusicXMLException if an unexpected node type is found while cloning nodes.
-     * @throws ParserConfigurationException if a serious configuration error occurs.
+     * @throws InvalidMusicXMLException if an unexpected element type is found while cloning the timewise document.
+     *
+     * @see XML#newDocumentBuilder()
      */
     public
-    MusicXML convertToTimewise()
+    org.w3c.dom.Document convertToTimewise()
     throws
         DOMException,
-        InvalidMusicXMLException,
-        ParserConfigurationException
+        InvalidMusicXMLException
     {
         // Create a new document and a new root node with all the attributes of the original document's root
-        final org.w3c.dom.Document document = MusicXML.newDocumentBuilder().newDocument();
-        final org.w3c.dom.Node root = getDocument().getChildNodes().item(0);
-        final org.w3c.dom.Node newRoot = document.appendChild(cloneAttributes((Element) Element.of(root), (Element) Element.of(document.createElement(MusicXML.Constant.SCORE_TIMEWISE))));
+        final org.w3c.dom.Document document = newDocumentBuilder().newDocument();
+        final Node root = getDocument().getChildNodes().item(0);
+        final org.w3c.dom.Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(MusicXML.Constant.SCORE_TIMEWISE)));
 
         // Create a placeholder map for the new measures in the new document
-        final Dictionary<org.w3c.dom.Node> newMeasures = new Dictionary<>();
+        final Dictionary<Node> newMeasures = new Dictionary<>();
 
         // Iterate through the partwise document's nodes and...
         final NodeList nodes = root.getChildNodes();
         for (int n = 0; n < nodes.getLength(); n++) {
-            final org.w3c.dom.Node node = nodes.item(n);
+            final Node node = nodes.item(n);
 
             // For the <part> nodes...
             if (node.getNodeName().equals(MusicXML.Constant.PART)) {
@@ -200,30 +203,30 @@ implements
 
                 // Iterate through all <measure> nodes...
                 for (int m = 0; m < measures.getLength(); m++) {
-                    final org.w3c.dom.Node measure = measures.item(m);
+                    final Node measure = measures.item(m);
 
                     // Find an already created new <measure> with the same part ID in the new document
                     //   or create a new <measure> in the new document and append it to the new root
                     final String partId = Locator.findAttributeValue(measure, MusicXML.Constant.ID);
-                    org.w3c.dom.Node newMeasure = newMeasures.find(partId);
+                    Node newMeasure = newMeasures.find(partId);
                     if (newMeasure == null) {
-                        newMeasure = cloneAttributes((Element) Element.of(measure), (Element) Element.of(document.createElement(MusicXML.Constant.MEASURE)));
+                        newMeasure = cloneAttributes(measure, document.createElement(MusicXML.Constant.MEASURE));
                         newMeasures.add(partId, newRoot.appendChild(newMeasure));
                     }
 
                     // Clone the <part> node and append it to the new <measure>
                     //   and recursively clone all child nodes in the measure and append to the cloned <part>
                     //   and add the cloned <part> to the new document
-                    cloneChildren((Element) Element.of(measure), clone((Element) Element.of(node), (Element) Element.of(newMeasure)));
+                    cloneChildren(measure, cloneChild(node, newMeasure));
                 }
             }
 
             // For other nodes recursively clone and add them to the new document
             else
-                cloneChildren((Element) Element.of(node), clone((Element) Element.of(node), (Element) Element.of(newRoot)));
+                cloneChildren(node, cloneChild(node, newRoot));
         }
 
-        return (MusicXML) document;
+        return document;
     }
 
     /**
@@ -272,7 +275,7 @@ implements
      */
     public abstract
     class Conductor
-    extends Handler
+    extends DocumentHandler
     {
         /**
          * Creates a score conductor for the specified MusicXML document.
@@ -357,7 +360,7 @@ implements
          */
         public abstract
         Incident<? extends Number> findInstance(
-            org.w3c.dom.Node... music
+            Node... music
             );
 
         /**
@@ -701,9 +704,11 @@ implements
          * This implementation converts timewise documents into their partwise equivalent using {@link #convertToPartwise()}.
          *
          * @param document the document.
+         *
+         * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+         * @throws NullPointerException if a document cannot be instantiated.
          * @throws DOMException if an error occurs while cloning nodes.
          * @throws InvalidMusicXMLException if an unexpected node type is found while cloning nodes.
-         * @throws ParserConfigurationException if a serious configuration error occurs.
          */
         public
         Partwise(
@@ -711,12 +716,11 @@ implements
             )
         throws
             DOMException,
-            InvalidMusicXMLException,
-            ParserConfigurationException
+            InvalidMusicXMLException
         {
             super(document);
             if (isTimewise())
-                ((XML.Handler<XML>) handler).setDocument(convertToPartwise());
+                ((DocumentHandler) handler).setDocument(convertToPartwise());
         }
 
         /**
@@ -836,9 +840,11 @@ implements
          * This implementation converts partwise documents into their timewise equivalent using {@link #convertToTimewise()}.
          *
          * @param document the document.
+         *
+         * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+         * @throws NullPointerException if a document cannot be instantiated.
          * @throws DOMException if an error occurs while cloning nodes.
          * @throws InvalidMusicXMLException if an unexpected node type is found while cloning nodes.
-         * @throws ParserConfigurationException if a serious configuration error occurs.
          */
         public
         Timewise(
@@ -846,12 +852,11 @@ implements
             )
         throws
             DOMException,
-            InvalidMusicXMLException,
-            ParserConfigurationException
+            InvalidMusicXMLException
         {
             super(document);
             if (isPartwise())
-                ((XML.Handler<XML>) handler).setDocument(convertToTimewise());
+                ((DocumentHandler) handler).setDocument(convertToTimewise());
         }
 
         /**

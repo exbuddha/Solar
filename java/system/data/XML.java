@@ -1,16 +1,22 @@
 package system.data;
 
+import static system.data.Constant.*;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.Stack;
+import java.util.Queue;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,10 +77,6 @@ implements
     private static
     TransformerFactory TRANSFORMER_FACTORY;
 
-    /** The XML string. */
-    private
-    CharSequence string;
-
     /** The document handler. */
     protected
     Document.Handler handler;
@@ -86,32 +88,36 @@ implements
      */
     public
     XML(
-        final Document.Handler handler
+        final DocumentHandler handler
         ) {
         super();
         this.handler = handler;
     }
 
     /**
-     * Creates an empty XML document using the standard implementation of {@link DocumentHandler}.
-     */
-    public
-    XML() {
-        this(DocumentHandler.standard());
-        ((DocumentHandler) handler).setDocument(newDocumentBuilder().newDocument());
-    }
-
-    /**
-     * Creates an XML document from the specified document using the standard implementation of {@link DocumentHandler}.
+     * Creates an XML document with the specified traditional document and using the standard implementation of {@link DocumentHandler}.
      *
-     * @param document the document.
+     * @param document
+     *
+     * @see DocumentHandler.Standard
      */
     public
     XML(
         final org.w3c.dom.Document document
         ) {
-        this(DocumentHandler.standard());
-        ((DocumentHandler) handler).setDocument(document);
+        this(new DocumentHandler.Standard());
+        ((DocumentHandler) handler).document = document;
+    }
+
+    /**
+     * Creates an empty XML document using the standard implementation of {@link DocumentHandler}.
+     *
+     * @see DocumentHandler.Standard
+     */
+    public
+    XML() {
+        this(new DocumentHandler.Standard());
+        ((DocumentHandler) handler).document = (XMLDocument) Element.of(newDocumentBuilder().newDocument());
     }
 
     /**
@@ -141,38 +147,22 @@ implements
         ) { return null; }
 
     /**
-     * Clones the source element and adds it as a child element to the target element and returns the cloned element.
+     * Clones the specified source element and returns the copy.
+     * <p>
+     * This implementation is recursive.
      *
      * @param source the source element.
-     * @param target the target element.
      *
-     * @return the cloned element.
-     *
-     * @throws DOMException if a node name is not a valid XML name.
-     * @throws UnsupportedOperationException if an unexpected node type other than ELEMENT or TEXT is passed.
+     * @return the copy.
      */
     public static
-    Element clone(
-        final Element source,
-        final Element target
-        )
-    throws
-        DOMException,
-        UnsupportedOperationException
-    {
+    Node clone(
+        final Node source
+        ) {
         if (source == null)
-            return target;
+            return null;
 
-        switch (source.getNodeType())
-        {
-        case Node.ELEMENT_NODE:
-            return (Element) target.appendChild(cloneAttributes(source, (Element) Element.of(target.getOwnerDocument().createElement(source.getNodeName()))));
-
-        case Node.TEXT_NODE:
-            return (Element) target.appendChild(target.getOwnerDocument().createTextNode(source.getNodeValue()));
-        }
-
-        throw new UnsupportedOperationException("Unsupported XML node type: " + source.getNodeType());
+        return cloneChildren(source, source.getOwnerDocument().createElement(source.getNodeName()));
     }
 
     /**
@@ -184,60 +174,68 @@ implements
      * @return the target element.
      */
     public static
-    Element cloneAttributes(
-        final Element source,
-        final Element target
-        ) {
-        if (source == null)
-            return target;
-
-        final NamedNodeMap attributes = source.getAttributes();
-        if (attributes != null) {
-            for (int i = 0; i < attributes.getLength(); i++) {
-                final Node attribute = attributes.item(i);
-                target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
-            }
-        }
-
-        return target;
-    }
-
-    /**
-     * Clones the attributes of the source element and adds them as attributes to the target element if one of the provided conditions pass, and returns the target element.
-     * <p>
-     * The bi-predicate functions must accept a number for the source attribute's order of appearance and the attribute as arguments.
-     *
-     * @param source the source node.
-     * @param target the target element.
-     * @param preds the source attribute pass condition bi-predicates.
-     *
-     * @return the target element.
-     */
-    public static
-    Element cloneAttributes(
-        final Element source,
-        final Element target,
-        final BiPredicate<Number, Node>... preds
+    org.w3c.dom.Element cloneAttributes(
+        final Node source,
+        final org.w3c.dom.Element target
         ) {
         if (source == null)
             return target;
 
         final NamedNodeMap attributes = source.getAttributes();
         if (attributes != null)
-            if (preds.length == 0)
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    final Node attribute = attributes.item(i);
-                    target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
-                }
-            else
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    final Node attribute = attributes.item(i);
-                    for (int j = 0; j < preds.length; j++)
-                        if (preds[j].test(i, attribute))
-                            target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
-                }
+            for (int i = 0; i < attributes.getLength(); i++) {
+                final Node attribute = attributes.item(i);
+                target.setAttribute(attribute.getNodeName(), attribute.getNodeValue());
+            }
 
         return target;
+    }
+
+    /**
+     * Clones the source element and adds it as a child element to the target element and returns the cloned element.
+     * <p>
+     * This implementation does not support namespace URI, {@code Document}, {@code DocumentFragment}, {@code Entity}, {@code EntityReference}, {@code Notation} source node types.
+     * If any of these node types are encountered, an {@code UnsupportedOperationException} is thrown.
+     *
+     * @param source the source element.
+     * @param target the target element.
+     *
+     * @return the target element.
+     *
+     * @throws DOMException if a node name is not a valid XML name.
+     * @throws UnsupportedOperationException if an unsupported node type is encountered.
+     */
+    public static
+    Node cloneChild(
+        final Node source,
+        final Node target
+        )
+    throws
+        DOMException,
+        UnsupportedOperationException
+    {
+        if (source == null)
+            return target;
+
+        switch (source.getNodeType())
+        {
+        case ELEMENT_NODE:
+            return target.appendChild(cloneAttributes(source, target.getOwnerDocument().createElement(source.getNodeName())));
+
+        case TEXT_NODE:
+            return target.appendChild(target.getOwnerDocument().createTextNode(source.getNodeValue()));
+
+        case CDATA_SECTION_NODE:
+            return target.appendChild(target.getOwnerDocument().createCDATASection(source.getNodeValue()));
+
+        case PROCESSING_INSTRUCTION_NODE:
+            return target.appendChild(target.getOwnerDocument().createProcessingInstruction(source.getNodeName(), source.getNodeValue()));
+
+        case COMMENT_NODE:
+            return target.appendChild(target.getOwnerDocument().createComment(source.getNodeValue()));
+        }
+
+        throw new UnsupportedOperationException(colon(XmlElementUnsupported) + source.getNodeType());
     }
 
     /**
@@ -251,9 +249,9 @@ implements
      * @return the target element.
      */
     public static
-    Element cloneChildren(
-        final Element source,
-        final Element target
+    Node cloneChildren(
+        final Node source,
+        final Node target
         )
     throws DOMException
     {
@@ -261,48 +259,8 @@ implements
             final NodeList innerElements = source.getChildNodes();
             for (int n = 0; n < innerElements.getLength(); n++) {
                 final Element innerElement = (Element) Element.of(innerElements.item(n));
-                cloneChildren(innerElement, clone(innerElement, target));
+                cloneChildren(innerElement, cloneChild(innerElement, target));
             }
-        }
-
-        return target;
-    }
-
-    /**
-     * Clones the entire inner structure of the source element and adds them as children to the target element if one of the provided conditions pass, and returns the target element.
-     * <p>
-     * This implementation is recursive.
-     * The conditions are passed down to all child elements recursively.
-     * The bi-predicate functions must accept a number for the child element's order of appearance and the child element as arguments.
-     *
-     * @param source the source element.
-     * @param target the target element.
-     * @param preds the child element pass condition bi-predicates.
-     *
-     * @return the target element.
-     */
-    public static
-    Element cloneChildren(
-        final Element source,
-        final Element target,
-        final BiPredicate<Number, Node>... preds
-        )
-    throws DOMException
-    {
-        if (source != null && source.hasChildNodes()) {
-            final NodeList innerElements = source.getChildNodes();
-            if (preds.length == 0)
-                for (int n = 0; n < innerElements.getLength(); n++) {
-                    final Element innerElement = (Element) innerElements.item(n);
-                    cloneChildren(innerElement, clone(innerElement, target));
-                }
-            else
-                for (int n = 0; n < innerElements.getLength(); n++) {
-                    final Element innerElement = (Element) innerElements.item(n);
-                    for (int j = 0; j < preds.length; j++)
-                        if (preds[j].test(n, innerElement))
-                            cloneChildren(innerElement, clone(innerElement, target), preds);
-                }
         }
 
         return target;
@@ -336,6 +294,10 @@ implements
      * Returns a new document builder, or null if an error occurs.
      *
      * @return a new document builder, or null if an error occurs.
+     *
+     * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     *
+     * @see DocumentBuilderFactory#newInstance()
      */
     public static
     DocumentBuilder newDocumentBuilder() {
@@ -357,6 +319,10 @@ implements
      * Returns a new SAX parser, or null if an error occurs.
      *
      * @return a new SAX parser, or null if an error occurs.
+     *
+     * @throws FactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     *
+     * @see SAXParserFactory#newInstance()
      */
     public static
     SAXParser newParser() {
@@ -379,6 +345,8 @@ implements
      *
      * @return a new transformer, or null if an error occurs.
      *
+     * @throws TransformerFactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
+     *
      * @see TransformerFactory#newInstance()
      */
     public static
@@ -397,13 +365,6 @@ implements
         }
     }
 
-    public static
-    XML of(
-        final org.w3c.dom.Document document
-        ) {
-        return null;
-    }
-
     /**
      * Parses the input stream with the specified handler.
      * <p>
@@ -414,9 +375,13 @@ implements
      *
      * @return the document, or null if handler is not a {@code Handler} type.
      *
+     * @throws NullPointerException if a parser cannot be instantiated.
+     * @throws IllegalArgumentException if the input stream is null.
      * @throws IOException if any I/O errors occur.
-     * @throws ParserConfigurationException if a serious configuration error occurs.
      * @throws SAXException if a processing error occurs.
+     *
+     * @see #newParser()
+     * @see SAXParser#parse(InputStream, DefaultHandler)
      */
     public static
     Node parse(
@@ -425,12 +390,9 @@ implements
         )
     throws
         IOException,
-        ParserConfigurationException,
         SAXException
     {
-        newParser()
-        .parse(inputStream, handler);
-
+        newParser().parse(inputStream, handler);
         return handler instanceof Handler
                ? ((Handler<?>) handler).document
                : null;
@@ -443,9 +405,12 @@ implements
      *
      * @return the document.
      *
+     * @throws NullPointerException if a parser cannot be instantiated.
+     * @throws IllegalArgumentException if the input stream is null.
      * @throws IOException if any I/O errors occur.
-     * @throws ParserConfigurationException if a serious configuration error occurs.
      * @throws SAXException if a processing error occurs.
+     *
+     * @see #parse(InputStream, DefaultHandler)
      */
     public static
     Node parse(
@@ -453,10 +418,9 @@ implements
         )
     throws
         IOException,
-        ParserConfigurationException,
         SAXException
     {
-        return parse(inputStream, DocumentHandler.standard());
+        return parse(inputStream, new DocumentHandler.Standard());
     }
 
     /**
@@ -465,26 +429,28 @@ implements
      * @param outputStream the output stream.
      * @param indent indentation amount.
      *
-     * @throws TransformerConfigurationException if a serious configuration error occurs.
+     * @throws NullPointerException if the output stream is null or a transformer cannot be instantiated due to a serious configuration error.
+     * @throws TransformerFactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
      * @throws TransformerException if a transformation error occurs.
+     *
+     * @see #newTransformer()
+     * @see Transformer#transform(javax.xml.transform.Source, javax.xml.transform.Result)
      */
     public
     void write(
         final OutputStream outputStream,
-        final Byte indent
+        final byte indent
         )
-    throws
-        TransformerConfigurationException,
-        TransformerException
+    throws TransformerException
     {
         // Initialize the transformer factory and create a new transformer
         final Transformer transformer = newTransformer();
 
         // Set the transformer's properties to use an indent size of 2
         final Properties outputFormatProperties = new Properties();
-        if (indent != null) {
+        if (indent != 0) {
             outputFormatProperties.put(OutputKeys.INDENT, "yes");
-            outputFormatProperties.put("{http://xml.apache.org/xslt}indent-amount", indent.toString());
+            outputFormatProperties.put("{http://xml.apache.org/xslt}indent-amount", Byte.toString(indent));
         }
         transformer.setOutputProperties(outputFormatProperties);
 
@@ -492,48 +458,57 @@ implements
         transformer.transform(new DOMSource(getDocument()), new StreamResult(outputStream));
     }
 
-    @Override
-    public char charAt(int index) {
-        return 0;
-    }
-
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation uses a {@code ByteArrayOutputStream} internally.
+     *
+     * @return the document as character sequence.
+     *
+     * @throws NullPointerException if a transformer cannot be instantiated due to a serious configuration error.
+     * @throws IllegalStateException if a transformation error occurs.
+     *
+     * @see #write(OutputStream)
+     */
     @Override
     public CharSequence getCharSequence() {
-        return string;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            write(output);
+        }
+        catch (TransformerException e) {
+            throw new IllegalStateException();
+        }
+
+        return new String(output.toByteArray());
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation returns the {@link org.w3c.dom.Element} class.
+     *
+     * @return the {@code org.w3c.dom.Element} class.
+     */
     @Override
-    public Class<?> getOrderClass() {
-        return Element.class;
+    public Class<? extends org.w3c.dom.Element> getOrderClass() {
+        return org.w3c.dom.Element.class;
     }
 
-    @Override
-    public int length() {
-        return 0;
-    }
-
+    /**
+     * Returns the document object wrapped by this instance.
+     *
+     * @return the wrapped document object.
+     *
+     * @throws IllegalStateException if the handler is null or is not a {@link DocumentHandler} type.
+     *
+     * @see #getDocument()
+     */
     @Override
     public org.w3c.dom.Document object() {
-        return handler instanceof Handler
+        return handler instanceof DocumentHandler
                ? getDocument()
                : null;
-    }
-
-    @Override
-    public Class<?> objectType() {
-        return handler instanceof Handler
-                ? ((Handler<?>) handler).document.getClass()
-                : null;
-    }
-
-    @Override
-    public CharSequence subSequence(int start, int end) {
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return getCharSequence().toString();
     }
 
     /**
@@ -541,29 +516,32 @@ implements
      *
      * @param outputStream the output stream.
      *
-     * @throws TransformerConfigurationException if a serious configuration error occurs.
+     * @throws NullPointerException if the output stream is null or a transformer cannot be instantiated due to a serious configuration error.
+     * @throws TransformerFactoryConfigurationError in case of service configuration error or if the implementation is not available or cannot be instantiated.
      * @throws TransformerException if a transformation error occurs.
+     *
+     * @see #write(OutputStream, byte)
      */
     @Override
     public void write(final OutputStream outputStream)
-    throws
-        TransformerConfigurationException,
-        TransformerException
+    throws TransformerException
     {
-        write(outputStream, null);
+        write(outputStream, (byte) 0);
     }
 
     /**
      * Returns the XML document.
+     * <p>
+     * This implementation throw an {@code IllegalStateException} if the handler is not a {@link DocumentHandler} type.
      *
      * @return the XML document.
      *
-     * @throws IllegalStateException if the handler is null or has an incorrect type.
+     * @throws IllegalStateException if the handler is null or is not a {@link DocumentHandler} type.
      */
     public
     org.w3c.dom.Document getDocument() {
         try {
-            return (org.w3c.dom.Document) ((Handler<?>) handler).document;
+            return ((DocumentHandler) handler).document;
         }
         catch (Exception e) {
             throw new IllegalStateException();
@@ -603,25 +581,28 @@ implements
         }
 
         /**
-         * Returns a document handler that accepts all node types.
-         * <p>
-         * If a document is not provided, a new document is created and used by the handler.
+         * {@code Basic} is an implementation of a standard document handler that only accepts elements, attributes, and text nodes.
          *
-         * @return the standard handler.
+         * @since 1.8
+         * @author Alireza Kamran
+         *
+         * @see Standard
          */
-        public static final
-        DocumentHandler standard() {
-            return new Standard();
-        }
+        public static
+        class Basic
+        extends Standard
+        {}
 
         /**
-         * {@code Basic} is an implementation of a document handler that only accepts elements, attributes, and text nodes.
+         * {@code Standard} is an implementation of a document handler that accepts all standard XML element types.
+         * <p>
+         * This class implementation is in progress.
          *
          * @since 1.8
          * @author Alireza Kamran
          */
-        protected static
-        class Basic
+        public static
+        class Standard
         extends DocumentHandler
         {
             /** The "document closed" flag. */
@@ -630,7 +611,7 @@ implements
 
             /** The element stack. */
             protected final
-            Stack<org.w3c.dom.Element> stack = new Stack<>();
+            LinkedList<org.w3c.dom.Element> stack = new LinkedList<>();
 
             /** The document depth. */
             protected
@@ -646,11 +627,17 @@ implements
             public void characters(final char[] ch, final int start, final int length) throws SAXException {
                 super.characters(ch, start, length);
 
-                if (stack.empty() || stack.size() != depth)
+                if (stack.isEmpty() || stack.size() != depth)
                     throw new SAXException();
 
                 // Append the characters to the element at the top of the stack
                 stack.peek().appendChild(getDocument().createTextNode(new String(ch, start, length)));
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public void close() {
+                closed = true;
             }
 
             /**
@@ -692,17 +679,13 @@ implements
                 depth--;
             }
 
-            /**
-             * {@inheritDoc}
-             */
+            /** {@inheritDoc} */
             @Override
             public boolean isClosed() {
                 return closed;
             }
 
-            /**
-             * {@inheritDoc}
-             */
+            /** {@inheritDoc} */
             @Override
             public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
                 // To avoid DTD validation
@@ -721,11 +704,10 @@ implements
             public void startDocument() throws SAXException {
                 super.startDocument();
 
-                final org.w3c.dom.Document doc = getDocument();
-                if (doc == null)
-                    setDocument(newDocumentBuilder().newDocument());
+                if (document == null)
+                    document = (XMLDocument) Element.of(newDocumentBuilder().newDocument());
                 else
-                    if (doc.hasChildNodes()) {
+                    if (document.hasChildNodes()) {
                         closed = true;
                         throw new IllegalStateException();
                     }
@@ -755,19 +737,6 @@ implements
                 depth++;
             }
         }
-
-        /**
-         * {@code Standard} is an implementation of a document handler that accepts all standard XML element types.
-         * <p>
-         * This class implementation is in progress.
-         *
-         * @since 1.8
-         * @author Alireza Kamran
-         */
-        protected static
-        class Standard
-        extends Basic
-        {}
     }
 
     /**
@@ -1010,7 +979,7 @@ implements
             final T document
             ) {
             this();
-            setDocument(document);
+            this.document = document;
         }
 
         /**
@@ -1020,6 +989,12 @@ implements
         Handler() {
             super();
         }
+
+        /**
+         * Closes the handler.
+         */
+        public abstract
+        void close();
 
         /**
          * {@inheritDoc}
@@ -1083,7 +1058,7 @@ implements
         /**
          * {@inheritDoc}
          * <p>
-         * When a handler is closed it usually indicates that the document is parsed completely.
+         * When a handler is closed it usually indicates that the document is parsed completely or does not accept any data.
          *
          * @return true if the handler is closed, and false otherwise.
          */
@@ -1726,16 +1701,11 @@ implements
             final Node target
             ) {
             if (target instanceof XMLDocument) {
-                final org.w3c.dom.Element object = (org.w3c.dom.Element) ((XMLDocument) target).object();
+                final org.w3c.dom.Document object = (org.w3c.dom.Document) ((XMLDocument) target).object();
                 return new XMLDocument() {
                     @Override
-                    public org.w3c.dom.Element object() {
+                    public org.w3c.dom.Document object() {
                         return object;
-                    }
-
-                    @Override
-                    public Class<? extends Node> objectType() {
-                        return target.getClass();
                     }
                 };
             }
@@ -1743,13 +1713,8 @@ implements
             if (target instanceof org.w3c.dom.Document)
                 return new XMLDocument() {
                     @Override
-                    public org.w3c.dom.Element object() {
-                        return (org.w3c.dom.Element) target;
-                    }
-
-                    @Override
-                    public Class<? extends Node> objectType() {
-                        return target.getClass();
+                    public org.w3c.dom.Document object() {
+                        return (org.w3c.dom.Document) target;
                     }
                 };
 
@@ -1760,25 +1725,50 @@ implements
                     public org.w3c.dom.Element object() {
                         return object;
                     }
-
-                    @Override
-                    public Class<? extends Node> objectType() {
-                        return target.getClass();
-                    }
                 };
             }
 
-            return new Element() {
-                @Override
-                public org.w3c.dom.Element object() {
-                    return (org.w3c.dom.Element) target;
-                }
+            if (target instanceof org.w3c.dom.Element)
+                return new Element() {
+                    @Override
+                    public org.w3c.dom.Element object() {
+                        return (org.w3c.dom.Element) target;
+                    }
+                };
 
-                @Override
-                public Class<? extends Node> objectType() {
-                    return target.getClass();
-                }
-            };
+            throw new IllegalArgumentException();
+        }
+
+        /**
+         * Applies the specified filter to this instance and its entire inner structure in breadth-first order and returns the result of the filter function.
+         *
+         * @param filter the filter function.
+         *
+         * @return the filtered source.
+         *
+         * @see Traversal#breadthFirst(Node, Function)
+         */
+        default
+        Node breadthFirst(
+            final Function<Node, Node> filter
+            ) {
+            return Traversal.breadthFirst(this, filter);
+        }
+
+        /**
+         * Applies the specified filter to this instance and its entire inner structure in depth-first order and returns the result of the filter function.
+         *
+         * @param filter the filter function.
+         *
+         * @return the filtered source.
+         *
+         * @see Traversal#depthFirst(Node, Function)
+         */
+        default
+        Node depthFirst(
+            final Function<Node, Node> filter
+            ) {
+            return Traversal.depthFirst(this, filter);
         }
 
         /**
@@ -1809,25 +1799,112 @@ implements
                         public Attr object() {
                             return object;
                         }
-
-                        @Override
-                        public Class<? extends Attr> objectType() {
-                            return target.getClass();
-                        }
                     };
                 }
 
-                return new Attribute() {
-                    @Override
-                    public Attr object() {
-                        return target;
-                    }
+                if (target instanceof Attr)
+                    return new Attribute() {
+                        @Override
+                        public Attr object() {
+                            return target;
+                        }
+                    };
 
-                    @Override
-                    public Class<? extends Attr> objectType() {
-                        return target.getClass();
-                    }
-                };
+                throw new IllegalArgumentException();
+            }
+        }
+
+        /**
+         * {@code Path} represents a point on a path of arbitrarily selected XML elements.
+         * <p>
+         * By convention, the number of each point must be the index of the element it points to within its parent element.
+         * However, paths can choose to provide a different number for the points on them.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public static abstract
+        class Path
+        extends Number
+        implements
+            Ordered,
+            Supplier<org.w3c.dom.Element>,
+            java.lang.reflect.Type
+        {
+            /**
+             * Returns the order of the path.
+             *
+             * @return the order.
+             */
+            public abstract
+            int getOrder();
+
+            /**
+             * Returns the next point on the path.
+             *
+             * @return the next path.
+             */
+            public abstract
+            Path next();
+
+            /**
+             * Returns the previous point on the path.
+             *
+             * @return the previous path.
+             */
+            public abstract
+            Path prev();
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns the {@code Integer} class.
+             *
+             * @return the {@code Integer} class.
+             */
+            @Override
+            public Class<Integer> getOrderClass() {
+                return Integer.class;
+            }
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns {@link #getOrder()}.
+             */
+            @Override
+            public double doubleValue() {
+                return getOrder();
+            }
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns {@link #getOrder()}.
+             */
+            @Override
+            public float floatValue() {
+                return getOrder();
+            }
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns {@link #getOrder()}.
+             */
+            @Override
+            public int intValue() {
+                return getOrder();
+            }
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns {@link #getOrder()}.
+             */
+            @Override
+            public long longValue() {
+                return getOrder();
             }
         }
     }
@@ -1908,8 +1985,105 @@ implements
      * @since 1.8
      * @author Alireza Kamran
      */
-    public abstract
+    public static abstract
     class Traversal
-    extends Filter
-    {}
+    {
+        /** The skip flag. */
+        public static final
+        Node Skip = new Null.XMLNode() {};
+
+        /**
+         * Performs a breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
+         * <p>
+         * If a filter function call returns null, the traversal stop.
+         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
+         * <p>
+         * This implementation uses a {@code LinkedList}.
+         *
+         * @param source the source element.
+         * @param filter the filter function.
+         *
+         * @return the filtered source.
+         */
+        public static
+        Node breadthFirst(
+            final Node source,
+            final Function<Node, Node> filter
+            ) {
+            if (source == null)
+                return null;
+            else {
+                final LinkedList<Node> queue = new LinkedList<>();
+                queue.add(source);
+                return breadthFirstQueue(queue, filter);
+            }
+        }
+
+        /**
+         * Performs a breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the filter function.
+         * <p>
+         * If a filter function call returns null, the traversal stop.
+         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
+         *
+         * @param queue the queue.
+         * @param filter the filter function.
+         *
+         * @return the filtered source.
+         *
+         * @throws NullPointerException if the queue element is null.
+         */
+        public static
+        Node breadthFirstQueue(
+            final Queue<Node> queue,
+            final Function<Node, Node> filter
+            ) {
+            if (queue.isEmpty())
+                return null;
+
+            final Node target = filter.apply(queue.element());
+            if (target != null) {
+                if (target != Skip) {
+                    final NodeList children = queue.element().getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++)
+                        queue.add(children.item(i));
+                }
+
+                queue.remove();
+                breadthFirstQueue(queue, filter);
+            }
+
+            return target;
+        }
+
+        /**
+         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
+         * <p>
+         * If a filter function call returns null, the traversal stop.
+         *
+         * @param source the source element.
+         * @param filter the filter function.
+         *
+         * @return the filtered source.
+         */
+        public static
+        Node depthFirst(
+            final Node source,
+            final Function<Node, Node> filter
+            ) {
+            final Node target = filter.apply(source);
+            if (target == null)
+                return null;
+
+            if (source != null) {
+                final NodeList children = source.getChildNodes();
+                for (int i = 0; i < children.getLength(); i++) {
+                    Node result = depthFirst(children.item(i), filter);
+                    if (result  == null)
+                        return target;
+                }
+            }
+
+            return target;
+        }
+    }
 }

@@ -31,7 +31,6 @@ public
 class Fraction
 extends Number
 implements
-    Cloneable,
     Comparable<Fraction>,
     Invertible,
     Inverting<Fraction>,

@@ -19,7 +19,7 @@ interface Symbolized<T extends Comparable<T>>
     /**
      * Compares the two symbolized instances based on their symbol values and returns a negative integer if the first non-null symbol is less than the second symbol, zero if both symbols are equal, and a positive integer if the non-null first symbol is less than the second symbol.
      * <p>
-     * This implementation returns zero if both instances are null, and {@link Integer#MAX_VALUE} or {@link Integer#MIN_VALUE} appropriately in cases where one instance is null and the other is non-null; otherwise, if both instances are non-null the value of {@link Comparable#compareTo(Object)} is returned.
+     * This implementation returns zero if both instances are null, and {@link Integer#MAX_VALUE} or -{@link Integer#MAX_VALUE} appropriately in cases where one instance is null and the other is non-null; otherwise, if both instances are non-null the value of {@link Comparable#compareTo(Object)} is returned.
      *
      * @param s1 the first symbolized instance.
      * @param s2 the second symbolized instance.
@@ -31,7 +31,7 @@ interface Symbolized<T extends Comparable<T>>
         return s1 == null
                ? (s2 == null
                   ? 0
-                  : Integer.MIN_VALUE)
+                  : -Integer.MAX_VALUE)
                : (s2 == null
                   ? Integer.MAX_VALUE
                   : s1.getSymbol().compareTo(s2.getSymbol()));

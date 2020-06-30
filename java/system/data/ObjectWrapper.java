@@ -11,7 +11,10 @@ package system.data;
 public
 interface ObjectWrapper
 {
+    /**
+     * Returns the object wrapped by this instance.
+     *
+     * @return the wrapped object.
+     */
     Object object();
-
-    Class<?> objectType();
 }

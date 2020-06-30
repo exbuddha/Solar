@@ -513,7 +513,7 @@ extends Lute
 
             @Override
             public Note getTune() {
-                return Note.withNumber((short) (String.this.tuning.getNumber() + number));
+                return new Note(String.this.tuning.getNumber() + number);
             }
 
             @Override
@@ -576,7 +576,7 @@ extends Lute
             public Note getTune() {
                 final int cents = getIntervalCents();
                 final int rounded = Math.round(cents / 100F);
-                final Note note = Note.withNumber((short) (rootFret.getTune().getNumber() + rounded));
+                final Note note = new Note(rootFret.getTune().getNumber() + rounded);
                 note.setAdjustment(cents - rounded * 100);
 
                 return note;

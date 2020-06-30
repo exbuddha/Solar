@@ -11,6 +11,8 @@ import static musical.Note.Accidental.Natural;
 import static musical.Note.Accidental.Sharp;
 import static musical.Scale.Accidental.DoubleFlat;
 import static musical.Scale.Accidental.DoubleSharp;
+import static musical.Scale.Accidental.NaturalFlat;
+import static musical.Scale.Accidental.NaturalSharp;
 import static system.data.Constant.OperationImpossible;
 import static system.data.Constant.OrderOutOfRange;
 
@@ -33,6 +35,7 @@ import system.data.Inverting;
 import system.data.Lambda;
 import system.data.Operable;
 import system.data.Symbolized;
+import system.data.Unique;
 import system.data.Lambda.BinaryLocator;
 
 /**
@@ -53,7 +56,8 @@ import system.data.Lambda.BinaryLocator;
  * This class defines all standard note in classical music as static objects called singletons.
  * Singletons are note types that will clone automatically, when operated on, into intermediary note types that can automatically diverge back to a singleton when possible.
  * This guarantees that operating on singletons will always return a singleton if there is one available that matches the result.
- * The intermediary note types are called standard notes.
+ * The intermediary note types are called standard notes that all singletons are sub-types of.
+ * Singletons define note frequencies with the precision of two floating points rounded away from zero.
  * <p>
  * Methods in this class implementation are not thread-safe.
  *
@@ -225,7 +229,7 @@ implements
     Singleton G1f = new Singleton(30F, G1fSym, (byte) 1, Pitch.G, Flat, 46.25F);
 
     public static final
-    Singleton G1 = new Singleton(31F, G1Sym, (byte) 1, Pitch.G, 49.00F);
+    Singleton G1 = new Singleton(31F, G1Sym, (byte) 1, Pitch.G, 49F);
 
     public static final
     Singleton G1s = new Singleton(32F, G1sSym, (byte) 1, Pitch.G, Sharp, 51.91F);
@@ -234,7 +238,7 @@ implements
     Singleton A1f = new Singleton(32F, A1fSym, (byte) 1, Pitch.A, Flat, 51.91F);
 
     public static final
-    Singleton A1 = new Singleton(33F, A1Sym, (byte) 1, Pitch.A, 55.00F);
+    Singleton A1 = new Singleton(33F, A1Sym, (byte) 1, Pitch.A, 55F);
 
     public static final
     Singleton A1s = new Singleton(34F, A1sSym, (byte) 1, Pitch.A, Sharp, 58.27F);
@@ -276,7 +280,7 @@ implements
     Singleton G2f = new Singleton(42F, G2fSym, (byte) 2, Pitch.G, Flat, 92.50F);
 
     public static final
-    Singleton G2 = new Singleton(43F, G2Sym, (byte) 2, Pitch.G, 98.00F);
+    Singleton G2 = new Singleton(43F, G2Sym, (byte) 2, Pitch.G, 98F);
 
     public static final
     Singleton G2s = new Singleton(44F, G2sSym, (byte) 2, Pitch.G, Sharp, 103.83F);
@@ -285,7 +289,7 @@ implements
     Singleton A2f = new Singleton(44F, A2fSym, (byte) 2, Pitch.A, Flat, 103.83F);
 
     public static final
-    Singleton A2 = new Singleton(45F, A2Sym, (byte) 2, Pitch.A, 110.00F);
+    Singleton A2 = new Singleton(45F, A2Sym, (byte) 2, Pitch.A, 110F);
 
     public static final
     Singleton A2s = new Singleton(46F, A2sSym, (byte) 2, Pitch.A, Sharp, 116.54F);
@@ -321,13 +325,13 @@ implements
     Singleton F3 = new Singleton(53F, F3Sym, (byte) 3, Pitch.F, 174.61F);
 
     public static final
-    Singleton F3s = new Singleton(54F, F3sSym, (byte) 3, Pitch.F, Sharp, 185.00F);
+    Singleton F3s = new Singleton(54F, F3sSym, (byte) 3, Pitch.F, Sharp, 185F);
 
     public static final
-    Singleton G3f = new Singleton(54F, G3fSym, (byte) 3, Pitch.G, Flat, 185.00F);
+    Singleton G3f = new Singleton(54F, G3fSym, (byte) 3, Pitch.G, Flat, 185F);
 
     public static final
-    Singleton G3 = new Singleton(55F, G3Sym, (byte) 3, Pitch.G, 196.00F);
+    Singleton G3 = new Singleton(55F, G3Sym, (byte) 3, Pitch.G, 196F);
 
     public static final
     Singleton G3s = new Singleton(56F, G3sSym, (byte) 3, Pitch.G, Sharp, 207.65F);
@@ -336,7 +340,7 @@ implements
     Singleton A3f = new Singleton(56F, A3fSym, (byte) 3, Pitch.A, Flat, 207.65F);
 
     public static final
-    Singleton A3 = new Singleton(57F, A3Sym, (byte) 3, Pitch.A, 220.00F);
+    Singleton A3 = new Singleton(57F, A3Sym, (byte) 3, Pitch.A, 220F);
 
     public static final
     Singleton A3s = new Singleton(58F, A3sSym, (byte) 3, Pitch.A, Sharp, 233.08F);
@@ -378,7 +382,7 @@ implements
     Singleton G4f = new Singleton(66F, G4fSym, (byte) 4, Pitch.G, Flat, 369.99F);
 
     public static final
-    Singleton G4 = new Singleton(67F, G4Sym, (byte) 4, Pitch.G, 392.00F);
+    Singleton G4 = new Singleton(67F, G4Sym, (byte) 4, Pitch.G, 392F);
 
     public static final
     Singleton G4s = new Singleton(68F, G4sSym, (byte) 4, Pitch.G, Sharp, 415.30F);
@@ -438,7 +442,7 @@ implements
     Singleton A5f = new Singleton(80F, A5fSym, (byte) 5, Pitch.A, Flat, 830.61F);
 
     public static final
-    Singleton A5 = new Singleton(81F, A5Sym, (byte) 5, Pitch.A, 880.00F);
+    Singleton A5 = new Singleton(81F, A5Sym, (byte) 5, Pitch.A, 880F);
 
     public static final
     Singleton A5s = new Singleton(82F, A5sSym, (byte) 5, Pitch.A, Sharp, 932.33F);
@@ -489,7 +493,7 @@ implements
     Singleton A6f = new Singleton(92F, A6fSym, (byte) 6, Pitch.A, Flat, 1661.22F);
 
     public static final
-    Singleton A6 = new Singleton(93F, A6Sym, (byte) 6, Pitch.A, 1760.00F);
+    Singleton A6 = new Singleton(93F, A6Sym, (byte) 6, Pitch.A, 1760F);
 
     public static final
     Singleton A6s = new Singleton(94F, A6sSym, (byte) 6, Pitch.A, Sharp, 1864.66F);
@@ -501,7 +505,7 @@ implements
     Singleton B6 = new Singleton(95F, B6Sym, (byte) 6, Pitch.B, 1975.53F);
 
     public static final
-    Singleton C7 = new Singleton(96F, C7Sym, (byte) 7, Pitch.C, 2093.00F);
+    Singleton C7 = new Singleton(96F, C7Sym, (byte) 7, Pitch.C, 2093F);
 
     public static final
     Singleton C7s = new Singleton(97F, C7sSym, (byte) 7, Pitch.C, Sharp, 2217.46F);
@@ -540,7 +544,7 @@ implements
     Singleton A7f = new Singleton(104F, A7fSym, (byte) 7, Pitch.A, Flat, 3322.44F);
 
     public static final
-    Singleton A7 = new Singleton(105F, A7Sym, (byte) 7, Pitch.A, 3520.00F);
+    Singleton A7 = new Singleton(105F, A7Sym, (byte) 7, Pitch.A, 3520F);
 
     public static final
     Singleton A7s = new Singleton(106F, A7sSym, (byte) 7, Pitch.A, Sharp, 3729.31F);
@@ -591,7 +595,7 @@ implements
     Singleton A8f = new Singleton(116F, A8fSym, (byte) 8, Pitch.A, Flat, 6644.88F);
 
     public static final
-    Singleton A8 = new Singleton(117F, A8Sym, (byte) 8, Pitch.A, 7040.00F);
+    Singleton A8 = new Singleton(117F, A8Sym, (byte) 8, Pitch.A, 7040F);
 
     public static final
     Singleton A8s = new Singleton(118F, A8sSym, (byte) 8, Pitch.A, Sharp, 7458.62F);
@@ -1467,20 +1471,6 @@ implements
     }
 
     /**
-     * Rounds the number away from zero and returns it.
-     *
-     * @param number the number.
-     *
-     * @return the rounded number.
-     */
-    private static
-    int round(
-        final float number
-        ) {
-        return (int) (Math.signum(number) * Math.round(Math.abs(number) / 100));
-    }
-
-    /**
      * Sets instance variables from the specified string value.
      *
      * @param instance the instance.
@@ -1788,7 +1778,7 @@ implements
             return null;
 
         final float number = (float) (69 + 12 * Math.log(freq / 440) / Log2Base10);
-        final short round = (short) round(number);
+        final short round = (short) Lambda.round(number);
         final Note note = new Note(round, sharp);
         note.setAdjustment((short) ((number - round) * 100));
 
@@ -1856,7 +1846,7 @@ implements
     Note distinct(
         final Comparator<Note> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Note>(this, Singleton.Order, comparator).result(this);
+        return (Standard) new Lambda.BinaryLocator<Note>(this, Singleton.Order, true, comparator).result(this);
     }
 
     /**
@@ -1892,7 +1882,7 @@ implements
      */
     public
     Note distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<Note>(this, Singleton.Order).result(this);
+        return (Standard) new Lambda.BinaryComparableLocator<Note>(this, Singleton.Order, true).result(this);
     }
 
     /**
@@ -2162,7 +2152,7 @@ implements
     public
     float getNumber() {
         final float adj = (accidental.cents + adjustment) / 100F;
-        final int round = round(adj);
+        final int round = Lambda.round(adj);
         final int order = pitch.order + round;
         return octave == null ? 0 : (octave + 1) * 12 + (order + (1 - order / 12) * 12) % 12 + adj - round;
     }
@@ -2920,6 +2910,16 @@ implements
         }
 
         /**
+         * Returns the standard equivalent of this instance.
+         *
+         * @return the standard accidental.
+         */
+        public
+        Accidental distinct() {
+            return Standard.Order[Lambda.round(cents / 100F) + 2];
+        }
+
+        /**
          * Returns the standard accidental adjusted by the specified adjustments as whole semitone amounts.
          * <p>
          * The accepted adjustment range is [-4, 4] depending on the order of this accidental.
@@ -2930,7 +2930,7 @@ implements
          */
         @Override
         public Accidental adjusted(final Number... adjustments) {
-            return Adjusted[order + 2][(order + addedAdjustments(adjustments) + 4) % 8];
+            return Adjusted[order + 2][(order + addedAdjustments(adjustments) + 4) % 9];
         }
 
         /** {@inheritDoc} */
@@ -3020,14 +3020,19 @@ implements
         }
 
         /**
-         * Returns true if the specified accidental is standard, and false otherwise.
+         * Returns true if this accidental is standard; otherwise returns false.
          *
-         * @param accidental the accidental.
-         * @return true if accidental is standard, and false otherwise.
+         * @return true if this accidental is standard, and false otherwise.
          */
         @Override
-        public boolean isStandard(final Accidental accidental) {
-            return accidental instanceof Standard;
+        public boolean isStandard() {
+            return this == Sharp ||
+                   this == Flat ||
+                   this == Natural ||
+                   this == DoubleSharp ||
+                   this == DoubleFlat ||
+                   this == NaturalSharp ||
+                   this == NaturalFlat;
         }
 
         /**
@@ -3111,7 +3116,18 @@ implements
         protected static
         class Standard
         extends Accidental
+        implements Unique
         {
+            /** The array of singletons. (ascending) */
+            public static final
+            Accidental[] Order = new Accidental[] {
+                DoubleFlat,
+                Flat,
+                Natural,
+                Sharp,
+                DoubleSharp
+            };
+
             /**
              * Creates a standard accidental with the specified symbol and cents.
              *
@@ -3133,11 +3149,15 @@ implements
              */
             @Override
             public Standard clone() {
-                return this == Sharp ||
-                       this == Flat ||
-                       this == Natural
+                return isStandard()
                        ? this
                        : new Standard(symbol, cents);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Standard distinct() {
+                return this;
             }
         }
     }
@@ -3249,25 +3269,25 @@ implements
         boolean isStandard(
             final Dynamics dynamics
             ) {
-            return dynamics == PPP ||
-                   dynamics == PP ||
-                   dynamics == P ||
+            return dynamics == P ||
                    dynamics == MP ||
                    dynamics == MF ||
                    dynamics == F ||
+                   dynamics == PP ||
                    dynamics == FF ||
+                   dynamics == PPP ||
                    dynamics == FFF;
         }
 
         /**
-         * Returns the dynamics instance with the velocity amount nearest to the specified velocity.
+         * Returns the standard dynamics with the velocity amount nearest to the specified velocity.
          *
          * @param velocity the velocity.
          *
-         * @return the nearest dynamics.
+         * @return the nearest standard dynamics.
          */
         public static
-        Dynamics withVelocity(
+        Standard withVelocity(
             final byte velocity
             ) {
             if (velocity <= Standard.Order[0].velocity || Standard.Order.length == 1)
@@ -3281,6 +3301,16 @@ implements
             return Standard.Order[i].velocity - velocity <= velocity - Standard.Order[i - 1].velocity
                    ? Standard.Order[i]
                    : Standard.Order[i - 1];
+        }
+
+        /**
+         * Returns the standard equivalent of this instance.
+         *
+         * @return the standard dynamics.
+         */
+        public
+        Standard distinct() {
+            return withVelocity(velocity);
         }
 
         /**
@@ -3380,6 +3410,7 @@ implements
         protected static
         class Standard
         extends Dynamics
+        implements Unique
         {
             /**
              * Creates a standard dynamics with the specified symbol, name, and velocity.
@@ -3421,6 +3452,12 @@ implements
                 return isStandard(this)
                        ? this
                        : new Standard(symbol, name, velocity);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Standard distinct() {
+                return this;
             }
         }
     }
@@ -3769,7 +3806,8 @@ implements
         Ordered<Byte>,
         OctaveType,
         Symbolized<String>,
-        Unit
+        Unit,
+        Unique
     {
         /** Octave -2. */
         public final Octave NegativeSecond = new Octave() {
@@ -4035,7 +4073,7 @@ implements
         /**
          * Compares this instance with the specified octave, and returns a negative integer if this instance is less than the octave, zero if they are equal, and a positive integer otherwise.
          * If this instance is not null and the specified octave is null, {@link Integer#MAX_VALUE} will be returned.
-         * If this instance if null and the specified octave is not null, {@link Integer#MIN_VALUE} will be returned.
+         * If this instance if null and the specified octave is not null, -{@link Integer#MAX_VALUE} will be returned.
          *
          * @param octave the octave.
          *
@@ -4048,7 +4086,7 @@ implements
                      ? 0
                      : Integer.MAX_VALUE
                    : this == Null
-                     ? Integer.MIN_VALUE
+                     ? -Integer.MAX_VALUE
                      : getOrder() - octave.getOrder();
         }
 
@@ -4091,7 +4129,8 @@ implements
         PitchType,
         Supporting<Accidental>,
         Symbolized<String>,
-        Unit
+        Unit,
+        Unique
     {
         /** The A pitch. (9) */
         A((byte) 9),
@@ -4501,7 +4540,8 @@ implements
     extends Standard
     implements
         Operable.Locked<Number>,
-        Symbolized.Singleton<String>
+        Symbolized.Singleton<String>,
+        Unique
     {
         /** A constant holding the maximum value a {@code Singleton} can have, 143. */
         public static final

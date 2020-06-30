@@ -79,7 +79,7 @@ implements Keyboard
             final short lowestNoteNumber = (short) firstKeyTune.getNumber();
             for (int semitone = 0; semitone < numOfKeys.intValue(); semitone++)
                 keyCreator
-                .withValues(Note.withNumber((short) (lowestNoteNumber + semitone)));
+                .withValues(new Note(lowestNoteNumber + semitone));
         }
     }
 

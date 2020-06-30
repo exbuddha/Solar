@@ -1,5 +1,10 @@
 package musical;
 
+import static musical.Constant.Note.Accidental.DoubleFlatSym;
+import static musical.Constant.Note.Accidental.DoubleSharpSym;
+import static musical.Constant.Note.Accidental.NaturalFlatSym;
+import static musical.Constant.Note.Accidental.NaturalSharpSym;
+
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -7,10 +12,10 @@ import music.system.data.Clockable;
 import music.system.data.Convertible;
 import music.system.data.Clockable.TemplativeProgression;
 import music.system.data.Visualized;
-import musical.Note;
 import musical.Note.Pitch;
 import system.data.Reversible;
 import system.data.Symbolized;
+import system.data.Unique;
 
 /**
  * {@code Scale} represents a musical scale.
@@ -39,7 +44,6 @@ class Scale
 extends Interval
 implements
     Adjustable,
-    Cloneable,
     Function<Number, Scale.Range>,
     Interval.Sequence,
     Iterable<Note>,
@@ -1069,19 +1073,19 @@ implements
     {
         /** The double-flat accidental. */
         public static final
-        Note.Accidental DoubleFlat = new Standard(Constant.Note.Accidental.DoubleFlatSym, (short) -200);
+        Accidental DoubleFlat = new Standard(DoubleFlatSym, (short) -200);
 
         /** The natural-flat accidental. */
         public static final
-        Note.Accidental NaturalFlat = new Standard(Constant.Note.Accidental.NaturalFlatSym, (short) -100);
-
-        /** The double-sharp accidental. */
-        public static final
-        Note.Accidental DoubleSharp = new Standard(Constant.Note.Accidental.DoubleSharpSym, (short) 200);
+        Accidental NaturalFlat = new Standard(NaturalFlatSym, (short) -100);
 
         /** The natural-sharp accidental. */
         public static final
-        Note.Accidental NaturalSharp = new Standard(Constant.Note.Accidental.NaturalSharpSym, (short) 100);
+        Accidental NaturalSharp = new Standard(NaturalSharpSym, (short) 100);
+
+        /** The double-sharp accidental. */
+        public static final
+        Accidental DoubleSharp = new Standard(DoubleSharpSym, (short) 200);
 
         /**
          * Creates a scale note accidental with the specified symbol, semitones, and cents.
@@ -1129,6 +1133,7 @@ implements
             return null;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Accidental clone() {
             return new Accidental(symbol, cents);
@@ -1145,6 +1150,7 @@ implements
         protected static
         class Standard
         extends Accidental
+        implements Unique
         {
             /**
              * Creates a standard scale accidental with the specified symbol, semitones, and cents.
@@ -1160,15 +1166,18 @@ implements
                 super(symbol, cents);
             }
 
+            /** {@inheritDoc} */
             @Override
             public Standard clone() {
-                return this == Sharp ||
-                       this == Flat ||
-                       this == Natural ||
-                       this == DoubleSharp ||
-                       this == DoubleFlat
+                return isStandard()
                        ? this
                        : new Standard(symbol, cents);
+            }
+
+            /** {@inheritDoc} */
+            @Override
+            public Standard distinct() {
+                return this;
             }
         }
     }
