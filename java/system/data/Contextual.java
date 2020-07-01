@@ -24,16 +24,4 @@ implements Context
      */
     protected abstract
     T getContext();
-
-    /**
-     * Returns true if this contextual instance is positively associated with the specified context; otherwise returns false.
-     *
-     * @param context the context.
-     *
-     * @return true if this instance is in the same context, and false otherwise.
-     */
-    public abstract
-    boolean is(
-        Context context
-        );
 }

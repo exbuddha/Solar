@@ -523,8 +523,7 @@ implements
      * @see #write(OutputStream, byte)
      */
     @Override
-    public void write(final OutputStream outputStream)
-    throws TransformerException
+    public void write(final OutputStream outputStream) throws TransformerException
     {
         write(outputStream, (byte) 0);
     }
@@ -620,7 +619,7 @@ implements
             /**
              * Accepts an element text.
              *
-             * @throws IllegalStateException if document is closed.
+             * @throws IllegalStateException if the document is closed.
              * @throws SAXException if the stack size does not match the document depth.
              */
             @Override
@@ -631,7 +630,7 @@ implements
                     throw new SAXException();
 
                 // Append the characters to the element at the top of the stack
-                stack.peek().appendChild(getDocument().createTextNode(new String(ch, start, length)));
+                stack.peek().appendChild(document.createTextNode(new String(ch, start, length)));
             }
 
             /** {@inheritDoc} */
@@ -643,7 +642,7 @@ implements
             /**
              * Ends the document.
              *
-             * @throws IllegalStateException if document is closed.
+             * @throws IllegalStateException if the document is closed.
              */
             @Override
             public void endDocument() throws SAXException {
@@ -656,7 +655,7 @@ implements
              * <p>
              * This implementation calls {@link #endDocument()} internally if there is only one element left in the stack.
              *
-             * @throws IllegalStateException if document is closed.
+             * @throws IllegalStateException if the document is closed.
              * @throws SAXException if the stack size does not match the document depth.
              */
             @Override
@@ -679,16 +678,28 @@ implements
                 depth--;
             }
 
-            /** {@inheritDoc} */
+            /**
+             * {@inheritDoc}
+             *
+             * @return true if the document is closed, and false otherwise.
+             */
             @Override
             public boolean isClosed() {
                 return closed;
             }
 
-            /** {@inheritDoc} */
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation avoid DTD validation.
+             *
+             * @param publicId the public identifier, or null if none is available.
+             * @param systemId the system identifier provided in the XML document.
+             *
+             * @return the new input source, or null to require the default behavior.
+             */
             @Override
             public InputSource resolveEntity(final String publicId, final String systemId) throws IOException, SAXException {
-                // To avoid DTD validation
                 return new InputSource(new ByteArrayInputStream(new byte[] {}));
             }
 
@@ -698,14 +709,14 @@ implements
              * If the document is null, a new one is created.
              * If the document is not empty, an {@code IllegalStateException} is thrown.
              *
-             * @throws IllegalStateException if document is closed or non-empty.
+             * @throws IllegalStateException if the document is closed or non-empty.
              */
             @Override
             public void startDocument() throws SAXException {
                 super.startDocument();
 
                 if (document == null)
-                    document = (XMLDocument) Element.of(newDocumentBuilder().newDocument());
+                    document = newDocumentBuilder().newDocument();
                 else
                     if (document.hasChildNodes()) {
                         closed = true;
@@ -718,7 +729,7 @@ implements
             /**
              * Starts an element.
              *
-             * @throws IllegalStateException if document is closed.
+             * @throws IllegalStateException if the document is closed.
              */
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
@@ -1050,9 +1061,10 @@ implements
          */
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            super.startElement(uri, localName, qName, attributes);
             if (isClosed())
                 throw new IllegalStateException();
+
+            super.startElement(uri, localName, qName, attributes);
         }
 
         /**
@@ -1995,7 +2007,7 @@ implements
         /**
          * Performs a breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
          * <p>
-         * If a filter function call returns null, the traversal stop.
+         * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
          * <p>
          * This implementation uses a {@code LinkedList}.
@@ -2022,7 +2034,7 @@ implements
         /**
          * Performs a breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the filter function.
          * <p>
-         * If a filter function call returns null, the traversal stop.
+         * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
          *
          * @param queue the queue.
@@ -2049,7 +2061,8 @@ implements
                 }
 
                 queue.remove();
-                breadthFirstQueue(queue, filter);
+                if (breadthFirstQueue(queue, filter) == null)
+                    return null;
             }
 
             return target;
@@ -2058,7 +2071,7 @@ implements
         /**
          * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
          * <p>
-         * If a filter function call returns null, the traversal stop.
+         * If a filter function call returns null, the traversal stops and null is returned.
          *
          * @param source the source element.
          * @param filter the filter function.
@@ -2076,11 +2089,9 @@ implements
 
             if (source != null) {
                 final NodeList children = source.getChildNodes();
-                for (int i = 0; i < children.getLength(); i++) {
-                    Node result = depthFirst(children.item(i), filter);
-                    if (result  == null)
-                        return target;
-                }
+                for (int i = 0; i < children.getLength(); i++)
+                    if (depthFirst(children.item(i), filter) == null);
+                        return null;
             }
 
             return target;
