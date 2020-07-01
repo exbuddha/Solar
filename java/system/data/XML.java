@@ -2061,8 +2061,9 @@ implements
                 }
 
                 queue.remove();
-                if (breadthFirstQueue(queue, filter) == null)
-                    return null;
+                if (!queue.isEmpty())
+                    if (breadthFirstQueue(queue, filter) == null)
+                        return null;
             }
 
             return target;
@@ -2084,15 +2085,13 @@ implements
             final Function<Node, Node> filter
             ) {
             final Node target = filter.apply(source);
-            if (target == null)
-                return null;
-
-            if (source != null) {
-                final NodeList children = source.getChildNodes();
-                for (int i = 0; i < children.getLength(); i++)
-                    if (depthFirst(children.item(i), filter) == null);
-                        return null;
-            }
+            if (target != null)
+                if (target != Skip && source != null) {
+                    final NodeList children = source.getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++)
+                        if (depthFirst(children.item(i), filter) == null);
+                            return null;
+                }
 
             return target;
         }
