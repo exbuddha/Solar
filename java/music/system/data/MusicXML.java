@@ -434,6 +434,10 @@ extends XML
              * <p>
              * This implementation only processes the accepted element texts.
              *
+             * @param ch the characters.
+             * @param start the start position in the character array.
+             * @param length the number of characters to use from the character array.
+             *
              * @throws IllegalStateException if the document is closed.
              */
             @Override
@@ -483,6 +487,11 @@ extends XML
              * {@inheritDoc}
              * <p>
              * This implementation only accepts the standard MusicXML document at their correct location and bypasses any other element.
+             *
+             * @param uri the namespace URI.
+             * @param localName the local name.
+             * @param qName the qualified name.
+             * @param attributes the element attributes.
              *
              * @throws IllegalStateException if the document is closed.
              */

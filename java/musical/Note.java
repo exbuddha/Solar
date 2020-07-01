@@ -1904,6 +1904,23 @@ implements
     }
 
     /**
+     * Returns true if the specified note has the same octave, pitch, accidental, and adjustment as this note, and false otherwise.
+     *
+     * @param note the other note.
+     *
+     * @return true if the note is equal to the specified note, and false otherwise.
+     */
+    public
+    boolean equals(
+        final Note note
+        ) {
+        return Lambda.areNullOrEqual(octave, note.octave) &&
+               pitch == note.pitch &&
+               accidental == note.accidental &&
+               adjustment == note.adjustment;
+    }
+
+    /**
      * Returns true if the specified note has the same pitch, accidental, and adjustment as this note; otherwise return false.
      *
      * @param note the note.
@@ -2361,7 +2378,7 @@ implements
     /**
      * Creates and returns a copy of this note.
      *
-     * @return a copy of note.
+     * @return a clone of this note.
      */
     @Override
     public Note clone() {
@@ -2372,7 +2389,7 @@ implements
      * Compares this note with the specified note and returns a negative integer if this note is less than the note, zero if they are equal, and a positive integer otherwise.
      * If the specified note is null, {@link Integer#MAX_VALUE} will be returned.
      *
-     * @param note the note.
+     * @param note the other note.
      *
      * @return a negative integer if this fraction is less than the fraction, zero if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the note is null.
      *
@@ -2389,6 +2406,8 @@ implements
      * {@inheritDoc}
      * <p>
      * This implementation is return this note.
+     *
+     * @return the note.
      */
     @Override
     public Note convert() {
@@ -2414,23 +2433,17 @@ implements
     }
 
     /**
-     * Returns true if the specified object is a note and has the same octave, pitch, accidental, and adjustment as this note, and false otherwise.
+     * Returns true if the specified object is a number and has the same number as this note, and false otherwise.
+     * <p>
+     * This implementation calls {@link Number#floatValue()} on the object.
      *
      * @param obj the object.
+     *
      * @return true if the note is equal to the specified object, and false otherwise.
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof Note) {
-            final Note note = (Note) obj;
-            return Lambda.areNullOrEqual(octave, note.octave) &&
-                   pitch == note.pitch &&
-                   accidental.equals(note.accidental) &&
-                   adjustment == note.adjustment;
-        }
-
-        return obj instanceof Number && getNumber() == ((Number) obj).floatValue() ||
-               (obj != null && obj.equals(this));
+        return obj instanceof Number && getNumber() == ((Number) obj).floatValue();
     }
 
     /**
@@ -2933,22 +2946,36 @@ implements
             return Adjusted[order + 2][(order + addedAdjustments(adjustments) + 4) % 9];
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Creates and returns a copy of this accidental.
+         *
+         * @return a clone of this accidental.
+         */
         @Override
         public Accidental clone() {
             return new Accidental(symbol, cents);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         *
+         * @param accidental the other accidental.
+         *
+         * @return a negative integer if this accidental is less than the accidental, zero if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the accidental is null.
+         */
         @Override
         public int compareTo(final Accidental accidental) {
-            return cents - accidental.cents;
+            return accidental == null
+                   ? Integer.MAX_VALUE
+                   : cents - accidental.cents;
         }
 
         /**
          * {@inheritDoc}
          * <p>
          * This implementation returns this accidental.
+         *
+         * @return the accidental.
          */
         @Override
         public Accidental convert() {
@@ -3154,7 +3181,13 @@ implements
                        : new Standard(symbol, cents);
             }
 
-            /** {@inheritDoc} */
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns the standard accidental.
+             *
+             * @return the standard accidental.
+             */
             @Override
             public Standard distinct() {
                 return this;
@@ -3336,16 +3369,28 @@ implements
             return withVelocity(velocity);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Creates and returns a copy of this dynamics.
+         *
+         * @return the clone of this dynamics.
+         */
         @Override
         public Dynamics clone() {
             return new Dynamics(symbol, name, velocity);
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         *
+         * @param dynamics the other dynamics.
+         *
+         * @return a negative integer if this dynamics is less than the dynamics, zero if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the dynamics is null.
+         */
         @Override
         public int compareTo(final Dynamics dynamics) {
-            return velocity - dynamics.velocity;
+            return dynamics == null
+                   ? Integer.MAX_VALUE
+                   : velocity - dynamics.velocity;
         }
 
         /**
@@ -3454,7 +3499,13 @@ implements
                        : new Standard(symbol, name, velocity);
             }
 
-            /** {@inheritDoc} */
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns the standard dynamics.
+             *
+             * @return the standard dynamics.
+             */
             @Override
             public Standard distinct() {
                 return this;
@@ -4515,6 +4566,8 @@ implements
          * {@inheritDoc}
          * <p>
          * This implementation returns the {@code Short} class.
+         *
+         * @return the {@code Short} class.
          */
         @Override
         default Class<Short> getOrderClass() {
@@ -4898,7 +4951,7 @@ implements
         /**
          * {@inheritDoc}
          * <p>
-         * This implementation returns this singleton.
+         * This implementation returns the singleton.
          *
          * @return the singleton.
          */
@@ -4907,7 +4960,11 @@ implements
             return this;
         }
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         *
+         * @return the singleton note frequency.
+         */
         @Override
         public float getFrequency() {
             return freq;
@@ -5626,7 +5683,7 @@ implements
         /**
          * Creates and returns a copy of this standard note.
          *
-         * @return the copy of the standard note.
+         * @return the clone of this standard note.
          */
         @Override
         public Standard clone() {

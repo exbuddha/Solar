@@ -608,7 +608,7 @@ implements
      * Compares this fraction with the specified fraction and returns a negative integer if this fraction is less than the fraction, zero if they are equal, and a positive integer otherwise.
      * If the specified fraction is null, {@link Integer#MAX_VALUE} will be returned.
      *
-     * @param fraction the fraction.
+     * @param fraction the other fraction.
      *
      * @return a negative integer if this fraction is less than the fraction, zero if they are equal, and a positive integer otherwise; or {@link Integer#MAX_VALUE} if the fraction is null.
      */
@@ -658,8 +658,7 @@ implements
      */
     @Override
     public boolean equals(final Object obj) {
-        return obj instanceof Number && compareTo((Number) obj) == 0 ||
-               (obj != null && obj.equals(this));
+        return obj instanceof Number && compareTo((Number) obj) == 0;
     }
 
     /**

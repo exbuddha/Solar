@@ -7,12 +7,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -619,6 +621,10 @@ implements
             /**
              * Accepts an element text.
              *
+             * @param ch the characters.
+             * @param start the start position in the character array.
+             * @param length the number of characters to use from the character array.
+             *
              * @throws IllegalStateException if the document is closed.
              * @throws SAXException if the stack size does not match the document depth.
              */
@@ -1012,7 +1018,13 @@ implements
          * <p>
          * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
          *
+         * @param ch the characters.
+         * @param start the start position in the character array.
+         * @param length the number of characters to use from the character array.
+         *
          * @throws IllegalStateException if document is closed.
+         *
+         * @see DefaultHandler#characters(char[], int, int)
          */
         @Override
         public void characters(final char[] ch, final int start, final int length) throws SAXException {
@@ -1027,7 +1039,13 @@ implements
          * <p>
          * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
          *
+         * @param uri the namespace URI.
+         * @param localName The local name (without prefix), or the empty string if Namespace processing is not being performed.
+         * @param qName The qualified name (with prefix), or the empty string if qualified names are not available.
+         *
          * @throws IllegalStateException if document is closed.
+         *
+         * @see DefaultHandler#endElement(String, String, String)
          */
         @Override
         public void endElement(final String uri, final String localName, final String qName) throws SAXException {
@@ -1057,7 +1075,14 @@ implements
          * <p>
          * This implementation throws an {@code IllegalStateException} if it receives notification while the document is closed.
          *
+         * @param uri the namespace URI.
+         * @param localName the local name.
+         * @param qName the qualified name.
+         * @param attributes the element attributes.
+         *
          * @throws IllegalStateException if document is closed.
+         *
+         * @see DefaultHandler#startElement(String, String, String, Attributes)
          */
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
@@ -1752,11 +1777,13 @@ implements
         }
 
         /**
-         * Applies the specified filter to this instance and its entire inner structure in breadth-first order and returns the result of the filter function.
+         * Applies the specified filter to the element and its entire inner structure in breadth-first order and returns the traversal result.
          *
          * @param filter the filter function.
          *
-         * @return the filtered source.
+         * @return the traversal result.
+         *
+         * @throws NullPointerException if the filter is null.
          *
          * @see Traversal#breadthFirst(Node, Function)
          */
@@ -1768,17 +1795,59 @@ implements
         }
 
         /**
-         * Applies the specified filter to this instance and its entire inner structure in depth-first order and returns the result of the filter function.
+         * Applies the specified filter to the element and its entire inner structure in depth-first order and returns the traversal result.
          *
          * @param filter the filter function.
          *
-         * @return the filtered source.
+         * @return the traversal result.
+         *
+         * @throws NullPointerException if the filter is null.
          *
          * @see Traversal#depthFirst(Node, Function)
          */
         default
         Node depthFirst(
             final Function<Node, Node> filter
+            ) {
+            return Traversal.depthFirst(this, filter);
+        }
+
+        /**
+         * Applies the specified filter to the element and its entire inner structure in depth-first order and returns the traversal result.
+         *
+         * @param index the element index.
+         * @param filter the filter bi-function.
+         *
+         * @return the traversal result.
+         *
+         * @throws NullPointerException if the filter is null.
+         *
+         * @see Traversal#depthFirst(Number, Node, BiFunction)
+         */
+        default
+        Node depthFirst(
+            final Number index,
+            final BiFunction<Number, Node, Node> filter
+            ) {
+            return Traversal.depthFirst(index, this, filter);
+        }
+
+        /**
+         * Applies the specified filter to the element and its entire inner structure in depth-first order and returns the traversal result.
+         * <p>
+         * The element index is provided automatically.
+         *
+         * @param filter the filter bi-function.
+         *
+         * @return the traversal result.
+         *
+         * @throws NullPointerException if the filter is null.
+         *
+         * @see Traversal#depthFirst(Node, BiFunction)
+         */
+        default
+        Node depthFirst(
+            final BiFunction<Number, Node, Node> filter
             ) {
             return Traversal.depthFirst(this, filter);
         }
@@ -1883,6 +1952,8 @@ implements
              * {@inheritDoc}
              * <p>
              * This implementation returns {@link #getOrder()}.
+             *
+             * @return the numeric value represented by this path point after conversion to type {@code double}.
              */
             @Override
             public double doubleValue() {
@@ -1893,6 +1964,8 @@ implements
              * {@inheritDoc}
              * <p>
              * This implementation returns {@link #getOrder()}.
+             *
+             * @return the numeric value represented by this path point after conversion to type {@code float}.
              */
             @Override
             public float floatValue() {
@@ -1903,6 +1976,8 @@ implements
              * {@inheritDoc}
              * <p>
              * This implementation returns {@link #getOrder()}.
+             *
+             * @return the numeric value represented by this path point after conversion to type {@code int}.
              */
             @Override
             public int intValue() {
@@ -1913,10 +1988,145 @@ implements
              * {@inheritDoc}
              * <p>
              * This implementation returns {@link #getOrder()}.
+             *
+             * @return the numeric value represented by this path point after conversion to type {@code long}.
              */
             @Override
             public long longValue() {
                 return getOrder();
+            }
+        }
+
+        /**
+         * {@code Queue} is an implementation of an {@code ArrayList} of XML elements which is also a queue and a wrapped XML element type representing the first element in the list/queue.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public
+        class Queue
+        extends ArrayList<Node>
+        implements
+            java.util.Queue<Node>,
+            XMLElement
+        {
+            /**
+             * Creates a queue containing the specified elements.
+             *
+             * @param nodes the elements.
+             */
+            public
+            Queue(
+                final Node... nodes
+                ) {
+                this();
+                for (final Node node : nodes)
+                    add(node);
+            }
+
+            /**
+             * Creates a queue containing the specified element.
+             *
+             * @param node the element.
+             */
+            public
+            Queue(
+                final Node node
+                ) {
+                this();
+                add(node);
+            }
+
+            /**
+             * Creates an empty queue.
+             */
+            public
+            Queue() {
+                super();
+            }
+
+            /**
+             * Validates the queue is not empty; otherwise throws a {@code NoSuchElementException}.
+             *
+             * @thrown NoSuchElementException if the queue is empty.
+             */
+            private
+            void validateNonEmpty() {
+                if (isEmpty())
+                    throw new NoSuchElementException();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @param node the element.
+             *
+             * @return true if the element was added to the queue, and false otherwise.
+             */
+            @Override
+            public boolean offer(final Node node) {
+                return add(node);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return the head of the queue.
+             *
+             * @throws NoSuchElementException if the queue is empty.
+             */
+            @Override
+            public Node remove() {
+                validateNonEmpty();
+                return remove(0);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return the head of the queue, or null if the queue is empty.
+             */
+            @Override
+            public Node poll() {
+                return remove(0);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return the head of the queue.
+             *
+             * @throws NoSuchElementException if the queue is empty.
+             */
+            @Override
+            public Node element() {
+                validateNonEmpty();
+                return get(0);
+            }
+
+            /**
+             * {@inheritDoc}
+             * <p>
+             * This implementation returns the head of the queue or null if the queue is empty.
+             *
+             * @return the head of the queue.
+             */
+            @Override
+            public Node object() {
+                final Node peek = peek();
+                return peek instanceof XMLElement
+                       ? (Node) ((XMLElement) peek).object()
+                       : peek();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return the head of the queue, or null if the queue is empty.
+             */
+            @Override
+            public Node peek() {
+                return get(0);
             }
         }
     }
@@ -2005,95 +2215,234 @@ implements
         Node Skip = new Null.XMLNode() {};
 
         /**
-         * Performs a breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
+         * Performs a breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
          * <p>
          * If a filter function call returns null, the traversal stops and null is returned.
-         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
+         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue element will not be added to the queue.
          * <p>
          * This implementation uses a {@code LinkedList}.
          *
          * @param source the source element.
          * @param filter the filter function.
          *
-         * @return the filtered source.
+         * @return the filtered source, or null if the source is null.
+         *
+         * @throws NullPointerException if the filter is null.
+         *
+         * @see #breadthFirstQueue(Queue, Function)
          */
         public static
         Node breadthFirst(
             final Node source,
             final Function<Node, Node> filter
             ) {
-            if (source == null)
-                return null;
-            else {
-                final LinkedList<Node> queue = new LinkedList<>();
-                queue.add(source);
-                return breadthFirstQueue(queue, filter);
-            }
+            if (source instanceof Stop)
+                return source;
+
+            final LinkedList<Node> queue = new LinkedList<>();
+            queue.add(source);
+            return breadthFirstQueue(queue, filter);
         }
 
         /**
-         * Performs a breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the filter function.
+         * Performs a breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the first filter function call.
          * <p>
          * If a filter function call returns null, the traversal stops and null is returned.
-         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue's first element will not be added to the queue.
+         * If a filter function call returns {@link Traversal#Skip}, the child elements of the queue element will not be added to the queue.
          *
          * @param queue the queue.
          * @param filter the filter function.
          *
-         * @return the filtered source.
+         * @return the filtered queue element, or null if the queue is empty or traversal stops.
          *
-         * @throws NullPointerException if the queue element is null.
+         * @throws NullPointerException if the queue or the filter is null.
          */
         public static
         Node breadthFirstQueue(
             final Queue<Node> queue,
             final Function<Node, Node> filter
             ) {
-            if (queue.isEmpty())
-                return null;
+            Node target = null;
+            while (!queue.isEmpty()) {
+                final Node source = queue.element();
+                if (source instanceof Stop)
+                    return source;
 
-            final Node target = filter.apply(queue.element());
-            if (target != null) {
-                if (target != Skip) {
-                    final NodeList children = queue.element().getChildNodes();
+                target = filter.apply(source);
+                if (target == null)
+                    return null;
+
+                if (target instanceof Stop)
+                    return target;
+
+                if (target != Skip && source != null) {
+                    final NodeList children = source.getChildNodes();
                     for (int i = 0; i < children.getLength(); i++)
                         queue.add(children.item(i));
                 }
 
                 queue.remove();
-                if (!queue.isEmpty())
-                    if (breadthFirstQueue(queue, filter) == null)
-                        return null;
             }
 
             return target;
         }
 
         /**
-         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the filter function.
+         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
          * <p>
          * If a filter function call returns null, the traversal stops and null is returned.
+         * If a filter function call returns {@link Traversal#Skip}, the child elements of the source element will not be traversed.
+         * If a filter function call returns a sub-type of {@link Traversal#Stop}, the sub-type will be returned.
          *
          * @param source the source element.
          * @param filter the filter function.
          *
          * @return the filtered source.
+         *
+         * @param NullPointerException if the filter is null.
          */
         public static
         Node depthFirst(
             final Node source,
             final Function<Node, Node> filter
             ) {
+            if (source instanceof Stop)
+                return source;
+
             final Node target = filter.apply(source);
-            if (target != null)
+            if (target != null) {
+                if (target instanceof Stop)
+                    return target;
+
                 if (target != Skip && source != null) {
                     final NodeList children = source.getChildNodes();
-                    for (int i = 0; i < children.getLength(); i++)
-                        if (depthFirst(children.item(i), filter) == null);
+                    for (int i = 0; i < children.getLength(); i++) {
+                        final Node result = depthFirst(children.item(i), filter);
+                        if (result == null)
                             return null;
+
+                        if (result instanceof Stop)
+                            return result;
+                    }
                 }
+            }
 
             return target;
+        }
+
+        /**
+         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter bi-function call.
+         * <p>
+         * If a filter bi-function call returns null, the traversal stops and null is returned.
+         * If a filter bi-function call returns {@link Traversal#Skip}, the child elements of the source element will not be traversed.
+         * If a filter bi-function call returns a sub-type of {@link Traversal#Stop}, the sub-type will be returned.
+         *
+         * @param index the source element index.
+         * @param source the source element.
+         * @param filter the filter bi-function.
+         *
+         * @return the filtered source.
+         *
+         * @param NullPointerException if the filter is null.
+         */
+        public static
+        Node depthFirst(
+            final Number index,
+            final Node source,
+            final BiFunction<Number, Node, Node> filter
+            ) {
+            if (source instanceof Stop)
+                return source;
+
+            final Node target = filter.apply(index, source);
+            if (target != null) {
+                if (target instanceof Stop)
+                    return target;
+
+                if (target != Skip && source != null) {
+                    final NodeList children = source.getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++) {
+                        final Node result = depthFirst(i, children.item(i), filter);
+                        if (result == null)
+                            return null;
+
+                        if (result instanceof Stop)
+                            return result;
+                    }
+                }
+            }
+
+            return target;
+        }
+
+        /**
+         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter bi-function call.
+         * <p>
+         * The source index is provided automatically.
+         * If the source is null, -1 is used.
+         * <p>
+         * If a filter bi-function call returns null, the traversal stops and null is returned.
+         * If a filter bi-function call returns {@link Traversal#Skip}, the child elements of the source element will not be traversed.
+         * If a filter bi-function call returns a sub-type of {@link Traversal#Stop}, the sub-type will be returned.
+         *
+         * @param source the source element.
+         * @param filter the filter bi-function.
+         *
+         * @return the filtered source.
+         *
+         * @param NullPointerException if the filter is null.
+         *
+         * @see #depthFirst(Number, Node, BiFunction)
+         */
+        public static
+        Node depthFirst(
+            final Node source,
+            final BiFunction<Number, Node, Node> filter
+            ) {
+            int i = -1;
+            for (Node element = source; element != null; element = element.getPreviousSibling())
+                i++;
+
+            return depthFirst(i, source, filter);
+        }
+
+        /**
+         * {@code Stop} represents the traversal stop flag as a wrapped XML element.
+         * <p>
+         * By design, when an instance of this class is returned by a traversal filter function, the traversal will stop and return the instance.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public static
+        class Stop
+        implements Element
+        {
+            /** The wrapped element. */
+            protected final
+            Node object;
+
+            /**
+             * Creates a stop flag at the specified element.
+             *
+             * @param element the element.
+             */
+            public
+            Stop(
+                final Node element
+                ) {
+                object = element;
+            }
+
+            /**
+             * Returns the stop element.
+             *
+             * @return the stop element.
+             */
+            @Override
+            public Node object() {
+                return object;
+            }
         }
     }
 }

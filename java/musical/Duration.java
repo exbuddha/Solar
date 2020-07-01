@@ -662,7 +662,7 @@ implements
     /**
      * Creates and returns a copy of this duration.
      *
-     * @return the copy of duration.
+     * @return the clone of this duration.
      */
     @Override
     public Duration clone() {
@@ -1658,7 +1658,7 @@ implements
         /**
          * Creates and returns a copy of this standard duration.
          *
-         * @return the copy of standard duration.
+         * @return the clone of this standard duration.
          */
         @Override
         public Standard clone() {

@@ -592,16 +592,59 @@ implements
     }
 
     /**
+     * Returns true if the specified interval type has the same amount of cents as the this interval, and false otherwise.
+     *
+     * @param interval the interval type.
+     *
+     * @return true if the interval is equal to the interval type, and false otherwise.
+     */
+    public
+    boolean equals(
+        final IntervalType interval
+        ) {
+        return cents == interval.getCents();
+    }
+
+    /**
+     * Returns true if the specified cents has the same amount of cents as the this interval, and false otherwise.
+     *
+     * @param cents the cents.
+     *
+     * @return true if the interval is equal to the cents, and false otherwise.
+     */
+    public
+    boolean equals(
+        final Cents cents
+        ) {
+        return this.cents == cents.getOrder();
+    }
+
+    /**
+     * Returns true if the specified semitones has the same amount of cents as the this interval, and false otherwise.
+     *
+     * @param semitones the semitones.
+     *
+     * @return true if the interval is equal to the semitones, and false otherwise.
+     */
+    public
+    boolean equals(
+        final Semitones semitones
+        ) {
+        return cents == semitones.getCents();
+    }
+
+    /**
      * Returns true if the specified interval is equal to this interval, ignoring the direction (sign) of both intervals, and false otherwise.
      *
      * @param interval the interval.
+     *
      * @return true if the interval is equal to this interval ignoring direction, and false otherwise.
      */
     public
     boolean equalsIgnoreDirection(
-        final Interval interval
+        final IntervalType interval
         ) {
-        return Math.abs(cents) == Math.abs(interval.cents);
+        return Math.abs(cents) == Math.abs(interval.getCents());
     }
 
     /**
@@ -878,7 +921,7 @@ implements
     /**
      * Creates and returns a copy of this interval.
      *
-     * @return the copy of interval.
+     * @return the clone of this interval.
      */
     @Override
     public Interval clone() {
@@ -918,7 +961,9 @@ implements
     }
 
     /**
-     * Returns true if the interval has the same amount of cents as the specified numeric object, and false otherwise.
+     * Returns true if the specified object is a number and represents the same amount of cents as the this interval, and false otherwise.
+     * <p>
+     * This implementation calls {@link Number#shortValue()} on the object.
      *
      * @param obj the object.
      *
@@ -926,13 +971,7 @@ implements
      */
     @Override
     public boolean equals(final Object obj) {
-        if (obj instanceof IntervalType)
-            return cents == ((IntervalType) obj).getCents();
-
-        if (obj instanceof Number)
-            return cents == ((Number) obj).shortValue();
-
-        return obj != null && obj.equals(this);
+        return obj instanceof Number && cents == ((Number) obj).shortValue();
     }
 
     /**
@@ -1825,7 +1864,7 @@ implements
         /**
          * Creates and returns a copy of this standard interval.
          *
-         * @return the copy of the standard interval.
+         * @return the clone of this standard interval.
          */
         @Override
         public Standard clone() {
