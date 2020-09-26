@@ -1,5 +1,10 @@
 package system.data;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 /**
  * {@code Null} classifies null data types.
  *
@@ -9,6 +14,256 @@ package system.data;
 public
 interface Null
 {
+    /**
+     * {@code List} classifies a null iterable.
+     *
+     * @param <T> the type of elements returned by the iterator.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    interface Iterable<T>
+    extends java.lang.Iterable<T>
+    {
+        /**
+         * The optional {@code NoSuchElementException} message.
+         * <p/>
+         * This implementation returns null.
+         *
+         * @return the exception message.
+         */
+        default String msg() {
+            return null;
+        }
+
+        @Override
+        default Iterator<T> iterator() {
+            return new Iterator<T>() {
+                       @Override
+                       public boolean hasNext() {
+                             return false;
+                         }
+
+                       @Override
+                       public T next() {
+                             throw new NoSuchElementException(msg());
+                         }
+                   };
+        }
+    }
+
+    /**
+     * {@code Iterator} classifies a null iterator.
+     *
+     * @param <T> the type of elements returned by this iterator.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    interface Iterator<T>
+    extends java.util.Iterator<T>
+    {
+        @Override
+        default boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        default T next() {
+            throw new NoSuchElementException();
+        }
+    }
+
+    /**
+     * {@code List} classifies a null list.
+     *
+     * @param <T> the type of elements in the list.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    interface List<T>
+    extends java.util.List<T>
+    {
+        @Override
+        default boolean add(T t) {
+            return false;
+        }
+
+        @Override
+        default void add(int index, T element) {
+
+        }
+
+        @Override
+        default boolean addAll(Collection<? extends T> c) {
+            return false;
+        }
+
+        @Override
+        default boolean addAll(int index, Collection<? extends T> c) {
+            return false;
+        }
+
+        @Override
+        default void clear() {
+
+        }
+
+        @Override
+        default boolean contains(Object o) {
+            return false;
+        }
+
+        @Override
+        default boolean containsAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        default boolean equals(Object o) {
+            return false;
+        }
+
+        @Override
+        default T get(int index) {
+            return null;
+        }
+
+        @Override
+        default int hashCode() {
+            return 0;
+        }
+
+        @Override
+        default int indexOf(Object o) {
+            return 0;
+        }
+
+        @Override
+        default boolean isEmpty() {
+            return false;
+        }
+
+        @Override
+        default java.util.Iterator<T> iterator() {
+            return new Iterator<T>() {};
+        }
+
+        @Override
+        default int lastIndexOf(Object o) {
+            return 0;
+        }
+
+        @Override
+        default java.util.ListIterator<T> listIterator() {
+            return new ListIterator<T>() {};
+        }
+
+        @Override
+        default java.util.ListIterator<T> listIterator(int index) {
+            return new ListIterator<T>() {};
+        }
+
+        @Override
+        default boolean remove(Object o) {
+            return false;
+        }
+
+        @Override
+        default T remove(int index) {
+            return null;
+        }
+
+        @Override
+        default boolean removeAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        default boolean retainAll(Collection<?> c) {
+            return false;
+        }
+
+        @Override
+        default T set(int index, T element) {
+            return null;
+        }
+
+        @Override
+        default int size() {
+            return 0;
+        }
+
+        @Override
+        default Object[] toArray() {
+            return new Object[0];
+        }
+
+        @Override
+        default <T1> T1[] toArray(T1[] a) {
+            return null;
+        }
+
+        @Override
+        default java.util.List<T> subList(int fromIndex, int toIndex) {
+            return this;
+        }
+    }
+
+    /**
+     * {@code ListIterator} classifies a null list iterator.
+     *
+     * @param <T> the type of elements returned by this iterator.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    interface ListIterator<T>
+    extends
+        java.util.Iterator<T>,
+        java.util.ListIterator<T>
+    {
+        @Override
+        default void add(T t) {}
+
+        @Override
+        default boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        default boolean hasPrevious() {
+            return false;
+        }
+
+        @Override
+        default T next() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        default int nextIndex() {
+            return 0;
+        }
+
+        @Override
+        default T previous() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        default int previousIndex() {
+            return 0;
+        }
+
+        @Override
+        default void remove() {}
+
+        @Override
+        default void set(T t) {}
+    }
+
     /**
      * {@code XMLNode} classifies a null XML node.
      *
@@ -20,179 +275,179 @@ interface Null
     extends org.w3c.dom.Node
     {
         @Override
-        public default String getNodeName() {
+        default String getNodeName() {
             return null;
         }
 
         @Override
-        public default String getNodeValue() throws org.w3c.dom.DOMException {
+        default String getNodeValue() throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default void setNodeValue(String nodeValue) throws org.w3c.dom.DOMException {}
+        default void setNodeValue(String nodeValue) throws org.w3c.dom.DOMException {}
 
         @Override
-        public default short getNodeType() {
+        default short getNodeType() {
             return 0;
         }
 
         @Override
-        public default org.w3c.dom.Node getParentNode() {
+        default org.w3c.dom.Node getParentNode() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.NodeList getChildNodes() {
+        default org.w3c.dom.NodeList getChildNodes() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node getFirstChild() {
+        default org.w3c.dom.Node getFirstChild() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node getLastChild() {
+        default org.w3c.dom.Node getLastChild() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node getPreviousSibling() {
+        default org.w3c.dom.Node getPreviousSibling() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node getNextSibling() {
+        default org.w3c.dom.Node getNextSibling() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.NamedNodeMap getAttributes() {
+        default org.w3c.dom.NamedNodeMap getAttributes() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Document getOwnerDocument() {
+        default org.w3c.dom.Document getOwnerDocument() {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild, org.w3c.dom.Node refChild) throws org.w3c.dom.DOMException {
+        default org.w3c.dom.Node insertBefore(org.w3c.dom.Node newChild, org.w3c.dom.Node refChild) throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild, org.w3c.dom.Node oldChild) throws org.w3c.dom.DOMException {
+        default org.w3c.dom.Node replaceChild(org.w3c.dom.Node newChild, org.w3c.dom.Node oldChild) throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws org.w3c.dom.DOMException {
+        default org.w3c.dom.Node removeChild(org.w3c.dom.Node oldChild) throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild) throws org.w3c.dom.DOMException {
+        default org.w3c.dom.Node appendChild(org.w3c.dom.Node newChild) throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default boolean hasChildNodes() {
+        default boolean hasChildNodes() {
             return false;
         }
 
         @Override
-        public default org.w3c.dom.Node cloneNode(boolean deep) {
+        default org.w3c.dom.Node cloneNode(boolean deep) {
             return null;
         }
 
         @Override
-        public default void normalize() {}
+        default void normalize() {}
 
         @Override
-        public default boolean isSupported(String feature, String version) {
+        default boolean isSupported(String feature, String version) {
             return false;
         }
 
         @Override
-        public default String getNamespaceURI() {
+        default String getNamespaceURI() {
             return null;
         }
 
         @Override
-        public default String getPrefix() {
+        default String getPrefix() {
             return null;
         }
 
         @Override
-        public default void setPrefix(String prefix) throws org.w3c.dom.DOMException {}
+        default void setPrefix(String prefix) throws org.w3c.dom.DOMException {}
 
         @Override
-        public default String getLocalName() {
+        default String getLocalName() {
             return null;
         }
 
         @Override
-        public default boolean hasAttributes() {
+        default boolean hasAttributes() {
             return false;
         }
 
         @Override
-        public default String getBaseURI() {
+        default String getBaseURI() {
             return null;
         }
 
         @Override
-        public default short compareDocumentPosition(org.w3c.dom.Node other) throws org.w3c.dom.DOMException {
+        default short compareDocumentPosition(org.w3c.dom.Node other) throws org.w3c.dom.DOMException {
             return 0;
         }
 
         @Override
-        public default String getTextContent() throws org.w3c.dom.DOMException {
+        default String getTextContent() throws org.w3c.dom.DOMException {
             return null;
         }
 
         @Override
-        public default void setTextContent(String textContent) throws org.w3c.dom.DOMException {}
+        default void setTextContent(String textContent) throws org.w3c.dom.DOMException {}
 
         @Override
-        public default boolean isSameNode(org.w3c.dom.Node other) {
+        default boolean isSameNode(org.w3c.dom.Node other) {
             return false;
         }
 
         @Override
-        public default String lookupPrefix(String namespaceURI) {
+        default String lookupPrefix(String namespaceURI) {
             return null;
         }
 
         @Override
-        public default boolean isDefaultNamespace(String namespaceURI) {
+        default boolean isDefaultNamespace(String namespaceURI) {
             return false;
         }
 
         @Override
-        public default String lookupNamespaceURI(String prefix) {
+        default String lookupNamespaceURI(String prefix) {
             return null;
         }
 
         @Override
-        public default boolean isEqualNode(org.w3c.dom.Node arg) {
+        default boolean isEqualNode(org.w3c.dom.Node arg) {
             return false;
         }
 
         @Override
-        public default Object getFeature(String feature, String version) {
+        default Object getFeature(String feature, String version) {
             return null;
         }
 
         @Override
-        public default Object setUserData(String key, Object data, org.w3c.dom.UserDataHandler handler) {
+        default Object setUserData(String key, Object data, org.w3c.dom.UserDataHandler handler) {
             return null;
         }
 
         @Override
-        public default Object getUserData(String key) {
+        default Object getUserData(String key) {
             return null;
         }
     }

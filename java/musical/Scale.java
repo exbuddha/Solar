@@ -13,13 +13,14 @@ import music.system.data.Convertible;
 import music.system.data.Clockable.TemplativeProgression;
 import music.system.data.Visualized;
 import musical.Note.Pitch;
+import system.Type;
 import system.data.Reversible;
 import system.data.Symbolized;
 import system.data.Unique;
 
 /**
  * {@code Scale} represents a musical scale.
- * <p>
+ * <p/>
  * The instances of this class must satisfy the conditions below in order to benefit from all the functionality presented in this class:
  * <ul>
  * <li>If a scale has a null root, it is considered to be a scale template, evaluating to scale intervals, and are used to create defined scales.
@@ -31,9 +32,9 @@ import system.data.Unique;
  * <li>Repeating notes in scales are not supported in calculations but are possible to create.
  * <li>Scale interval adjustments are not accounted for in any comparisons.
  * <li>A scale must be either ascending or descending for all the comparison methods to work correctly, or ascending and descending in rare cases, for which some comparisons might still fail.
- * <p>
+ * <p/>
  * </ul>
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -278,6 +279,7 @@ implements
      * @param i the scale note indexes.
      * @return true if a scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Number octave,
         final Note.Pitch pitch,
@@ -300,6 +302,7 @@ implements
      * @param i the scale note index.
      * @return true if the scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Number octave,
         final Note.Pitch pitch,
@@ -316,6 +319,7 @@ implements
      * @param i the scale note indexes.
      * @return true if a scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Number octave,
         final Note.Pitch pitch,
@@ -337,6 +341,7 @@ implements
      * @param i the scale note index.
      * @return true if the scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Note.Pitch pitch,
         final musical.Note.Accidental accidental,
@@ -353,6 +358,7 @@ implements
      * @param i the scale note indexes.
      * @return true if a scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Note.Pitch pitch,
         final musical.Note.Accidental accidental,
@@ -373,6 +379,7 @@ implements
      * @param i the scale note index.
      * @return true if the scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Note.Pitch pitch,
         final int i
@@ -387,6 +394,7 @@ implements
      * @param i the scale note indexes.
      * @return true if a scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final Note.Pitch pitch,
         final int... i
@@ -406,6 +414,7 @@ implements
      * @param i the scale note index.
      * @return true if the scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final musical.Note note,
         final int i
@@ -420,6 +429,7 @@ implements
      * @param i the scale note indexes.
      * @return true if a scale note matches the specifications, or false otherwise.
      */
+    public
     boolean contains(
         final musical.Note note,
         final int... i
@@ -434,7 +444,7 @@ implements
 
     /**
      * Returns the index of the first note with the specified octave, pitch, accidental, and adjustment in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param octave the note octave.
@@ -460,7 +470,7 @@ implements
 
     /**
      * Returns the index of the first note with the specified octave, pitch, and accidental in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param octave the note octave.
@@ -484,7 +494,7 @@ implements
 
     /**
      * Returns the index of the first note with the specified octave and pitch in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param octave the note octave.
@@ -501,7 +511,7 @@ implements
 
     /**
      * Returns the index of the first note with the specified pitch and accidental in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param pitch the note pitch.
@@ -522,7 +532,7 @@ implements
 
     /**
      * Returns the index of the first note with the specified pitch in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param pitch the note pitch.
@@ -537,7 +547,7 @@ implements
 
     /**
      * Returns the index of the first note equal to the specified note in the scale.
-     * <p>
+     * <p/>
      * If an equal note is not found, the scale size is returned.
      *
      * @param note the note.
@@ -557,9 +567,9 @@ implements
 
     /**
      * Returns true if the specified scale has the same root note, ignoring pitch, and the same intervals as this scale, and false otherwise.
-     * <p>
+     * <p/>
      * If one of the scales has a null root, only the intervals will be compared.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -577,9 +587,9 @@ implements
 
     /**
      * Returns true if the specified scale has the same root note, ignoring octave and pitch, and the same intervals, and false otherwise.
-     * <p>
+     * <p/>
      * If one of the scales has a null root, only the intervals will be compared.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -597,7 +607,7 @@ implements
 
     /**
      * Returns true if the specified scale has the same intervals appearing in the same order as this scale, and false otherwise.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -619,7 +629,7 @@ implements
 
     /**
      * Returns true if the specified scale has the same interval sequence as this scale, starting from this scale's interval at index {@code i}, and false otherwise.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -650,9 +660,9 @@ implements
 
     /**
      * Returns true if the specified scale has the same interval sequence, ignoring the root, as this scale, and false otherwise.
-     * <p>
+     * <p/>
      * This method can be used to verify if the specified scale is a mode of this scale.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -674,9 +684,9 @@ implements
 
     /**
      * Returns true if the specified scale has the same note sequence and root, ignoring octave and pitch, as this scale, and false otherwise.
-     * <p>
+     * <p/>
      * For example, for the C major and the A minor scales this method returns true.
-     * <p>
+     * <p/>
      * This implementation does not account for the {@code adjustments} values.
      *
      * @param scale the scale.
@@ -719,9 +729,9 @@ implements
 
     /**
      * Returns true if the scale is a chromatic scale, and false otherwise.
-     * <p>
+     * <p/>
      * In music theory, the chromatic scale is a twelve-note musical scale composed of eleven adjacent pitches, each separated by a semitone, and a repeated octave.
-     * <p>
+     * <p/>
      * This method only works for ascending or descending scales.
      *
      * @return true if the scale is chromatic, and false otherwise.
@@ -759,11 +769,11 @@ implements
 
     /**
      * Returns true if the scale is a diatonic scale, and false otherwise.
-     * <p>
+     * <p/>
      * <b>Wikipedia:</b> In music theory, a diatonic scale (or heptatonia prima) is an eight-note musical scale composed of seven pitches and a repeated octave.
      * The diatonic scale includes five whole steps and two half steps for each octave, in which the two half steps are separated from each other by either two or three whole steps, depending on their position in the scale.
      * This pattern ensures that, in a diatonic scale spanning more than one octave, all the half steps are maximally separated from each other. (i.e. separated by at least two whole steps)
-     * <p>
+     * <p/>
      * This implementation only works for ascending or descending scales.
      *
      * @return true if the scale is diatonic, and false otherwise.
@@ -805,9 +815,9 @@ implements
     /**
      * Returns the full length of the scale in semitones.
      * If a scale covers an entire octave then the length of that scale is 12.
-     * <p>
+     * <p/>
      * This method does not account for the {@code adjustments} values.
-     * <p>
+     * <p/>
      * This method internally calls {@link Interval#getSemitones()} on every interval.
      *
      * @return the length of the scale in semitones.
@@ -831,7 +841,7 @@ implements
 
     /**
      * Sets the scale root.
-     * <p>
+     * <p/>
      * This implementation synchronously performs a required data reset.
      *
      * @param root the scale root.
@@ -870,7 +880,7 @@ implements
 
     /**
      * Returns the scale range for the specified register number in this scale, or null if register number is out of range.
-     * <p>
+     * <p/>
      * This implementation only returns individual notes of the scale covering ranges with register numbers starting from 0 to one less than the scale size.
      *
      * @param reg the scale register number.
@@ -966,9 +976,9 @@ implements
 
     /**
      * Returns true if the specified object is a scale, has equal root note, and intervals as this scale, and false otherwise.
-     * <p>
+     * <p/>
      * If the scale has null root, it is ignored in the comparison.
-     * <p>
+     * <p/>
      * This method does not account for the {@code adjustments} values.
      *
      * @param obj the object.
@@ -999,7 +1009,7 @@ implements
 
     /**
      * Returns the total rounded width of the scale intervals in semitones.
-     * <p>
+     * <p/>
      * This method differs from {@link #length()} in the way it calculates the semitones value after summing up the total number of cents.
      * The latter is a more accurate calculation of the total width of the scale.
      */
@@ -1015,7 +1025,7 @@ implements
 
     /**
      * Returns true if the specified type is a scale and has equal root and intervals as this scale.
-     * <p>
+     * <p/>
      * This implementation calls {@link #hasEqualIntervals(Scale)} internally.
      *
      * @param type the other interval type.
@@ -1023,7 +1033,7 @@ implements
      * @return true if interval type has equal root and intervals as this scale.
      */
     @Override
-    public boolean is(final system.data.Type<? extends IntervalType> type) {
+    public boolean is(final Type<? super IntervalType> type) {
         return type instanceof Scale &&
                (this == type ||
                 ((getRoot() == null && ((Scale) type).getRoot() == null) ||
@@ -1059,7 +1069,7 @@ implements
 
     /**
      * {@code Accidental} represents a scale note accidental.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @see Note.Accidental
@@ -1103,7 +1113,7 @@ implements
 
         /**
          * Returns the accidental for the specified semitone, or null if the semitone value is out of range.
-         * <p>
+         * <p/>
          * Accidental semitone must be between -2 and 2.
          *
          * @param semitone the semitone.
@@ -1141,7 +1151,7 @@ implements
 
         /**
          * {@code Standard} represents all standard scale accidentals.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -1168,15 +1178,15 @@ implements
 
             /** {@inheritDoc} */
             @Override
-            public Standard clone() {
+            public Accidental.Standard clone() {
                 return isStandard()
                        ? this
-                       : new Standard(symbol, cents);
+                       : new Accidental.Standard(symbol, cents);
             }
 
             /** {@inheritDoc} */
             @Override
-            public Standard distinct() {
+            public Accidental.Standard distinct() {
                 return this;
             }
         }
@@ -1184,7 +1194,7 @@ implements
 
     /**
      * {@code Backward} represents a scale range visited reversely to its naturally growing order.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1198,7 +1208,7 @@ implements
 
     /**
      * {@code Chord} represents a scale range consisting of notes that are categorized in music theory as chords.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1222,7 +1232,7 @@ implements
 
         /**
          * {@code Progress} represents a single instance of chord progression.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -1244,7 +1254,7 @@ implements
 
     /**
      * {@code Fall} classifies all musical falls in scales.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1260,7 +1270,7 @@ implements
 
     /**
      * {@code Forward} represents a scale range visited in its naturally growing order.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1274,7 +1284,7 @@ implements
 
     /**
      * {@code Note} represents the musical scale note with a certain octave, pitch, and accidental.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1350,9 +1360,9 @@ implements
 
     /**
      * {@code Phrase} represents simple to complex sequences consisting of expressive scale ranges.
-     * <p>
+     * <p/>
      * Phrases contain some form of time information while ranges do not.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1365,7 +1375,7 @@ implements
     {
         /**
          * {@code Motive} categorizes the human perceptive motives in musical listening.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -1403,11 +1413,11 @@ implements
             Uplifting;
 
             @Override
-            public boolean is(system.data.Type<? extends Perception> type) { return false; }
+            public boolean is(Type<? super Perception> type) { return false; }
 
             /**
              * {@code Degree} categorizes the relative degrees in human perception of musical motives.
-             * <p>
+             * <p/>
              * This class implementation is in progress.
              *
              * @since 1.8
@@ -1424,17 +1434,17 @@ implements
                 Subtle;
 
                 @Override
-                public boolean is(system.data.Type<? extends Perception> type) { return false; }
+                public boolean is(Type<? super Perception> type) { return false; }
             }
         }
     }
 
     /**
      * {@code Range} represents ordered sequences of intervals in, or for the scale.
-     * <p>
+     * <p/>
      * This is the superclass for all musical expressions within a scale: individual notes or degrees, harmonies, and their relative order of occurrence.
      * It facilitates a methodical approach to formulating movements in music scores.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1458,7 +1468,7 @@ implements
 
         /**
          * Returns true if this range contains a single note with the specified octave, pitch, accidental, and optional adjustment.
-         * <p>
+         * <p/>
          * By convention, if {@code adjustment} is empty or starts with null, 0 adjustment is used.
          *
          * @param octave the note octave.
@@ -1472,7 +1482,7 @@ implements
 
         /**
          * Returns true if this range contains a single pitch type of the specified pitch, accidental, and optional adjustment.
-         * <p>
+         * <p/>
          * By convention, if {@code adjustment} is empty or starts with null, 0 adjustment is used.
          *
          * @param pitch the note pitch.
@@ -1485,7 +1495,7 @@ implements
 
         /**
          * Returns true if this range contains a single note equal to the specified pitch and having the optional adjustment.
-         * <p>
+         * <p/>
          * By convention, if {@code adjustment} is empty, the note adjustment is used; and when it starts with null or 0, the note adjustment is ignored; otherwise the provided adjustment is used instead of the note adjustment.
          *
          * @param note the note.
@@ -1497,7 +1507,7 @@ implements
 
         /**
          * Returns the fundamental tune for the range.
-         * <p>
+         * <p/>
          * By convention, if a range cannot be associated with a certain tune, or harmonic, null is returned.
          *
          * @return the fundamental.
@@ -1517,7 +1527,7 @@ implements
 
     /**
      * {@code Rest} represents the musical rest.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1525,6 +1535,7 @@ implements
      */
     public abstract
     class Rest
+    extends Duration
     implements musical.Phrase
     {
         protected
@@ -1533,7 +1544,7 @@ implements
 
     /**
      * {@code Rise} classifies all musical rises in a scale.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1549,13 +1560,13 @@ implements
 
     /**
      * {@code System} identifies a functional system of chords and phrases for the scale.
-     * <p>
+     * <p/>
      * The aim of this superclass is to provide theoretical knowledge in music for constructing broader ideas such as style, genre, taste, or tradition.
      * A scale system is defined as a functional relationship among smaller ranges in the scale using two optional variables: a visualized one and a free-form predefined object.
      * The visualized variable can, but necessarily has to, represent an ordered value.
      * The free-form variable, defined as templator, creates the range of known theoretical music elements that have significance in the knowledge base of the scale.
      * Together, or singly if the design implies so, the last two variables cover a hypothetical two-dimensional space for the scale system.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -1569,7 +1580,7 @@ implements
     {
         /**
          * {@code Conversion} classifies all forms of conversions among scale systems.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -1594,7 +1605,7 @@ implements
 
     /**
      * {@code Systematic} classifies scales that are connected to a scientifically well-defined musical system of knowledge.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the scale type.
@@ -1618,9 +1629,9 @@ implements
 
         /**
          * {@code Truth} classifies arbitrarily defined data types that make up all musical creations.
-         * <p>
+         * <p/>
          * The aim of this interface is to provide means to formulating song writing as well-defined systematic truths or artistic preferences.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8

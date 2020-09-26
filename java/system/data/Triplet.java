@@ -2,7 +2,7 @@ package system.data;
 
 /**
  * {@code Triplet} represents all triple data types in the system.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <A> the triplet's first data type.

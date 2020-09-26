@@ -30,7 +30,7 @@ extends
 
     /**
      * {@code Converted} classifies musical data types that are ordered and can be converted by delta amounts in that order.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the order data type.
@@ -61,7 +61,7 @@ extends
 
     /**
      * {@code OpenVariable} classifies variable types that are of a certain data type or its super-type.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the data type.
@@ -82,7 +82,7 @@ extends
 
     /**
      * {@code Variable} classifies variable types that are of a certain data type.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the data type.

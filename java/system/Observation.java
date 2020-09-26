@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 /**
  * {@code Observation} contains the main executable of the Java application and defines other related instances.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -24,7 +24,7 @@ interface Observation
 {
     /**
      * Runs the application.
-     * <p>
+     * <p/>
      * This implementation chain calls {@link #configure(String...)} using the specified command-line arguments, re-applies the same arguments to the returned task agent, and runs the task.
      *
      * @param args the command arguments.
@@ -56,7 +56,7 @@ interface Observation
 
     /**
      * Configures the Java application system with the specified parameters and returns the appropriate task based on application parameters.
-     * <p>
+     * <p/>
      * This implementation returns the output of {@link #system} method if there are no command-line parameters available; otherwise it returns the {@link Static#Imagination} system task agent.
      *
      * @param params command-line parameters.
@@ -80,7 +80,7 @@ interface Observation
 
     /**
      * Returns the system task based on the provided command-line arguments.
-     * <p>
+     * <p/>
      * If the system task cannot be properly instantiated, the system task will exit with the {@link Constant#TaskInstantiationErrCode} error code.
      * If the system task cannot be properly configured, the system task will exit with the {@link Constant#TaskConfigurationErrCode} error code.
      * If the task is not found or the configuration step returns in a null task, the system task will exit with the {@link Constant#TaskNotFoundErrCode} error code.
@@ -141,7 +141,7 @@ interface Observation
     /**
      * {@code Agent} classifies functional interfaces that are self-maintained units of logic intended to be called at the highest level of execution.
      * These units of logic, also called task agents, provide a setup method as configuration step similar to the traditional command-line entries that accept a list of arguments.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <I> the parameter type.
@@ -162,7 +162,7 @@ interface Observation
 
     /**
      * {@code Static} encapsulates the main threads available as system applications.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -312,7 +312,7 @@ interface Observation
 
     /**
      * {@code System} classifies complex processes that require to be adjusted to an underlying system or properly initialized by a model of execution at runtime.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -325,7 +325,7 @@ interface Observation
 
     /**
      * {@code Task} classifies a single unit of logic in the system.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

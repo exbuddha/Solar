@@ -10,12 +10,18 @@ public
 interface Format
 {
     /**
+     * Returns an intermediary domain type capable of performing search on the domain.
+     *
+     * @return the intermediary searchable domain type.
+     */
+    Hierarchical.Domain search();
+
+    /**
      * {@code Hierarchical} classifies structures that are constructed, or nested, in hierarchical manner.
      *
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Hierarchical
     extends
         Format,
@@ -27,14 +33,14 @@ interface Format
          * @since 1.8
          * @author Alireza Kamran
          */
-        public
         interface Domain
         extends Hierarchical
         {
             /**
-             * Returns a domain type, set to start according to the specified coordinates of this domain type.
+             * Returns a domain type set to start according to the specified coordinates of this domain type.
              *
-             * @param start the start point coordinates.
+             * @param start the starting point coordinates.
+             *
              * @return the domain type.
              */
             Domain from(
@@ -42,9 +48,10 @@ interface Format
                 );
 
             /**
-             * Returns a domain type, set to end according to the specified coordinates of this domain type.
+             * Returns a domain type set to end according to the specified coordinates of this domain type.
              *
-             * @param end the end point coordinates.
+             * @param end the ending point coordinates.
+             *
              * @return the domain type.
              */
             Domain until(
@@ -59,7 +66,6 @@ interface Format
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Interpretable
     extends CharSequence
     {
@@ -69,7 +75,7 @@ interface Format
          * @since 1.8
          * @author Alireza Kamran
          */
-        public abstract
+        abstract
         class Document
         implements
             Interpretable,
@@ -85,7 +91,7 @@ interface Format
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation calls {@link #getCharSequence()} internally.
              *
              * @param index the character index.
@@ -99,7 +105,7 @@ interface Format
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation calls {@link #getCharSequence()} internally.
              *
              * @return the character sequence length.
@@ -111,7 +117,7 @@ interface Format
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation calls {@link #getCharSequence()} internally.
              *
              * @param start the subsequence start index. (inclusive)
@@ -126,7 +132,7 @@ interface Format
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation calls {@link #getCharSequence()} internally.
              *
              * @return the character sequence as string.
@@ -138,7 +144,7 @@ interface Format
 
             /**
              * {@code Element} classifies all document elements.
-             * <p>
+             * <p/>
              * Document elements are the uniquely recognized atomic units in documents that are meaningful in logical contexts.
              * They are commonly associated with all data types within a specific documents.
              *
@@ -151,7 +157,7 @@ interface Format
 
             /**
              * {@code ElementPart} classifies all document element parts.
-             * <p>
+             * <p/>
              * A document element part can be any arbitrary section of an element that can stand alone as a recognized piece in that element.
              *
              * @since 1.8
@@ -163,10 +169,10 @@ interface Format
 
             /**
              * {@code Filter} represents data types that are constructed in order to filter out parts of documents during traversal.
-             * <p>
+             * <p/>
              * Filters are structures that are in charge of determining whether or not a document part is eligible for the application of filtering.
              * If a filter is designed to use the nested {@link Condition} class it must provide functionality to bind document data to appropriate match conditions.
-             * <p>
+             * <p/>
              * Using document filters implies the need for an additional layer of abstraction around the logic for parsing or post-processing documents and their elements.
              * It is possible to apply filtering in a more efficient way; therefore, this class should be used only when there is a requirement to represent such units of logic in a object-oriented design that allows maintaining the state of filters and their match conditions.
              *
@@ -190,7 +196,7 @@ interface Format
                 {
                     /**
                      * Evaluates that the condition has the specified polarity towards the specified criteria.
-                     * <p>
+                     * <p/>
                      * By convention, true polarity indicates existence of match and false polarity indicates non-existence of match.
                      *
                      * @param criteria the criteria.
@@ -233,7 +239,6 @@ interface Format
                      * @since 1.8
                      * @author Alireza Kamran
                      */
-                    public
                     interface Operator
                     extends Conditional
                     {
@@ -248,7 +253,7 @@ interface Format
 
                 /**
                  * {@code Predictive} classifies conditional data types that are predictive with respect to a target element, or elements, in document.
-                 * <p>
+                 * <p/>
                  * Predictive conditionals require performing some extra work outside of the logically discerned boundary of their target element.
                  * This is due to the fact that, by design, predictive conditionals rely on data for which the traversal (search) algorithm will not have a record by default at the time of visiting the target element.
                  */
@@ -349,7 +354,7 @@ interface Format
                     {
                         /**
                          * Attempts to force the condition match result in data to reflect the specified polarity.
-                         * <p>
+                         * <p/>
                          * By convention, true polarity indicates existence of match and false polarity indicates non-existence of match.
                          *
                          * @param polarity the polarity.
@@ -398,13 +403,13 @@ interface Format
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Sequential<T>
     {
         /**
          * Returns a sequential type after applying the specified coordinates to this sequential type.
          *
-         * @param coords the coordinates.
+         * @param coords the coordinates. (data element)
+         *
          * @return the located sequential type.
          */
         Sequential<T> at(
@@ -418,9 +423,7 @@ interface Format
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Writable
-    extends Format
     {
         /**
          * Writes the content to the output stream.
@@ -428,7 +431,6 @@ interface Format
          * @param outputStream the stream.
          * @throws Exception if an error occurs.
          */
-        abstract
         void write(
             java.io.OutputStream outputStream
             )

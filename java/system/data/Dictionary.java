@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * {@code Dictionary} is an n-tree dictionary for mapping string keys to value objects.
- * <p>
- * This class implementation is in progress.
+ * {@code Dictionary} is an n-tree dictionary for one-to-one mapping of string keys to value objects.
  *
  * @param <T> the type of value objects.
  *
@@ -67,7 +65,7 @@ class Dictionary<T>
 
     /**
      * Adds the key and value to the dictionary.
-     * <p>
+     * <p/>
      * This method is thread-safe.
      *
      * @param key the key.
@@ -153,18 +151,18 @@ class Dictionary<T>
      * Creates and returns an intermediary {@link MultiKeyMapper} object for mapping multiple keys to a single value object.
      *
      * @param keys the keys.
+     *
      * @return the mapper.
      */
     public
     MultiKeyMapper<T> map(
         final String... keys
         ) {
-        return new MultiKeyMapper<T>() {
-            @Override
-            public void to(final T value) {
-                for (final String key : keys)
-                    add(key, value);
-            }
+        return value -> {
+            for (final String key : keys)
+                add(key, value);
+
+            return this;
         };
     }
 
@@ -176,6 +174,7 @@ class Dictionary<T>
      * @param start the index of the starting letter in the n-tree.
      * @param length the number of next letters in the list to lookup.
      * @param ignoreCase the flag indicating if search should ignore the character case.
+     *
      * @return the next letter node, or null if not found.
      */
     private
@@ -222,33 +221,7 @@ class Dictionary<T>
     }
 
     /**
-     * {@code MultiKeyMapper} classifies an intermediary object used for mapping multiple keys to a single value object.
-     * <p>
-     * This class implementation is in progress.
-     *
-     * @param <S> the type of value object.
-     *
-     * @since 1.8
-     * @author Alireza Kamran
-     */
-    public
-    interface MultiKeyMapper<S>
-    {
-        /**
-         * Maps to the specified value.
-         *
-         * @param value the value.
-         */
-        public
-        void to(
-            S value
-            );
-    }
-
-    /**
      * {@code Letter} is a representation of a single node in the n-tree dictionary.
-     * <p>
-     * This class implementation is in progress.
      *
      * @param <S> The type of the value objects.
      *
@@ -282,5 +255,28 @@ class Dictionary<T>
             this.ch = ch;
             nextLetters = new ArrayList<>(1);
         }
+    }
+
+    /**
+     * {@code MultiKeyMapper} classifies an intermediary object used for mapping multiple keys to a single value object.
+     *
+     * @param <S> the type of value object.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
+    public
+    interface MultiKeyMapper<S>
+    {
+        /**
+         * Maps to the specified value and returns this dictionary.
+         *
+         * @param value the value.
+         *
+         * @return the dictionary.
+         */
+        Dictionary<S> to(
+            S value
+            );
     }
 }

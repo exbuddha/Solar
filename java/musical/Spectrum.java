@@ -6,10 +6,11 @@ import music.system.data.Clockable.Progressor;
 import music.system.data.Clockable.Regressor;
 import music.system.data.Clockable.Rotational;
 import music.system.data.Clockable.Sinusoidal;
+import system.Type;
 
 /**
  * {@code Spectrum} characterizes any sonic data type that is within the audible frequency ranges of sound or the hearing scale.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -20,11 +21,11 @@ extends Sound
 {
     /**
      * {@code Effect} categorizes sonic or musical characteristic of spectrums, notes, and groups.
-     * <p>
+     * <p/>
      * This categorization intends to define a handful of characteristics that relate to time-sensitivity of individual incidents within their own maintained line of thought.
      * It focuses only on influence of the recognized timbres and tones present in the line of thought during listening.
      * There are additional points of interest specifically related to the perception of spectrums that will have to accompany the data represented here in order to completely allow for analysis of musical incidents, such as pitch rises and falls or changes in tempo.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -68,7 +69,7 @@ extends Sound
         Transient;
 
         @Override
-        public boolean is(final system.data.Type<? extends Effect> type) {
+        public boolean is(final Type<? extends Effect> type) {
             return this == type;
         }
     }
@@ -87,7 +88,7 @@ extends Sound
 
     /**
      * {@code Localization} classifies any form of data type that characterizes tone quality of sounds by scientifically recording properties of the spectrum of those sounds.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -99,7 +100,7 @@ extends Sound
 
     /**
      * {@code Modulus} classifies the significant weights of all notes with two axes: a tabular (pitch-and-octave) and a local (accidental).
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -111,7 +112,7 @@ extends Sound
     {
         /**
          * {@code Local} classifies the axis of note modifiers local to the data points on the tabular axis.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @param <T> the numeric data type.
@@ -127,7 +128,7 @@ extends Sound
         {
             /**
              * {@code Conversional} classifies entire converting operational spaces on accidentational axes.
-             * <p>
+             * <p/>
              * This class implementation is in progress.
              *
              * @param <T> the transformed data type.
@@ -149,7 +150,7 @@ extends Sound
 
         /**
          * {@code Fall} classifies all musical falls in note systems.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -165,7 +166,7 @@ extends Sound
 
         /**
          * {@code Tabular} classifies the axis of note names as they singularly stand within their defining table.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @param <T> the numeric data type.
@@ -181,7 +182,7 @@ extends Sound
         {
             /**
              * {@code Conversional} classifies entire converting operational spaces on tabular axes.
-             * <p>
+             * <p/>
              * This class implementation is in progress.
              *
              * @param <T> the transformed data type.
@@ -203,7 +204,7 @@ extends Sound
 
         /**
          * {@code Rise} classifies all musical rises in note systems.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8

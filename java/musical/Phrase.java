@@ -4,11 +4,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import music.system.data.Clockable.Templator;
-import performance.Instance;
+import musical.performance.Instance;
+import system.Type;
 
 /**
  * {@code Phrase} classifies ranges in music that additively construct melodies.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -23,7 +24,7 @@ extends
 {
     /**
      * Returns true if the phrase is instantaneous.
-     * <p>
+     * <p/>
      * This implementation returns false.
      *
      * @return true if the phrase is instantaneous.
@@ -35,14 +36,14 @@ extends
 
     /**
      * {@code Detection} represents the intelligent process of determining phrases in music scores.
-     * <p>
+     * <p/>
      * In music, phrases are considered to be the humanly recognizable ranges that resemble a complete clause in writing or speech.
      * A process of detection involves programmatical construction of the generalization below, pivoting on the cognition of similarity and symmetry:
-     * <p>
+     * <p/>
      * If it is similar, it is a part of phrase.
      * If it is non-similar, it is a new, or a new part of phrase.
      * The rest is a historical lookup in an archived memory of observed phrases in music.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -65,7 +66,7 @@ extends
 
     /**
      * {@code Sensation} categorizes human musical perception of phrases, and their parts, based on universal laws of modulation and tonality.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -88,6 +89,6 @@ extends
         Unrestful;
 
         @Override
-        public boolean is(system.data.Type<? extends musical.Perception> type) { return false; }
+        public boolean is(Type<? extends Perception> type) { return false; }
     }
 }

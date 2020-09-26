@@ -4,9 +4,9 @@ import java.util.function.Supplier;
 
 /**
  * {@code Cache} classifies addressable containers of any data that are themselves retrievable by type information.
- * <p>
+ * <p/>
  * This class declares high-level methods for loading from and retrieving from arbitrarily complex addresses.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -17,7 +17,7 @@ interface Cache
 {
     /**
      * Loads the cache from the specified address.
-     * <p>
+     * <p/>
      * The address in this context refers to external resources where the cache is populated from.
      *
      * @param address the address.
@@ -40,7 +40,7 @@ interface Cache
 
     /**
      * {@code Data} classifies cache data by an arbitrary type.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the data type.
@@ -63,7 +63,7 @@ interface Cache
 
     /**
      * {@code Table} is an boolean n-tree dictionary used for string key matching.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

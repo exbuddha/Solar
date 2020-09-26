@@ -7,7 +7,7 @@ import system.data.Fraction;
 
 /**
  * {@code Interpreter} classifies the entity in music capable of translating elements in the score to intermediary types that relate to instances of music.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

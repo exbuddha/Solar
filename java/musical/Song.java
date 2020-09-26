@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Song} classifies all songs in musical data.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

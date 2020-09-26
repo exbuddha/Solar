@@ -8,7 +8,7 @@ import system.data.Fraction;
 
 /**
  * {@code Repetition} represents a time interval in music, relative to the quarter note time value, over which an ordered list of interactions are repeated.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -88,7 +88,7 @@ extends Partition
 
     /**
      * Creates an empty repetition.
-     * <p>
+     * <p/>
      * This constructor creates an {@code ArrayList} for the repetition rate.
      */
     public
@@ -151,7 +151,7 @@ extends Partition
 
     /**
      * {@code Complex} represents repetition time offsets that are complex.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -164,7 +164,7 @@ extends Partition
 
     /**
      * {@code Intro} represents repetition offsets that occur at the beginning of the repetition.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -177,7 +177,7 @@ extends Partition
 
     /**
      * {@code Offset} represents all repetition time offsets that are simple.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -198,7 +198,7 @@ extends Partition
 
     /**
      * {@code Outro} represents repetition offsets that occur at the end of the repetition.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

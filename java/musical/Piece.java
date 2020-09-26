@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Piece} classifies all musical pieces that from songs.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

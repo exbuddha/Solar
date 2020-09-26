@@ -1,7 +1,7 @@
 package musical;
 
 /**
- * {@code Unadjustable} classifies musical data types that can accept in-place unadjustment.
+ * {@code Unadjustable} classifies system data types that can accept in-place unadjustment.
  *
  * @since 1.8
  * @author Alireza Kamran

@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Influence} classifies universal influence of musical expressions on human listeners.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

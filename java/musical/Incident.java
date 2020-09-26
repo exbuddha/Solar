@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Incident} classifies all musical events recorded in notations.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <T> the musical data type.

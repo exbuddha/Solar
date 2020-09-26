@@ -1,11 +1,11 @@
 package musical;
 
 import system.data.Symbolized;
-import system.data.Type;
+import system.Type;
 
 /**
  * {@code Clef} represents a standard musical clef.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

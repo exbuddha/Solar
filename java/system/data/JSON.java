@@ -5,15 +5,16 @@ import java.io.OutputStream;
 
 import exceptions.InvalidJSONException;
 import musical.Notation;
+import org.w3c.dom.Node;
 import system.data.Format.Hierarchical;
 import system.data.Format.Interpretable;
 
 /**
  * {@code JSON} represents a JSON document.
- * <p>
+ * <p/>
  * It also holds static members for generating JSON elements from an input stream or character sequence, writing elements to output streams, and traversing them.
  * The static methods in this class are thread-safe.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -34,7 +35,7 @@ implements Hierarchical
 
     /**
      * Creates a JSON object from the specified input stream.
-     * <p>
+     * <p/>
      * This implementation assumes that input stream is a standard JSON object string.
      *
      * @param stream the JSON input stream.
@@ -48,7 +49,7 @@ implements Hierarchical
 
     /**
      * Creates a JSON object from the specified input.
-     * <p>
+     * <p/>
      * This implementation assumes that input is a standard JSON object string.
      *
      * @param input the JSON string.
@@ -146,6 +147,11 @@ implements Hierarchical
     }
 
     @Override
+    public Domain search() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return getCharSequence().toString();
     }
@@ -216,7 +222,7 @@ implements Hierarchical
 
         /**
          * Returns the end index of the element within JSON string.
-         * <p>
+         * <p/>
          * The element's end index is equal to the element's start index plus its length.
          *
          * @return the element's end index.
@@ -304,7 +310,7 @@ implements Hierarchical
 
     /**
      * {@code Filter} represents data types that are constructed in order to filter out parts of JSON documents during traversal.
-     * <p>
+     * <p/>
      * This class implementation is empty.
      *
      * @see Document.Filter
@@ -318,7 +324,7 @@ implements Hierarchical
     {
         /**
          * {@code Match} represents all data types that make up the conditional expressions for matching elements within JSON documents.
-         * <p>
+         * <p/>
          * This class implementation is empty.
          *
          * @since 1.8
@@ -330,7 +336,7 @@ implements Hierarchical
         {
             /**
              * {@code Ancestor} represents all match types that target JSON element ancestor conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -343,7 +349,7 @@ implements Hierarchical
 
             /**
              * {@code Child} represents all match types that target JSON element child conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -356,7 +362,7 @@ implements Hierarchical
 
             /**
              * {@code Descendant} represents all match types that target JSON element descendant conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -369,7 +375,7 @@ implements Hierarchical
 
             /**
              * {@code Depth} represents all match types that target JSON element depth conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -382,7 +388,7 @@ implements Hierarchical
 
             /**
              * {@code Element} represents all match types that target JSON element conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -395,7 +401,7 @@ implements Hierarchical
 
             /**
              * {@code Index} represents all match types that target JSON element index conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -408,7 +414,7 @@ implements Hierarchical
 
             /**
              * {@code Key} represents all match types that target JSON element key conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -421,7 +427,7 @@ implements Hierarchical
 
             /**
              * {@code Parent} represents all match types that target JSON element parent conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -434,7 +440,7 @@ implements Hierarchical
 
             /**
              * {@code Sibling} represents all match types that target JSON element sibling conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -447,7 +453,7 @@ implements Hierarchical
 
             /**
              * {@code Type} represents all match types that target JSON element type conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -460,7 +466,7 @@ implements Hierarchical
 
             /**
              * {@code Value} represents all match types that target JSON element value conditions.
-             * <p>
+             * <p/>
              * This class implementation is empty.
              *
              * @since 1.8
@@ -475,7 +481,7 @@ implements Hierarchical
 
     /**
      * {@code Handler} represents callback handlers for processing all, or parts of, JSON documents during parsing.
-     * <p>
+     * <p/>
      * By design, the generic type of this class defines the handler's result element type.
      *
      * @param <T> the document node type.
@@ -564,7 +570,7 @@ implements Hierarchical
 
         /**
          * Returns the end index of the element key within JSON string.
-         * <p>
+         * <p/>
          * The key's end index is equal to the key's start index plus its length.
          *
          * @return the element key's end index.
@@ -581,7 +587,7 @@ implements Hierarchical
 
     /**
      * {@code Score} represents an experimental form of JSON object translated from and equivalent to a MusicXML score.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -592,6 +598,6 @@ implements Hierarchical
     extends JSON
     implements
         Notation,
-        performance.system.Type<Notation>
+        musical.performance.system.Type<Notation>
     {}
 }

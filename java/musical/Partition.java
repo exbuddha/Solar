@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * {@code Partition} represents timing in music.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -57,7 +57,7 @@ implements Iterable<Duration>
 
     /**
      * {@code Reorder} represents a reordering for partition rates.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

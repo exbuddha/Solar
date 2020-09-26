@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /**
  * {@code Pulse} classifies noticeable expressions in sound synthesis and music.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

@@ -7,11 +7,11 @@ import music.system.data.Clockable.ProgressiveDataPoint;
 import music.system.data.Clockable.Progressor;
 import music.system.data.Clockable.Templator;
 import system.data.Symbolized;
-import system.data.Type;
+import system.Type;
 
 /**
  * {@code Chord} classifies musical ranges that connote harmony in music.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -34,7 +34,7 @@ extends
 
     /**
      * {@code Progress} represents the measure of change in chord and song construction.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -51,7 +51,7 @@ extends
     {
         /**
          * Creates a progression with the specified variance and quantification.
-         * <p>
+         * <p/>
          * If quantification is empty, null is used for interval cents amount.
          *
          * @param v the progression variance.
@@ -79,7 +79,7 @@ extends
 
         /**
          * Creates a progression with null variance and the specified quantification.
-         * <p>
+         * <p/>
          * If quantification is empty, null is used for interval cents amount.
          *
          * @param q the progression quantification.
@@ -147,9 +147,9 @@ extends
 
     /**
      * {@code Mode} categorizes all known chord modes.
-     * <p>
+     * <p/>
      * Chord modes consist of all individual parts that define the structure or mode of a chord excluding the numeric intervallic relations.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -220,9 +220,9 @@ extends
 
     /**
      * {@code OrderedSet} classifies ordered set of progresses for chords.
-     * <p>
+     * <p/>
      * Ordered sets are equivalent of java standard {@link SortedSet} with the twist that each element in the set can be attached to other adjacent elements creating a group with specific significance.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

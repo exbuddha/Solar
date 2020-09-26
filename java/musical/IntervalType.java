@@ -16,7 +16,7 @@ extends
 {
     /**
      * Returns the number of semitones in this interval type by rounding the cents amount.
-     * <p>
+     * <p/>
      * This implementation calls {@link #getCents()} and rounds away from zero.
      *
      * @return the semitones.

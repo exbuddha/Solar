@@ -2,7 +2,7 @@ package system.data;
 
 /**
  * {@code Tuple} represents all tuple data types in the system.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <A> the tuple's first data type.

@@ -1,8 +1,8 @@
 package musical;
 
 /**
- * {@code Unadjusting} classifies musical data types that are unadjustable to a similar or different type.
- * <p>
+ * {@code Unadjusting} classifies system data types that are unadjustable to a similar or different type.
+ * <p/>
  * In all common cases, the unadjusted data type is similar to its adjusting data type.
  *
  * @param <T> the unadjusted data type.

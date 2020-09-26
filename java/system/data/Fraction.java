@@ -9,19 +9,19 @@ import java.util.function.BooleanSupplier;
 
 /**
  * {@code Fraction} is a representation of fractional numbers in math.
- * <p>
+ * <p/>
  * For practical reasons, this class implementation is concerned only with calculations intended for musical durations.
  * Therefore, the numerator and denominator are accepted respectively as {@code int} and {@code short} values at instantiation time and any point in the logic after that.
  * All operations presume unlikeliness of underflow/overflow occurrences meaning that there are no validations done to avoid those cases.
- * <p>
+ * <p/>
  * All fractions can automatically perform simplification which reduces the numerator and denominator values to the smallest integer amount available.
  * Simplification flag is turned off by default for all operations unless explicitly set to on or when a non-zero default denominator is passed at instantiation time.
  * If a default denominator value is set and the simplification is turned on, after every operation the fraction will be simplified to a denominator value that is equal to the default denominator if possible; otherwise the fraction will be simplified normally.
- * <p>
+ * <p/>
  * Validation is automatically performed to guarantee that the denominator is not zero.
  * The denominator is converted to its absolute value during instantiation and simplification, and the negative sign is given to the numerator.
  * This means that it is impossible to force a fraction denominator to be negative at any time.
- * <p>
+ * <p/>
  * All methods in this class implementation are thread-safe.
  *
  * @since 1.8
@@ -74,7 +74,7 @@ implements
      * Creates a fraction with the specified numerator, denominator, simplification flag, and default denominator.
      * When simplification flag is on, the fraction is simplified automatically.
      * If the flag is null, it will be set to off.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on both denominators.
      *
      * @param numerator the numerator.
@@ -110,7 +110,7 @@ implements
      * Creates a fraction with the specified numerator, denominator, and simplification flag.
      * When simplification flag is on, the fraction is simplified automatically.
      * If the flag is null, it will be set to off.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
      *
      * @param numerator the numerator.
@@ -132,7 +132,7 @@ implements
     /**
      * Creates a fraction with the specified numerator, denominator, and default denominator.
      * The simplification flag is set to on unless the default denominator is null.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on both denominators.
      *
      * @param numerator the numerator.
@@ -154,7 +154,7 @@ implements
     /**
      * Creates a fraction with the specified numerator and denominator.
      * The simplification flag is set to off.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
      *
      * @param numerator the numerator.
@@ -174,7 +174,7 @@ implements
     /**
      * Creates a fraction equal to the specified number.
      * The simplification flag is set to off unless the number is a fraction with simplification set to on.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -224,13 +224,13 @@ implements
 
     /**
      * Creates a fraction from the specified string value.
-     * <p>
+     * <p/>
      * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
      * The numerator and denominator parts are parsed as {@code double} values.
      * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-     * <p>
+     * <p/>
      * The simplification flag is set to off.
-     * <p>
+     * <p/>
      * This constructor performs unsafe casts from {@code double} to {@code int}, for the numerator, and to {@code short} for the denominator.
      *
      * @param value the value.
@@ -560,7 +560,7 @@ implements
 
     /**
      * Adds the specified number to this fraction.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -683,7 +683,7 @@ implements
 
     /**
      * Inverts the fraction into its reciprocal.
-     * <p>
+     * <p/>
      * This implementation performs an unsafe cast from {@code int} to {@code short}.
      *
      * @throws IllegalStateException if the numerator is zero.
@@ -746,7 +746,7 @@ implements
 
     /**
      * Multiplies this fraction by the specified number.
-     * <p>
+     * <p/>
      * This implementation call {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -804,7 +804,7 @@ implements
 
     /**
      * Subtracts the specified number from this fraction.
-     * <p>
+     * <p/>
      * This implementation call {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -904,7 +904,7 @@ implements
 
     /**
      * Sets the denominator and validates it.
-     * <p>
+     * <p/>
      * Negative values are converted to their absolute value.
      *
      * @param denominator the denominator.
@@ -933,7 +933,7 @@ implements
 
     /**
      * Sets the simplification flag.
-     * <p>
+     * <p/>
      * If the specified flag is null the simplification flag is set to off.
      *
      * @param simplification the simplification flag.
@@ -974,7 +974,7 @@ implements
         /**
          * Creates a singleton fraction with the specified symbol, numerator, denominator, and default denominator.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
          *
          * @param symbol the symbol.
@@ -999,7 +999,7 @@ implements
         /**
          * Creates a singleton fraction with the specified symbol, numerator, and denominator.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
          *
          * @param symbol the symbol.
@@ -1022,7 +1022,7 @@ implements
         /**
          * Creates a singleton fraction with the specified numerator, denominator, default denominator, and null symbol.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
          *
          * @param numerator the numerator.
@@ -1044,7 +1044,7 @@ implements
         /**
          * Creates a singleton fraction with the specified numerator and denominator, and null symbol.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the numerator and {@link Number#shortValue()} on the denominator.
          *
          * @param numerator the numerator.
@@ -1064,7 +1064,7 @@ implements
         /**
          * Creates a singleton fraction with the specified symbol and equal to the specified number.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the number.
          *
          * @param symbol the symbol.
@@ -1084,7 +1084,7 @@ implements
         /**
          * Creates a singleton fraction equal to the specified number.
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#intValue()} on the number.
          *
          * @param n the number.
@@ -1134,13 +1134,13 @@ implements
 
         /**
          * Creates a fraction from the specified symbol and string value.
-         * <p>
+         * <p/>
          * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          * The numerator and denominator parts are parsed as {@code double} values.
          * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-         * <p>
+         * <p/>
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor performs unsafe casts from {@code double} to {@code int}, for the numerator, and to {@code short} for the denominator.
          *
          * @param symbol the symbol.
@@ -1161,13 +1161,13 @@ implements
 
         /**
          * Creates a fraction from the specified string value and with a symbol equal to the same value.
-         * <p>
+         * <p/>
          * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          * The numerator and denominator parts are parsed as {@code double} values.
          * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-         * <p>
+         * <p/>
          * The simplification flag is set to off.
-         * <p>
+         * <p/>
          * This constructor performs unsafe casts from {@code double} to {@code int}, for the numerator, and to {@code short} for the denominator.
          *
          * @param value the value.

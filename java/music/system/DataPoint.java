@@ -2,7 +2,7 @@ package music.system;
 
 /**
  * {@code DataPoint} classifies all music-specific data types.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <X> the first variable type.

@@ -2,7 +2,7 @@ package system.data;
 
 /**
  * {@code Ordered} classifies all data types that are ordered.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -20,7 +20,7 @@ interface Ordered
 
     /**
      * {@code PerMany} classifies all data types that are ordered per many sets or axes.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

@@ -2,7 +2,7 @@ package system.data;
 
 /**
  * {@code Contextual} classifies data types that offer functionality within their own scope by one or many contexts.
- * <p>
+ * <p/>
  * The implementation of this class is a matter trusted to the role of the enclosing class and the logical language it supports.
  * Normally, there is one or a few instances of this class within the enclosing class, also called the provider class, and each one defines a set of methods that makes progressive chained calls possible.
  * Each chain method can either return the same contextual instance after applying its own contextual meaning to the context type returned by the instance, or it can return a brand new contextual object.

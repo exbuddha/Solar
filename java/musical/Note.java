@@ -40,25 +40,25 @@ import system.data.Lambda.BinaryLocator;
 
 /**
  * {@code Note} represents the musical note of a certain octave and pitch.
- * <p>
+ * <p/>
  * Notes are Java number types and represent their relative number as a {@code float} matching the standard MIDI note numbers.
- * <p>
+ * <p/>
  * A note with null octave is considered to be a pitch type, for which some functionality will fail.
  * Notes must have a pitch.
  * Pitch symbols only support single characters.
  * Notes can also have accidentals and adjustments measured in cents.
- * <p>
+ * <p/>
  * Double-sharp and double-flat accidentals are not supported.
  * They are maintained in the subclass {@link Scale.Accidental}.
- * <p>
+ * <p/>
  * Note adjustment is accounted for in all operations and comparisons.
- * <p>
+ * <p/>
  * This class defines all standard note in classical music as static objects called singletons.
  * Singletons are note types that will clone automatically, when operated on, into intermediary note types that can automatically diverge back to a singleton when possible.
  * This guarantees that operating on singletons will always return a singleton if there is one available that matches the result.
  * The intermediary note types are called standard notes that all singletons are sub-types of.
  * Singletons define note frequencies with the precision of two floating points rounded away from zero.
- * <p>
+ * <p/>
  * Methods in this class implementation are not thread-safe.
  *
  * @since 1.8
@@ -728,13 +728,13 @@ implements
     protected
     Accidental accidental;
 
-    /** The note adjustment.<p>The number of cents added to, or subtracted from, the note to slightly alter its pitch. */
+    /** The note adjustment.<p/>The number of cents added to, or subtracted from, the note to slightly alter its pitch. */
     protected
     short adjustment;
 
     /**
      * Creates a note with the specified symbol, octave, pitch, accidental, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -772,7 +772,7 @@ implements
 
     /**
      * Creates a note with the specified symbol, octave, pitch, accidental, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -797,7 +797,7 @@ implements
 
     /**
      * Creates a note with the specified symbol, octave, pitch, and accidental, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -820,7 +820,7 @@ implements
 
     /**
      * Creates a note with the specified symbol, octave, pitch, and accidental, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -843,7 +843,7 @@ implements
 
     /**
      * Creates a natural note with the specified symbol, octave, pitch, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
      * Null octaves are allowed.
      *
@@ -866,7 +866,7 @@ implements
 
     /**
      * Creates a natural note with the specified symbol, octave, pitch, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
      * Null octaves are allowed.
      *
@@ -889,7 +889,7 @@ implements
 
     /**
      * Creates a natural note with the specified symbol, octave, and pitch.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -914,7 +914,7 @@ implements
 
     /**
      * Creates a natural note with the specified symbol, octave, and pitch.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -933,7 +933,7 @@ implements
 
     /**
      * Creates a note, as a pitch type, with null octave and the specified symbol, pitch, accidental, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -974,7 +974,7 @@ implements
 
     /**
      * Creates a natural note, as a pitch type, with null octave and the specified symbol, pitch, and adjustment (in cents), and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -1009,7 +1009,7 @@ implements
 
     /**
      * Creates a note with the specified octave, pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -1032,7 +1032,7 @@ implements
 
     /**
      * Creates a note with the specified octave, pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -1055,7 +1055,7 @@ implements
 
     /**
      * Creates a note with the specified octave, pitch, accidental, and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -1076,7 +1076,7 @@ implements
 
     /**
      * Creates a note with the specified octave, pitch, accidental, and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -1097,7 +1097,7 @@ implements
 
     /**
      * Creates a note, as pitch type, with null octave and the specified pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
@@ -1118,12 +1118,11 @@ implements
 
     /**
      * Creates a natural note, as pitch type, with null octave and the specified pitch and adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
      * Null octaves are allowed.
      *
      * @param pitch the pitch.
-     * @param accidental the accidental.
      * @param adjustment the adjustment.
      *
      * @see #adjust()
@@ -1138,11 +1137,10 @@ implements
 
     /**
      * Creates a natural note with the specified octave, pitch, and adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
      * Null octaves are allowed.
      *
-     * @param symbol the symbol.
      * @param octave the octave.
      * @param pitch the pitch.
      * @param adjustment the adjustment.
@@ -1160,7 +1158,7 @@ implements
 
     /**
      * Creates a natural note with the specified octave, pitch, and adjustment (in cents), and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
      * Null octaves are allowed.
      *
@@ -1181,7 +1179,7 @@ implements
 
     /**
      * Creates a natural note with the specified octave and pitch, and null symbol.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -1198,7 +1196,7 @@ implements
 
     /**
      * Creates a natural note with the specified octave and pitch, and null symbol.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#byteValue()} on the octave.
      * Null octaves are allowed.
      *
@@ -1243,7 +1241,7 @@ implements
 
     /**
      * Creates a note with the specified symbol and from the specified string value, and adjusts the note.
-     * <p>
+     * <p/>
      * The string value must be a valid note symbol, such as "A", "A4", "Eb", or "Eb-1".
      *
      * @param symbol the symbol.
@@ -1266,12 +1264,12 @@ implements
 
     /**
      * Creates a note with the specified symbol, number, and sharp preference flag, and adjusts the note.
-     * <p>
+     * <p/>
      * If the sharp flag is true and the note is not a natural note, the sharp note will be created; otherwise the flat note is created.
-     * <p>
+     * <p/>
      * This constructor performs an unsafe cast from {@code float} to {@code short}.
      *
-     * @param the symbol.
+     * @param symbol the symbol.
      * @param number the number.
      * @param sharp the sharp preference flag.
      *
@@ -1317,10 +1315,10 @@ implements
 
     /**
      * Creates a note with the specified symbol and number, and with sharp preference flag set to true, and adjusts the note.
-     * <p>
+     * <p/>
      * This constructor performs an unsafe cast from {@code float} to {@code short}.
      *
-     * @param the symbol.
+     * @param symbol the symbol.
      * @param number the number.
      *
      * @throws IllegalArgumentException if the number is less than zero.
@@ -1335,9 +1333,9 @@ implements
 
     /**
      * Creates a note with the specified number and sharp preference flag, and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * If the sharp flag is true and the note is not a natural note, the sharp note will be created; otherwise the flat note is created.
-     * <p>
+     * <p/>
      * This constructor performs an unsafe cast from {@code float} to {@code short}.
      *
      * @param number the number.
@@ -1355,7 +1353,7 @@ implements
 
     /**
      * Creates a note with the specified number, and with sharp preference flag set to true, and null symbol, and adjusts the note.
-     * <p>
+     * <p/>
      * This constructor performs an unsafe cast from {@code float} to {@code short}.
      *
      * @param number the number.
@@ -1371,7 +1369,7 @@ implements
 
     /**
      * Creates a note from the specified string value and with a symbol equal to the same value, and adjusts the note.
-     * <p>
+     * <p/>
      * The string value must be a valid note symbol, such as "A", "A4", "Eb", or "Eb-1".
      *
      * @param value the value.
@@ -1436,7 +1434,7 @@ implements
 
     /**
      * Returns the number for a note with the specified octave and pitch-and-accidental order.
-     * <p>
+     * <p/>
      * The pitch-and-accidental order is the sum of the pitch order and the accidental order.
      * The pitch order for C is 0, D is 2, E is 4, F is 5, G is 7, A is 9, and B is 11.
      * The accidental order for sharp is 1, flat is -1, and natural is 0.
@@ -1456,7 +1454,7 @@ implements
 
     /**
      * Returns the number for a note with the specified frequency.
-     * <p>
+     * <p/>
      * If the frequency is negative, NaN is returned.
      *
      * @param freq the frequency.
@@ -1549,7 +1547,7 @@ implements
                                                                   public int compare(Note n, final Note singleton) {
                                                                       return ((Singleton) singleton).diff(octave.shortValue(), pitch, accidental);
                                                                   }
-                                                              }).result(null);
+                                                              }).element(null);
     }
 
     /**
@@ -1577,7 +1575,7 @@ implements
                                                                   public int compare(Note n, final Note singleton) {
                                                                       return ((Singleton) singleton).diff(octave.getOrder(), pitch, accidental);
                                                                   }
-                                                              }).result(null);
+                                                              }).element(null);
     }
 
     /**
@@ -1585,7 +1583,6 @@ implements
      *
      * @param octave the octave.
      * @param pitch the pitch.
-     * @param accidental the accidental.
      *
      * @return the singleton note.
      *
@@ -1604,7 +1601,6 @@ implements
      *
      * @param octave the octave.
      * @param pitch the pitch.
-     * @param accidental the accidental.
      *
      * @return the singleton note.
      *
@@ -1640,7 +1636,6 @@ implements
      * Returns the singleton natural note in the 4th octave and with the specified pitch, or null if none is found.
      *
      * @param pitch the pitch.
-     * @param accidental the accidental.
      *
      * @return the singleton note.
      *
@@ -1675,9 +1670,9 @@ implements
 
     /**
      * Returns the singleton note with the specified number and sharp preference flag, or null if none is found.
-     * <p>
+     * <p/>
      * The number must be whole.
-     * <p>
+     * <p/>
      * When if flag is set to true and the singleton has an accidental, the sharp version is returned; otherwise the flat version is returned.
      *
      * @param number the number.
@@ -1692,12 +1687,7 @@ implements
         final Number number,
         final boolean sharp
         ) {
-        final Integer i = new BinaryLocator<Note>(null, Singleton.Order, new Comparator<Note>() {
-                                                                             @Override
-                                                                             public int compare(Note n, final Note singleton) {
-                                                                                 return (int) (((Singleton) singleton).number - number.floatValue());
-                                                                             }
-                                                                         }).position(null);
+        final Integer i = new BinaryLocator<Note>(null, Singleton.Order, (Note n, final Note singleton) -> (int) (((Singleton) singleton).number - number.floatValue())).index(null);
 
         if (i == null)
             return null;
@@ -1716,7 +1706,7 @@ implements
 
     /**
      * Returns the singleton note with the specified number, or null if none is found.
-     * <p>
+     * <p/>
      * This implementation prefers sharp notes when there is an accidental.
      *
      * @param number the number.
@@ -1748,7 +1738,7 @@ implements
                                                                   public int compare(Note n, final Note singleton) {
                                                                       return ((Singleton) singleton).symbol.compareTo(symbol);
                                                                   }
-                                                              }).result(null);
+                                                              }).element(null);
     }
 
     /**
@@ -1835,7 +1825,7 @@ implements
 
     /**
      * Returns the singleton equivalent to this note using the specified comparator, or itself if none is found.
-     * <p>
+     * <p/>
      * This implementation calls {@link Comparator#compare(Object, Object)} with this note as the first argument and the singletons as second arguments of that method.
      *
      * @param comparator the comparator.
@@ -1846,7 +1836,7 @@ implements
     Note distinct(
         final Comparator<Note> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Note>(this, Singleton.Order, true, comparator).result(this);
+        return new Lambda.BinaryLocator<>(this, Singleton.Order, true, comparator).element(this);
     }
 
     /**
@@ -1862,17 +1852,12 @@ implements
     Note distinct(
         final boolean sharp
         ) {
-        return distinct(new Comparator<Note>() {
-            @Override
-            public int compare(final Note n1, final Note n2) {
-                return n1.compareTo(n2) == 0 && n1.accidental == Natural ||
-                       (sharp
-                        ? n1.accidental == Sharp && n2.accidental == Sharp
-                        : n1.accidental == Flat && n2.accidental == Flat)
-                       ? 0
-                       : 1;
-            }
-        });
+        return distinct((final Note n1, final Note n2) -> n1.compareTo(n2) == 0 && n1.accidental == Natural ||
+               (sharp
+                ? n1.accidental == Sharp && n2.accidental == Sharp
+                : n1.accidental == Flat && n2.accidental == Flat)
+               ? 0
+               : 1);
     }
 
     /**
@@ -1882,7 +1867,7 @@ implements
      */
     public
     Note distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<Note>(this, Singleton.Order, true).result(this);
+        return new Lambda.BinaryComparableLocator<>(this, Singleton.Order, true).element(this);
     }
 
     /**
@@ -1940,14 +1925,14 @@ implements
 
     /**
      * Returns true if the specified note has the same number as this note; otherwise returns false.
-     * <p>
+     * <p/>
      * This implementation calls {@link #compareTo(Note)} internally.
      *
      * @param note the note.
      *
      * @return true if the notes are equal ignoring pitch variations, and false otherwise.
      *
-     * @see #compareTo(Object)
+     * @see #compareTo(Note)
      */
     public
     boolean equalsIgnorePitch(
@@ -1994,7 +1979,7 @@ implements
 
     /**
      * Returns the distance from the specified note values in cents.
-     * <p>
+     * <p/>
      * If the octave of this note or the specified octave is null, octaves will not be accounted for in the calculation.
      *
      * @param octave the octave.
@@ -2024,7 +2009,7 @@ implements
 
     /**
      * Returns the distance from the specified natural note values in cents.
-     * <p>
+     * <p/>
      * If the octave of this note or the specified octave is null, octaves will not be accounted for in the calculation.
      *
      * @param octave the octave.
@@ -2046,7 +2031,7 @@ implements
 
     /**
      * Returns the distance from the specified natural note values in cents.
-     * <p>
+     * <p/>
      * If the octave of this note or the specified octave is null, octaves will not be accounted for in the calculation.
      *
      * @param octave the octave.
@@ -2066,7 +2051,7 @@ implements
 
     /**
      * Returns the distance from the specified note values in cents.
-     * <p>
+     * <p/>
      * The note octave is not accounted for in the calculation.
      *
      * @param pitch the pitch.
@@ -2088,7 +2073,7 @@ implements
 
     /**
      * Returns the distance from the specified natural note values in cents.
-     * <p>
+     * <p/>
      * The note octave is not accounted for in the calculation.
      *
      * @param pitch the pitch.
@@ -2108,7 +2093,7 @@ implements
 
     /**
      * Returns the distance from the specified natural pitch in cents.
-     * <p>
+     * <p/>
      * The note octave is not accounted for in the calculation.
      *
      * @param pitch the pitch.
@@ -2126,7 +2111,7 @@ implements
 
     /**
      * Returns the distance from the specified note in cents.
-     * <p>
+     * <p/>
      * If the octave of this note or the specified note is null, octaves will not be accounted for in the calculation.
      *
      * @param note the note.
@@ -2159,9 +2144,9 @@ implements
 
     /**
      * Returns the note number.
-     * <p>
+     * <p/>
      * If the octave is null, the relative order of the note is returned.
-     * <p>
+     * <p/>
      * This implementation rounds the adjustment away from zero.
      *
      * @return the note number.
@@ -2176,7 +2161,7 @@ implements
 
     /**
      * Creates and returns a data point representing this note.
-     * <p>
+     * <p/>
      * This implementation returns a data point with {@code x} mapped to the octave, {@code y} mapped to the pitch, and {@code z} mapped to the accidental.
      *
      * @return the note data point.
@@ -2191,7 +2176,7 @@ implements
             }
 
             @Override
-            public Local<?> getAccidental() {
+            public Local<Byte> getAccidental() {
                 return Note.this.getAccidental();
             }
 
@@ -2201,12 +2186,12 @@ implements
             }
 
             @Override
-            public Tabular<?> getPitch() {
+            public Tabular<Byte> getPitch() {
                 return Note.this.getPitch();
             }
 
             @Override
-            public boolean is(final system.data.Type<? extends Note> type) {
+            public boolean is(final system.Type<? super Note> type) {
                 if (type instanceof Note) {
                     final Note note = (Note) type;
                     return ((getOctave() == null && note.getOctave() == null) || (getOctave() != null && getOctave().getOrder().equals(note.getOctave()))) &&
@@ -2246,7 +2231,7 @@ implements
 
     /**
      * Adds the specified number of cents to the note and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation performs unsafe casts from {@code float} and {@code int} to {@code short}.
      *
      * @param n the number of cents.
@@ -2404,7 +2389,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation is return this note.
      *
      * @return the note.
@@ -2434,7 +2419,7 @@ implements
 
     /**
      * Returns true if the specified object is a number and has the same number as this note, and false otherwise.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#floatValue()} on the object.
      *
      * @param obj the object.
@@ -2448,7 +2433,7 @@ implements
 
     /**
      * Returns the note order.
-     * <p>
+     * <p/>
      * The note order is equal to the note number.
      *
      * @return the note order.
@@ -2462,7 +2447,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation returns the {@code Float} class.
      *
      * @return the {@code Float} class.
@@ -2494,8 +2479,6 @@ implements
 
     /**
      * Inverts the note by rotating its accidental, and returns this note.
-     *
-     * @return the inverted note.
      */
     @Override
     public void invert() {
@@ -2527,7 +2510,7 @@ implements
      * @return true if type is equal to this note, and false otherwise.
      */
     @Override
-    public boolean is(final system.data.Type<? extends NoteType> type) {
+    public boolean is(final system.Type<? super NoteType> type) {
         if (type instanceof Note) {
             final Note note = (Note) type;
             return note.octave == octave &&
@@ -2561,7 +2544,7 @@ implements
 
     /**
      * Subtracts the specified number of cents from this note and returns this note.
-     * <p>
+     * <p/>
      * If this is a standard note the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -2586,7 +2569,7 @@ implements
 
     /**
      * Adds the specified number of cents to this note and returns this note.
-     * <p>
+     * <p/>
      * If this is a standard note the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -2603,10 +2586,10 @@ implements
 
     /**
      * Subtracts the specified amount of cents from the note and adjusts the note.
-     * <p>
+     * <p/>
      * This implementation performs unsafe casts from {@code int} to {@code short}.
      *
-     * @param cents the cents.
+     * @param n the cents.
      *
      * @throws NullPointerException if the number is null.
      *
@@ -2708,7 +2691,7 @@ implements
 
     /**
      * Sets the accidental of the note.
-     * <p>
+     * <p/>
      * This implementation does not adjust the result and retains the accidental even if it produces an uncommon note.
      *
      * @param accidental the accidental.
@@ -2722,7 +2705,7 @@ implements
 
     /**
      * Sets the adjustment of the note. (in cents)
-     * <p>
+     * <p/>
      * This implementation converts null to 0, calls {@link Number#shortValue()} on the adjustment, and does not adjust the note.
      *
      * @param adjustment the adjustment.
@@ -2762,7 +2745,7 @@ implements
 
     /**
      * Sets the pitch of the note.
-     * <p>
+     * <p/>
      * This method does not adjust the result and retains the pitch even if it produces an uncommon note.
      *
      * @param pitch the pitch.
@@ -2786,10 +2769,10 @@ implements
 
     /**
      * {@code Accidental} represents all note accidentals.
-     * <p>
+     * <p/>
      * This class defines the standard accidentals: sharp, flat, and natural.
      * Double-sharp and double-flat accidentals are defined in {@link Scale.Accidental}.
-     * <p>
+     * <p/>
      * Cloning a static standard accidental returns itself.
      *
      * @since 1.8
@@ -2934,7 +2917,7 @@ implements
 
         /**
          * Returns the standard accidental adjusted by the specified adjustments as whole semitone amounts.
-         * <p>
+         * <p/>
          * The accepted adjustment range is [-4, 4] depending on the order of this accidental.
          *
          * @param adjustments the adjustments.
@@ -2972,7 +2955,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns this accidental.
          *
          * @return the accidental.
@@ -3012,7 +2995,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns the {@code Byte} class.
          *
          * @return the {@code Byte} class.
@@ -3024,7 +3007,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns the {@code Byte} class.
          *
          * @return the {@code Byte} class.
@@ -3042,7 +3025,7 @@ implements
          * @return true if the runtime instances are the same, or false otherwise.
          */
         @Override
-        public boolean is(final system.data.Type<? extends AccidentalType> type) {
+        public boolean is(final system.Type<? super AccidentalType> type) {
             return this == type;
         }
 
@@ -3064,7 +3047,7 @@ implements
 
         /**
          * Returns true if the specified pitch supports this accidental; otherwise returns false.
-         * <p>
+         * <p/>
          * This implementation returns false if the pitch is null.
          *
          * @param pitch the pitch.
@@ -3183,7 +3166,7 @@ implements
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation returns the standard accidental.
              *
              * @return the standard accidental.
@@ -3197,9 +3180,9 @@ implements
 
     /**
      * {@code Dynamics} represents the note dynamics.
-     * <p>
+     * <p/>
      * In music, dynamics normally refers to the volume of a sound or note, but can also refer to every aspect of the execution of a given piece, either stylistic (staccato, legato, etc.) or functional. (velocity)
-     * <p>
+     * <p/>
      * This class defines the well-known note dynamics in classical music as statically defined standard types.
      * Cloning a static standard dynamics returns itself.
      *
@@ -3422,14 +3405,14 @@ implements
          * @return true if the dynamics are equal.
          */
         @Override
-        public boolean is(final system.data.Type<? extends Dynamics> type) {
+        public boolean is(final system.Type<? super Dynamics> type) {
             return equals(type);
         }
 
         /**
          * Sets the symbol of the dynamics.
          *
-         * @param the symbol.
+         * @param symbol the symbol.
          */
         @Override
         public void setSymbol(final String symbol) {
@@ -3501,7 +3484,7 @@ implements
 
             /**
              * {@inheritDoc}
-             * <p>
+             * <p/>
              * This implementation returns the standard dynamics.
              *
              * @return the standard dynamics.
@@ -3567,7 +3550,7 @@ implements
 
         /**
          * Creates the accompaniment with the specified initial capacity.
-         * <p>
+         * <p/>
          * This implementation uses an {@code ArrayList}.
          *
          * @param initialCapacity the initial capacity.
@@ -3620,7 +3603,7 @@ implements
         /**
          * Adds all the notes in the specified collection to the group, and returns true if the group changes; otherwise returns false.
          *
-         * @param the notes.
+         * @param notes the notes.
          *
          * @return true if the group is changed, and false otherwise.
          */
@@ -3660,7 +3643,7 @@ implements
         /**
          * Returns true if the group contains all of the specified notes; otherwise returns false.
          *
-         * @param the notes.
+         * @param notes the notes.
          *
          * @return true if the group contains all the note, and false otherwise.
          */
@@ -3719,7 +3702,7 @@ implements
         /**
          * Removes the specified object from the group, and returns true if the group changes; otherwise returns false.
          *
-         * @param the object.
+         * @param obj the object.
          *
          * @return true if the object is removed, and false otherwise.
          */
@@ -3746,7 +3729,7 @@ implements
         /**
          * Removes all the specified notes from the group, and returns true if the group changes; otherwise returns false.
          *
-         * @param the notes.
+         * @param notes the notes.
          *
          * @return true if a note is removed, and false otherwise.
          */
@@ -3760,7 +3743,7 @@ implements
         /**
          * Retains all the specified notes in the group and removes the others, and returns true if the group changes; otherwise returns false.
          *
-         * @param the notes.
+         * @param notes the notes.
          *
          * @return true if a note is removed, and false otherwise.
          */
@@ -3833,7 +3816,7 @@ implements
 
         /**
          * Returns the note group accompaniment.
-         * <p>
+         * <p/>
          * This implementation returns null if no accompaniment is added.
          *
          * @return the list of accompanied notes.
@@ -3861,7 +3844,7 @@ implements
         Unique
     {
         /** Octave -2. */
-        public final Octave NegativeSecond = new Octave() {
+        Octave NegativeSecond = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) -2;
@@ -3874,7 +3857,7 @@ implements
         };
 
         /** Octave -1. */
-        public final Octave NegativeFirst = new Octave() {
+        Octave NegativeFirst = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) -1;
@@ -3887,7 +3870,7 @@ implements
         };
 
         /** Octave 0. */
-        public final Octave Zeroth = new Octave() {
+        Octave Zeroth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 0;
@@ -3900,7 +3883,7 @@ implements
         };
 
         /** Octave 1. */
-        public final Octave First = new Octave() {
+        Octave First = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 1;
@@ -3913,7 +3896,7 @@ implements
         };
 
         /** Octave 2. */
-        public final Octave Second = new Octave() {
+        Octave Second = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 2;
@@ -3926,7 +3909,7 @@ implements
         };
 
         /** Octave 3. */
-        public final Octave Third = new Octave() {
+        Octave Third = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 3;
@@ -3939,7 +3922,7 @@ implements
         };
 
         /** Octave 4. */
-        public final Octave Fourth = new Octave() {
+        Octave Fourth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 4;
@@ -3952,7 +3935,7 @@ implements
         };
 
         /** Octave 5. */
-        public final Octave Fifth = new Octave() {
+        Octave Fifth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 5;
@@ -3965,7 +3948,7 @@ implements
         };
 
         /** Octave 6. */
-        public final Octave Sixth = new Octave() {
+        Octave Sixth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 6;
@@ -3978,7 +3961,7 @@ implements
         };
 
         /** Octave 7. */
-        public final Octave Seventh = new Octave() {
+        Octave Seventh = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 7;
@@ -3991,7 +3974,7 @@ implements
         };
 
         /** Octave 8. */
-        public final Octave Eighth = new Octave() {
+        Octave Eighth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 8;
@@ -4004,7 +3987,7 @@ implements
         };
 
         /** Octave 9. */
-        public final Octave Ninth = new Octave() {
+        Octave Ninth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 9;
@@ -4017,7 +4000,7 @@ implements
         };
 
         /** Octave 10. */
-        public final Octave Tenth = new Octave() {
+        Octave Tenth = new Octave() {
             @Override
             public Byte getOrder() {
                 return (byte) 10;
@@ -4030,7 +4013,7 @@ implements
         };
 
         /** Null octave. */
-        public final Octave Null = new Octave() {
+        Octave Null = new Octave() {
             @Override
             public Byte getOrder() {
                 return null;
@@ -4044,7 +4027,7 @@ implements
 
         /**
          * Returns the octave type with the specified number, or null if the number is null.
-         * <p>
+         * <p/>
          * The accepted range is [-2, 10].
          *
          * @param n the number.
@@ -4143,7 +4126,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation return the {@code Byte} class.
          *
          * @return the {@code Byte} class.
@@ -4161,7 +4144,7 @@ implements
          * @return true if the runtime instances are the same, or false otherwise.
          */
         @Override
-        default boolean is(final system.data.Type<? extends OctaveType> type) {
+        default boolean is(final system.Type<? super OctaveType> type) {
             return this == type;
         }
     }
@@ -4209,7 +4192,7 @@ implements
         Pitch[] Order
         = new Pitch[] { C, C, D, D, E, F, F, G, G, A, A, B };
 
-        /** The pitch order.<p>The pitch order must be between 0 and 11. */
+        /** The pitch order.<p/>The pitch order must be between 0 and 11. */
         public final
         byte order;
 
@@ -4293,6 +4276,8 @@ implements
 
         /**
          * This implementation returns this pitch.
+         *
+         * @return the pitch.
          */
         @Override
         public PitchType convert() {
@@ -4311,7 +4296,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns the {@code Byte} class.
          *
          * @return the {@code Byte} class.
@@ -4339,13 +4324,13 @@ implements
          * @return true if the runtime instances are the same, or false otherwise.
          */
         @Override
-        public boolean is(final system.data.Type<? extends PitchType> type) {
-            return type == this;
+        public boolean is(final system.Type<? super PitchType> type) {
+            return this == type;
         }
 
         /**
          * Returns true if this pitch supports the specified accidental; otherwise returns false.
-         * <p>
+         * <p/>
          * This implementation returns false if the accidental is null.
          *
          * @param accidental the accidental.
@@ -4384,7 +4369,7 @@ implements
 
     /**
      * {@code Scientific} classifies all scientific note system in music theory.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <E> the first numerically ordered data type.
@@ -4400,7 +4385,7 @@ implements
     {
         /**
          * {@code Progression} classifies progressive operations in music theory.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @param <X> the first progressor data type.
@@ -4409,14 +4394,13 @@ implements
          * @since 1.8
          * @author Alireza Kamran
          */
-        public
         interface Progression<X extends Progressor, Y extends Progressor>
         extends Progressive<X, Y>
         {}
 
         /**
          * {@code Regression} classifies regressive operations in music theory.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @param <X> the regressor data type.
@@ -4425,32 +4409,29 @@ implements
          * @since 1.8
          * @author Alireza Kamran
          */
-        public
         interface Regression<X extends Regressor, Y extends Progressor>
         extends Regressive<X, Y>
         {}
 
         /**
          * {@code System} classifies systems of notes.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
          * @author Alireza Kamran
          */
-        public
         interface System
         extends Scientific<Note, Octave, Modulus>
         {
             /**
              * {@code DataPoint} classifies all data points representing notes in a system.
-             * <p>
+             * <p/>
              * This class implementation is in progress.
              *
              * @since 1.8
              * @author Alireza Kamran
              */
-            public
             interface DataPoint
             extends
                 Clockable<Note>,
@@ -4461,7 +4442,7 @@ implements
                 Modulus.Local<?> getAccidental();
 
                 /**
-                 * This implementation returns {@link Octave#Null}.
+                 * This implementation returns {@link Octave.Null}.
                  *
                  * @return the null octave.
                  */
@@ -4564,7 +4545,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns the {@code Short} class.
          *
          * @return the {@code Short} class.
@@ -4856,7 +4837,7 @@ implements
 
         /**
          * Clones this singleton and adjusts the copy with the specified adjustments, as cents, and returns it or the equivalent singleton if one exists.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on all the adjustment values.
          *
          * @param adjustments the adjustments.
@@ -4942,7 +4923,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation is empty.
          */
         @Override
@@ -4950,7 +4931,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns the singleton.
          *
          * @return the singleton.
@@ -5060,7 +5041,7 @@ implements
 
         /**
          * Creates a standard note with the specified symbol, octave, pitch, accidental, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5085,7 +5066,7 @@ implements
 
         /**
          * Creates a standard note with the specified symbol, octave, pitch, accidental, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5110,7 +5091,7 @@ implements
 
         /**
          * Creates a standard note with the specified symbol, octave, pitch, and accidental, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5133,7 +5114,7 @@ implements
 
         /**
          * Creates a standard note with the specified symbol, octave, pitch, and accidental, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5156,7 +5137,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified symbol, octave, pitch, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
          * Null octaves are allowed.
          *
@@ -5179,7 +5160,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified symbol, octave, pitch, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
          * Null octaves are allowed.
          *
@@ -5202,7 +5183,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified symbol, octave, and pitch.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5221,7 +5202,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified symbol, octave, and pitch.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5240,7 +5221,7 @@ implements
 
         /**
          * Creates a standard note, as a pitch type, with null octave and the specified symbol, pitch, accidental, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5281,7 +5262,7 @@ implements
 
         /**
          * Creates a standard natural note, as a pitch type, with null octave and the specified symbol, pitch, and adjustment (in cents), and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5316,7 +5297,7 @@ implements
 
         /**
          * Creates a standard note with the specified octave, pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5339,7 +5320,7 @@ implements
 
         /**
          * Creates a standard note with the specified octave, pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5362,7 +5343,7 @@ implements
 
         /**
          * Creates a standard note with the specified octave, pitch, accidental, and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5383,7 +5364,7 @@ implements
 
         /**
          * Creates a standard note with the specified octave, pitch, accidental, and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5404,7 +5385,7 @@ implements
 
         /**
          * Creates a standard note, as pitch type, with null octave and the specified pitch, accidental, adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
@@ -5425,12 +5406,11 @@ implements
 
         /**
          * Creates a standard natural note, as pitch type, with null octave and the specified pitch and adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on the adjustment unless it is null, where it will be set to zero.
          * Null octaves are allowed.
          *
          * @param pitch the pitch.
-         * @param accidental the accidental.
          * @param adjustment the adjustment.
          *
          * @see Note#adjust()
@@ -5445,11 +5425,10 @@ implements
 
         /**
          * Creates a standard natural note with the specified octave, pitch, and adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
          * Null octaves are allowed.
          *
-         * @param symbol the symbol.
          * @param octave the octave.
          * @param pitch the pitch.
          * @param adjustment the adjustment.
@@ -5467,7 +5446,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified octave, pitch, and adjustment (in cents), and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave and {@link Number#shortValue()} on the adjustment.
          * Null octaves are allowed.
          *
@@ -5488,7 +5467,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified octave and pitch, and null symbol.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5505,7 +5484,7 @@ implements
 
         /**
          * Creates a standard natural note with the specified octave and pitch, and null symbol.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#byteValue()} on the octave.
          * Null octaves are allowed.
          *
@@ -5550,12 +5529,12 @@ implements
 
         /**
          * Creates a standard note with the specified symbol, number, and sharp preference flag, and adjusts the note.
-         * <p>
+         * <p/>
          * If the sharp flag is true and the note is not a natural note, the sharp note will be created; otherwise the flat note is created.
-         * <p>
+         * <p/>
          * This constructor performs an unsafe cast from {@code float} to {@code short}.
          *
-         * @param the symbol.
+         * @param symbol the symbol.
          * @param number the number.
          * @param sharp the sharp preference flag.
          *
@@ -5572,10 +5551,10 @@ implements
 
         /**
          * Creates a standard note with the specified symbol and number, and with sharp preference flag set to true, and adjusts the note.
-         * <p>
+         * <p/>
          * This constructor performs an unsafe cast from {@code float} to {@code short}.
          *
-         * @param the symbol.
+         * @param symbol the symbol.
          * @param number the number.
          *
          * @throws IllegalArgumentException if the number is less than zero.
@@ -5590,9 +5569,9 @@ implements
 
         /**
          * Creates a standard note with the specified number and sharp preference flag, and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * If the sharp flag is true and the note is not a natural note, the sharp note will be created; otherwise the flat note is created.
-         * <p>
+         * <p/>
          * This constructor performs an unsafe cast from {@code float} to {@code short}.
          *
          * @param number the number.
@@ -5610,7 +5589,7 @@ implements
 
         /**
          * Creates a standard note with the specified number, and with sharp preference flag set to true, and null symbol, and adjusts the note.
-         * <p>
+         * <p/>
          * This constructor performs an unsafe cast from {@code float} to {@code short}.
          *
          * @param number the number.
@@ -5626,7 +5605,7 @@ implements
 
         /**
          * Creates a standard note with the specified symbol and from the specified string value, and adjusts the note.
-         * <p>
+         * <p/>
          * The string value must be a valid note symbol, such as "A", "A4", "Eb", or "Eb-1".
          *
          * @param symbol the symbol.
@@ -5647,7 +5626,7 @@ implements
 
         /**
          * Creates a standard note from the specified string value and with a symbol equal to the same value, and adjusts the note.
-         * <p>
+         * <p/>
          * The string value must be a valid note symbol, such as "A", "A4", "Eb", or "Eb-1".
          *
          * @param value the value.
@@ -5666,7 +5645,7 @@ implements
 
         /**
          * Adjusts this standard note with the specified adjustments, as cents, and returns this standard note or the equivalent singleton if one exists.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on all the adjustment values.
          *
          * @param adjustments the adjustments.

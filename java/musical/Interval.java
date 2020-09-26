@@ -11,6 +11,7 @@ import music.system.data.Clockable.ProgressiveDataPoint;
 import music.system.data.Clockable.Progressor;
 import music.system.data.Delta;
 import music.system.data.Ordered;
+import system.Type;
 import system.data.Fraction;
 import system.data.Invertible;
 import system.data.Inverting;
@@ -23,16 +24,16 @@ import system.data.Unique;
 
 /**
  * {@code Interval} represents a musical interval which is a measure of distance (pitch difference) between notes.
- * <p>
+ * <p/>
  * Intervals are Java number types and represent their width in cents.
  * So, the perfect octave interval is a number equal to 1200.
  * Intervals can be negative.
  * This class defines the standard interval types in classical music as static objects called singletons.
- * <p>
+ * <p/>
  * Singletons are interval types that will clone automatically, when operated on, into intermediary interval types that can automatically diverge back to a singleton when possible.
  * This guarantees that operating on singletons will always return a singleton if there is one available that matches the result.
  * The intermediary interval types are called standard intervals that all singletons are sub-types of.
- * <p>
+ * <p/>
  * Methods in this class implementation are not thread-safe.
  *
  * @since 1.8
@@ -183,7 +184,7 @@ implements
 
     /**
      * Creates an interval with the specified symbol and cents.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#shortValue()} on the cents.
      *
      * @param symbol the symbol.
@@ -199,7 +200,7 @@ implements
 
     /**
      * Creates an interval with null symbol and the specified cents and null symbol.
-     * <p>
+     * <p/>
      * This constructor calls {@link Number#shortValue()} on the cents.
      *
      * @param cents the cents.
@@ -243,7 +244,7 @@ implements
 
     /**
      * Creates an interval with the specified symbol and semitones.
-     * <p>
+     * <p/>
      * This constructor converts the semitones amount to cents.
      *
      * @param symbol the symbol.
@@ -261,7 +262,7 @@ implements
 
     /**
      * Creates an interval with the specified semitones and null symbol.
-     * <p>
+     * <p/>
      * This constructor converts the semitones amount to cents.
      *
      * @param semitones the semitones.
@@ -277,7 +278,7 @@ implements
 
     /**
      * Creates an interval with the specified symbol and from the specified string value.
-     * <p>
+     * <p/>
      * The string value must be a valid interval symbol, double, or fraction matching the pattern "a/b", which may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
      *
      * @param symbol the symbol.
@@ -315,7 +316,7 @@ implements
 
     /**
      * Creates an interval from the specified string value and with a symbol equal to the same value.
-     * <p>
+     * <p/>
      * The string value must be a valid interval symbol, double, or fraction matching the pattern "a/b", which may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
      *
      * @param value the value.
@@ -420,7 +421,7 @@ implements
 
     /**
      * Adjusts this interval with the specified cents adjustments and returns the adjusted interval.
-     * <p>
+     * <p/>
      * If this is a standard interval with an equivalent singleton, the singleton is returned.
      *
      * @param adjustments the adjustments. (cents)
@@ -442,7 +443,7 @@ implements
 
     /**
      * Adjusts this interval with the specified semitones adjustments and returns the adjusted interval.
-     * <p>
+     * <p/>
      * If this is a standard interval with an equivalent singleton, the singleton is returned.
      *
      * @param adjustments the adjustments. (semitones)
@@ -464,7 +465,7 @@ implements
 
     /**
      * Divides this interval by the specified cents and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param cents the cents.
@@ -484,7 +485,7 @@ implements
 
     /**
      * Divides this interval by the specified number and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param semitones the semitones.
@@ -504,7 +505,7 @@ implements
 
     /**
      * Returns the singleton equivalent to this interval using the specified comparator, or itself if none is found.
-     * <p>
+     * <p/>
      * This implementation calls {@link Comparator#compare(Object, Object)} with this interval as the first argument and the singletons as second arguments of that method.
      *
      * @param comparator the comparator.
@@ -515,7 +516,7 @@ implements
     Interval distinct(
         final Comparator<Interval> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Interval>(this, Singleton.Order, true, comparator).result(this);
+        return new Lambda.BinaryLocator<>(this, Singleton.Order, true, comparator).element(this);
     }
 
     /**
@@ -531,17 +532,14 @@ implements
     Interval distinct(
         final Mode... modes
         ) {
-        return distinct(new Comparator<Interval>() {
-            @Override
-            public int compare(final Interval i1, final Interval i2) {
-                if (i1.compareTo(i2) == 0) {
-                    for (final Mode mode : modes)
-                        if (((Singleton) i2).mode == mode)
-                            return 0;
-                }
-
-                return 1;
+        return distinct((final Interval i1, final Interval i2) -> {
+            if (i1.compareTo(i2) == 0) {
+                for (final Mode mode : modes)
+                    if (((Singleton) i2).mode == mode)
+                        return 0;
             }
+
+            return 1;
         });
     }
 
@@ -552,7 +550,7 @@ implements
      */
     public
     Interval distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<IntervalType>(this, Singleton.Order, true).result(this);
+        return (Standard) new Lambda.BinaryComparableLocator<IntervalType>(this, Singleton.Order, true).element(this);
     }
 
     /**
@@ -649,7 +647,7 @@ implements
 
     /**
      * Subtracts the specified cents from this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param cents the cents.
@@ -669,7 +667,7 @@ implements
 
     /**
      * Subtracts the specified number from this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param semitones the semitones.
@@ -723,7 +721,7 @@ implements
 
     /**
      * Creates and returns a data point representing this interval.
-     * <p>
+     * <p/>
      * This implementation returns a data point with {@code x} mapped to the interval order, {@code y} mapped to the interval mode, and {@code z} mapped to null.
      * If this is not a standard interval, null is used for the interval mode.
      *
@@ -752,7 +750,7 @@ implements
 
     /**
      * Adds the specified cents to this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param cents the cents.
@@ -772,7 +770,7 @@ implements
 
     /**
      * Adds the specified semitones to this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param semitones the semitones.
@@ -826,7 +824,7 @@ implements
 
     /**
      * Multiplies this interval by the specified cents and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param cents the cents.
@@ -846,7 +844,7 @@ implements
 
     /**
      * Multiplies this interval by the specified semitones and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param semitones the semitones.
@@ -866,7 +864,7 @@ implements
 
     /**
      * Adds the specified number, as cents, to this interval.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the number.
      *
      * @param n the number.
@@ -881,9 +879,9 @@ implements
 
     /**
      * Adjusts this interval with the specified adjustments, as cents, and returns the adjusted interval.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on all the adjustment values.
-     * <p>
+     * <p/>
      * If this is a standard interval with an equivalent singleton, the singleton is returned.
      *
      * @param adjustments the adjustments.
@@ -901,7 +899,7 @@ implements
 
     /**
      * Divides this interval by the specified number and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -932,7 +930,7 @@ implements
 
     /**
      * Divides this interval by the specified number.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -962,7 +960,7 @@ implements
 
     /**
      * Returns true if the specified object is a number and represents the same amount of cents as the this interval, and false otherwise.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the object.
      *
      * @param obj the object.
@@ -998,7 +996,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation returns the {@code Byte} class.
      *
      * @return the {@code Byte} class.
@@ -1010,7 +1008,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation returns the {@code Short} class.
      *
      * @return the {@code Short} class.
@@ -1032,7 +1030,7 @@ implements
 
     /**
      * Inverts the interval.
-     * <p>
+     * <p/>
      * This implementation inverts to the smallest interval that completes the octave when added to this interval.
      * The interval direction is preserved.
      *
@@ -1047,9 +1045,9 @@ implements
 
     /**
      * Inverts and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
-     * <p>
+     * <p/>
      * If this is one of the {@link #AugmentedFourth} or {@link #DiminishedFifth} singletons, it will be inverted to its other form.
      *
      * @return the inverted interval or its equivalent singleton if this is a standard type.
@@ -1064,7 +1062,7 @@ implements
 
     /**
      * Returns true if this interval is equal to the specified type; otherwise returns false.
-     * <p>
+     * <p/>
      * If this is a singleton, this method returns true if the runtime instances are the same and false otherwise.
      *
      * @param type the other interval type.
@@ -1072,7 +1070,7 @@ implements
      * @return true if this interval is equal to the type, or if this singleton is the same runtime instance as the type.
      */
     @Override
-    public boolean is(final system.data.Type<? extends IntervalType> type) {
+    public boolean is(final Type<? super IntervalType> type) {
         return equals(type);
     }
 
@@ -1088,7 +1086,7 @@ implements
 
     /**
      * Subtracts the specified number from this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -1107,7 +1105,7 @@ implements
 
     /**
      * Multiplies this interval by the specified number.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#intValue()} on the number.
      *
      * @param n the number.
@@ -1122,7 +1120,7 @@ implements
 
     /**
      * Adds the specified number to this interval and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -1149,7 +1147,7 @@ implements
 
     /**
      * Reverses and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      */
     @Override
@@ -1160,7 +1158,7 @@ implements
 
     /**
      * Subtracts the specified number from this interval.
-     * <p>
+     * <p/>
      * This implementation calls {@link Number#shortValue()} on the number.
      *
      * @param n the number.
@@ -1175,7 +1173,7 @@ implements
 
     /**
      * Multiplies this interval by the specified number and returns this interval.
-     * <p>
+     * <p/>
      * If this is a standard interval the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -1194,7 +1192,7 @@ implements
 
     /**
      * Returns a string representation of the interval.
-     * <p>
+     * <p/>
      * This implementation returns the interval symbol if it not null; otherwise the cents amount concatenated with a single whitespace and {@link Constant.Interval#CentsSym} will be returned.
      */
     @Override
@@ -1312,7 +1310,7 @@ implements
      *
      * @throws UnsupportedOperationException if this is a singleton and the specified symbol is not equal to the singleton symbol.
      *
-     * @see Symbolized.Singleton#setSymbol(Object)
+     * @see Symbolized.Singleton#setSymbol(Comparable)
      */
     @Override
     public void setSymbol(final String symbol) {
@@ -1355,7 +1353,7 @@ implements
          * @param type the other mode type.
          */
         @Override
-        public boolean is(final system.data.Type<? extends IntervalModeType> type) {
+        public boolean is(final Type<? super IntervalModeType> type) {
             return this == type;
         }
 
@@ -1442,7 +1440,7 @@ implements
 
         /**
          * Clones this singleton and adjusts the copy with the specified adjustments, as cents, and returns it or the equivalent singleton if one exists.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on all the adjustment values.
          *
          * @param adjustments the adjustments.
@@ -1511,7 +1509,7 @@ implements
 
         /**
          * Clone this singleton and inverts the copy and returns it or the equivalent singleton if one exists.
-         * <p>
+         * <p/>
          * If this is one of the {@link #AugmentedFourth} or {@link #DiminishedFifth} singletons, it will be inverted to its other form.
          *
          * @return the inverted standard interval or its equivalent singleton.
@@ -1549,7 +1547,7 @@ implements
          * @return true if the runtime instances are same.
          */
         @Override
-        public boolean is(final system.data.Type<? extends IntervalType> type) {
+        public boolean is(final Type<? super IntervalType> type) {
             return this == type;
         }
 
@@ -1675,7 +1673,7 @@ implements
 
         /**
          * Creates a standard interval with the specified symbol and number of cents.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#shortValue()} on the number.
          *
          * @param symbol the symbol.
@@ -1693,7 +1691,7 @@ implements
 
         /**
          * Creates a standard interval with null symbol and the specified number of cents and null symbol.
-         * <p>
+         * <p/>
          * This constructor calls {@link Number#shortValue()} on the number.
          *
          * @param number the number.
@@ -1739,7 +1737,7 @@ implements
 
         /**
          * Creates a standard interval with the specified symbol and semitones.
-         * <p>
+         * <p/>
          * This constructor converts the semitones amount to cents.
          *
          * @param symbol the symbol.
@@ -1757,7 +1755,7 @@ implements
 
         /**
          * Creates a standard interval with the specified semitones and null symbol.
-         * <p>
+         * <p/>
          * This constructor converts the semitones amount to cents.
          *
          * @param semitones the semitones.
@@ -1773,7 +1771,7 @@ implements
 
         /**
          * Creates a standard interval with the specified symbol and from the specified string value.
-         * <p>
+         * <p/>
          * The string value must be a valid interval symbol, double, or fraction matching the pattern "a/b", which may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          *
          * @param symbol the symbol.
@@ -1794,7 +1792,7 @@ implements
 
         /**
          * Creates a standard interval from the specified string value and with a symbol equal to the same value.
-         * <p>
+         * <p/>
          * The string value must be a valid interval symbol, double, or fraction matching the pattern "a/b", which may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          *
          * @param value the value.
@@ -1833,7 +1831,7 @@ implements
 
         /**
          * Adjusts this standard interval with the specified adjustments, as cents, and returns this standard interval or the equivalent singleton if one exists.
-         * <p>
+         * <p/>
          * This implementation calls {@link Number#shortValue()} on all the adjustment values.
          *
          * @param adjustments the adjustments.
@@ -1875,7 +1873,7 @@ implements
 
         /**
          * Returns true if the specified object is an instance of the {@code Interval} class and has the same amount of cents as this interval, and false otherwise.
-         * <p>
+         * <p/>
          * If the specified object is a standard duration, the modes will also be compared.
          *
          * @param obj the object.
@@ -1890,7 +1888,7 @@ implements
 
         /**
          * Inverts and returns this standard interval or its equivalent singleton, when one exists.
-         * <p>
+         * <p/>
          * If this is equal to one of the {@link #AugmentedFourth} or {@link #DiminishedFifth} singletons, it will be inverted to its other form.
          *
          * @return the inverted standard interval or its equivalent singleton.
@@ -1920,7 +1918,7 @@ implements
 
         /**
          * Creates and returns a data point representing this standard interval.
-         * <p>
+         * <p/>
          * This implementation returns a data point with {@code x} mapped to the interval order, {@code y} mapped to the interval mode, and {@code z} mapped to null.
          *
          * @return the interval data point.

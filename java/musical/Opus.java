@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Opus} classifies a collection of songs that make up a grand musical piece.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

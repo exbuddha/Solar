@@ -2,7 +2,7 @@ package music.system;
 
 /**
  * {@code Type} classifies data types that are primarily used to represent knowledge of music or music theory.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <T> the primary data type.
@@ -12,5 +12,5 @@ package music.system;
  */
 public
 interface Type<T>
-extends system.data.Type<T>
+extends system.Type<T>
 {}

@@ -1,11 +1,16 @@
 package musical;
 
+import static music.system.data.Constant.MusicXML.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.xml.parsers.FactoryConfigurationError;
+
+import org.xml.sax.ext.DefaultHandler2;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,13 +19,14 @@ import org.xml.sax.SAXException;
 import exceptions.InvalidMusicXMLException;
 import exceptions.UnsupportedClefException;
 import music.system.data.MusicXML;
+import system.Type;
 import system.data.Dictionary;
 import system.data.Fraction;
 import system.data.XML;
 
 /**
  * {@code Score} represents a valid MusicXML document.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -44,7 +50,7 @@ implements
      * @throws SAXException if a processing error occurs.
      * @throws InvalidMusicXMLException if the stream content is not a valid MusicXML document.
      *
-     * @see #parse(InputStream, DefaultHandler)
+     * @see XML#parse(InputStream, DefaultHandler2)
      */
     public
     Score(
@@ -124,7 +130,7 @@ implements
         // Create a new document and a new root node with all the attributes of the original document's root
         final org.w3c.dom.Document document = newDocumentBuilder().newDocument();
         final Node root = getDocument().getChildNodes().item(0);
-        final Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(MusicXML.Constant.SCORE_PARTWISE)));
+        final Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(SCORE_PARTWISE)));
 
         // Create a placeholder map for the new parts in the new document
         final Dictionary<Node> newParts = new Dictionary<>();
@@ -135,7 +141,7 @@ implements
             final Node node = nodes.item(n);
 
             // For the <measure> nodes...
-            if (node.getNodeName().equals(MusicXML.Constant.MEASURE)) {
+            if (node.getNodeName().equals(MEASURE)) {
                 final NodeList parts = node.getChildNodes();
 
                 // Iterate through all <part> nodes...
@@ -144,10 +150,10 @@ implements
 
                     // Find an already created new <part> with the same part ID in the new document
                     //   or create a new <part> in the new document and append it to the new root
-                    final String partId = Locator.findAttributeValue(part, MusicXML.Constant.ID);
+                    final String partId = findAttributeValue(part, ID);
                     Node newPart = newParts.find(partId);
                     if (newPart == null) {
-                        newPart = cloneAttributes(part, document.createElement(MusicXML.Constant.PART));
+                        newPart = cloneAttributes(part, document.createElement(PART));
                         newParts.add(partId, newRoot.appendChild(newPart));
                     }
 
@@ -187,7 +193,7 @@ implements
         // Create a new document and a new root node with all the attributes of the original document's root
         final org.w3c.dom.Document document = newDocumentBuilder().newDocument();
         final Node root = getDocument().getChildNodes().item(0);
-        final org.w3c.dom.Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(MusicXML.Constant.SCORE_TIMEWISE)));
+        final org.w3c.dom.Node newRoot = document.appendChild(cloneAttributes(root, document.createElement(SCORE_TIMEWISE)));
 
         // Create a placeholder map for the new measures in the new document
         final Dictionary<Node> newMeasures = new Dictionary<>();
@@ -198,7 +204,7 @@ implements
             final Node node = nodes.item(n);
 
             // For the <part> nodes...
-            if (node.getNodeName().equals(MusicXML.Constant.PART)) {
+            if (node.getNodeName().equals(PART)) {
                 final NodeList measures = node.getChildNodes();
 
                 // Iterate through all <measure> nodes...
@@ -207,10 +213,10 @@ implements
 
                     // Find an already created new <measure> with the same part ID in the new document
                     //   or create a new <measure> in the new document and append it to the new root
-                    final String partId = Locator.findAttributeValue(measure, MusicXML.Constant.ID);
+                    final String partId = findAttributeValue(measure, ID);
                     Node newMeasure = newMeasures.find(partId);
                     if (newMeasure == null) {
-                        newMeasure = cloneAttributes(measure, document.createElement(MusicXML.Constant.MEASURE));
+                        newMeasure = cloneAttributes(measure, document.createElement(MEASURE));
                         newMeasures.add(partId, newRoot.appendChild(newMeasure));
                     }
 
@@ -237,7 +243,7 @@ implements
     public
     boolean isPartwise() {
         return getDocument().getDocumentElement().getTagName()
-               .equals(MusicXML.Constant.SCORE_PARTWISE);
+               .equals(SCORE_PARTWISE);
     }
 
     /**
@@ -248,7 +254,7 @@ implements
     public
     boolean isTimewise() {
         return getDocument().getDocumentElement().getTagName()
-               .equals(MusicXML.Constant.SCORE_TIMEWISE);
+               .equals(SCORE_TIMEWISE);
     }
 
     /**
@@ -260,14 +266,14 @@ implements
     Interpreter findInterpreter();
 
     @Override
-    public boolean is(final system.data.Type<? extends Notation> type) {
+    public boolean is(final Type<? super Notation> type) {
         // Scores are not associated with a different score type
         return false;
     }
 
     /**
-     * {@code Conductor} represents all handler types that are used for first-pass conduction of musical scores.
-     * <p>
+     * {@code Conductor} represents all handler types that are intended for first-pass conduction of musical scores.
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -276,6 +282,7 @@ implements
     public abstract
     class Conductor
     extends DocumentHandler
+    implements Handler
     {
         /**
          * Creates a score conductor for the specified MusicXML document.
@@ -291,7 +298,7 @@ implements
 
         /**
          * {@code Execution} represents specialized MusicXML filters that are intended for just-in-time processing of score documents.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -305,9 +312,9 @@ implements
 
     /**
      * {@code Interpreter} represents an intelligent score part in MusicXML documents.
-     * <p>
+     * <p/>
      * The default instances of this class correspond to uniquely coupled pairs of {@code score-part} and {@code part} elements in the score document.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -394,9 +401,9 @@ implements
 
     /**
      * {@code Measure} represents a score measure.
-     * <p>
+     * <p/>
      * Measures that contain other measure types represent hyper-measures.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -435,7 +442,7 @@ implements
 
         /**
          * {@code Segment} represents a measure segment.
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -447,14 +454,14 @@ implements
         {
             protected
             Segment() {
-                super((org.w3c.dom.Element) Measure.this.document);
+                super(Measure.this);
             }
         }
     }
 
     /**
      * {@code Note} represents a score note.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -560,9 +567,9 @@ implements
 
     /**
      * {@code Part} represents score parts corresponding to {@code part} elements in MusicXML scores.
-     * <p>
+     * <p/>
      * Parts that contain other part types represent part groups.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -570,8 +577,9 @@ implements
      */
     public abstract
     class Part<T extends Interpreted>
-    extends XML.Handler<XML.Element>
+    extends XML.Handler<Element>
     implements
+        Handler,
         Incident<Duration>,
         Interpreted,
         Iterable<Incident<? extends Number>>,
@@ -587,7 +595,7 @@ implements
          */
         protected
         Part(
-            final XML.Element part
+            final MusicXML.Element part
             ) {
             super();
             setDocument(part);
@@ -672,7 +680,7 @@ implements
         Fraction findTimeSignature();
 
         @Override
-        public boolean is(system.data.Type<? extends Interpreted> type) {
+        public boolean is(Type<? super Interpreted> type) {
             // Score parts are not associated with a different score part type
             return false;
         }
@@ -688,7 +696,7 @@ implements
 
     /**
      * {@code Partwise} represents all partwise MusicXML scores.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -700,7 +708,7 @@ implements
     {
         /**
          * Creates a partwise score for the specified MusicXML document.
-         * <p>
+         * <p/>
          * This implementation converts timewise documents into their partwise equivalent using {@link #convertToPartwise()}.
          *
          * @param document the document.
@@ -725,7 +733,7 @@ implements
 
         /**
          * {@code Search} classifies search functionality for partwise MusicXML scores
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8
@@ -739,7 +747,7 @@ implements
 
     /**
      * {@code Rest} represents a score rest.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -767,7 +775,7 @@ implements
 
     /**
      * {@code Tempo} classifies score tempo as data types that can be sequentially located and calculated in score parts, measures, or notes.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -787,24 +795,13 @@ implements
          * @return the score tempo.
          */
         Tempo at(
-            Element music
-            );
-
-        /**
-         * Returns the score tempo at the specified score note.
-         *
-         * @param note the score note.
-         *
-         * @return the score tempo.
-         */
-        Tempo at(
-            Note note
+            Incident<?> music
             );
     }
 
     /**
      * {@code Timed} classifies score data types as sequentially located and interpreted timed units.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -818,13 +815,13 @@ implements
     {
         @Override
         Timed at(
-            XML.Element music
+            MusicXML.Element music
             );
     }
 
     /**
      * {@code Timewise} represents all timewise MusicXML scores.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -836,7 +833,7 @@ implements
     {
         /**
          * Creates a timewise score for the specified MusicXML document.
-         * <p>
+         * <p/>
          * This implementation converts partwise documents into their timewise equivalent using {@link #convertToTimewise()}.
          *
          * @param document the document.
@@ -848,7 +845,7 @@ implements
          */
         public
         Timewise(
-            final XML document
+            final MusicXML document
             )
         throws
             DOMException,
@@ -861,7 +858,7 @@ implements
 
         /**
          * {@code Search} classifies search functionality for timewise MusicXML scores
-         * <p>
+         * <p/>
          * This class implementation is in progress.
          *
          * @since 1.8

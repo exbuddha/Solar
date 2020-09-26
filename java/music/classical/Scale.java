@@ -12,7 +12,7 @@ import musical.Standardized;
 
 /**
  * {@code Scale} represents the classical scale.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -268,7 +268,7 @@ implements
 
     /**
      * Creates a scale with the specified symbol, root note, and intervals, and adjusts the scale.
-     * <p>
+     * <p/>
      * The intervals are rounded to the nearest semitone and the remainder cents are converted to scale interval adjustment.
      *
      * @param symbol the scale symbol.
@@ -286,7 +286,7 @@ implements
 
     /**
      * Creates a scale with the specified root note and intervals, and adjusts the scale.
-     * <p>
+     * <p/>
      * The intervals are rounded to the nearest semitone and the remainder cents are converted to scale interval adjustment.
      *
      * @param root the root note.
@@ -302,7 +302,7 @@ implements
 
     /**
      * Creates a scale with the specified symbol and intervals, and adjusts the scale.
-     * <p>
+     * <p/>
      * The intervals are rounded to the nearest semitone and the remainder cents are converted to scale interval adjustment.
      *
      * @param symbol the scale symbol.
@@ -318,7 +318,7 @@ implements
 
     /**
      * Creates a scale with the specified symbol, root note, and the intervals and interval adjustments arrays of the specified scale, and adjusts the scale.
-     * <p>
+     * <p/>
      * Scale intervals and adjustments arrays are not cloned.
      *
      * @param symbol the scale symbol.
@@ -336,7 +336,7 @@ implements
 
     /**
      * Creates a scale with the specified root note and the intervals and interval adjustments arrays of the specified scale, and adjusts the scale.
-     * <p>
+     * <p/>
      * Scale intervals and adjustments arrays are not cloned.
      *
      * @param root the root note.
@@ -352,7 +352,7 @@ implements
 
     /**
      * Creates a scale with the specified symbol and notes, and adjusts the scale.
-     * <p>
+     * <p/>
      * The intervals are rounded to the nearest semitone and the remainder cents are converted to scale interval adjustment.
      *
      * @param symbol the scale symbol.
@@ -369,7 +369,7 @@ implements
 
     /**
      * Creates a scale with the specified notes and adjusts the scale.
-     * <p>
+     * <p/>
      * The intervals are rounded to the nearest semitone and the remainder cents are converted to scale interval adjustment.
      *
      * @param notes the notes.
@@ -400,7 +400,7 @@ implements
 
     /**
      * Returns the total width of the scale intervals in cents including adjustments.
-     * <p>
+     * <p/>
      * This implementation provides the most accurate result for the total width of the scale in cents.
      *
      * @return the total width of the scale intervals including adjustments.
@@ -430,7 +430,7 @@ implements
 
     /**
      * Adjusts the scale.
-     * <p>
+     * <p/>
      * This implementation is empty.
      */
     @Override
@@ -447,7 +447,7 @@ implements
 
     /**
      * Creates and returns a deep copy of this scale.
-     * <p>
+     * <p/>
      * This method creates and returns a non-adjusting implementation of {@code Scale}, unless this scale is standard.
      *
      * @return a deep copy of this scale.
@@ -475,9 +475,9 @@ implements
 
     /**
      * Returns an iterator over the notes in the scale.
-     * <p>
+     * <p/>
      * The number of returned notes is exactly one plus the number of the intervals in the scale.
-     * <p>
+     * <p/>
      * This implementation creates notes with empty adjustment functions.
      *
      * @return the iterator over scale notes.
@@ -555,7 +555,7 @@ implements
 
     /**
      * Returns the scale intervals array.
-     * <p>
+     * <p/>
      * This implementation returns a new copy of the array.
      *
      * @return the intervals array.
@@ -571,7 +571,7 @@ implements
 
     /**
      * Sets the scale interval adjustments array.
-     * <p>
+     * <p/>
      * This implementation sets {@code adjustments} to null if it is empty.
      *
      * @param adjustments the interval adjustments array.
@@ -587,7 +587,7 @@ implements
 
     /**
      * {@code Standard} represents all standard classical scales.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -662,7 +662,7 @@ implements
 
         /**
          * Given the two specified musical ranges, returns all known chords that have at least one note in each range.
-         * <p>
+         * <p/>
          * This implementation return null.
          */
         @Override
@@ -678,7 +678,7 @@ implements
 
     /**
      * {@code Systematic} represents all systematic classical scales.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -689,7 +689,7 @@ implements
     extends Scale
     implements
         BiConsumer<Range, Number>,
-        BiFunction<musical.Range, musical.Range, Iterable<? extends Range>>,
+        //BiFunction<musical.Range, musical.Range, Iterable<? extends Range>>,
         Consumer<Range>
     {
         /**
@@ -756,9 +756,9 @@ implements
 
         /**
          * Accepts range in the scale at the specified register number, or throws an {@code IllegalArgumentException} if register number is out of range.
-         * <p>
+         * <p/>
          * By convention, the register numbers starting from 0 up to one less than the scale size are reserved for individual notes in the scale represented as pointer ranges.
-         * This is a requirement of some comparison methods such as {@link #contains(Note, int)} and {@link #indexOf(Note)}.
+         * This is a requirement of some comparison methods such as {@link musical.Scale#contains(musical.Note, int)} and {@link musical.Scale#indexOf(musical.Note)}.
          *
          * @param range the range.
          * @param reg the scale register number.
@@ -776,7 +776,7 @@ implements
 
         /**
          * Accepts range in the scale.
-         * <p>
+         * <p/>
          * This implementation is empty.
          *
          * @param range the range.
@@ -793,7 +793,7 @@ implements
          * @param r2 the second range.
          * @return the iterable of related ranges.
          */
-        @Override
+        //@Override
         public abstract
         Iterable<? extends Range> apply(
             musical.Range r1,

@@ -1,12 +1,14 @@
 package system.data;
 
+import system.Type;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * {@code Graph} classifies the graph data structure as a group of interconnected vertices and edges.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @param <V> the vertex type.
@@ -28,7 +30,7 @@ class Graph<V, E>
 
     /**
      * Creates a graph with the specified initial capacities and load factors for the two hash sets containing graph vertices and edges.
-     * <p>
+     * <p/>
      * This constructor uses the {@link HashSet}.
      *
      * @param verticesInitialCapacity the initial capacity of the vertices hash set.
@@ -50,7 +52,7 @@ class Graph<V, E>
 
     /**
      * Creates a graph with the specified initial capacity and load factor for both hash sets containing graph vertices and edges.
-     * <p>
+     * <p/>
      * This constructor uses the {@link HashSet}.
      *
      * @param initialCapacity the initial capacity of both vertices and edges hash set.
@@ -67,7 +69,7 @@ class Graph<V, E>
 
     /**
      * Creates an empty graph with load factor 1.
-     * <p>
+     * <p/>
      * This constructor uses the {@link HashSet}.
      */
     public
@@ -77,7 +79,7 @@ class Graph<V, E>
 
     /**
      * {@code Edge} classifies an edge in graph data structure that connects vertices and carries a data object.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the data object type.
@@ -87,7 +89,7 @@ class Graph<V, E>
      */
     public static abstract
     class Edge<T>
-    implements system.data.Type<Edge<?>>
+    implements Type<Edge<?>>
     {
         /** The connected vertex. */
         protected
@@ -166,7 +168,7 @@ class Graph<V, E>
 
     /**
      * {@code Edge} classifies entries of the graph as {@link Map.Entry} types.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <V> the vertex type.
@@ -198,7 +200,7 @@ class Graph<V, E>
 
     /**
      * {@code Vertex} classifies a vertex in graph data structure with an attached object.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @param <T> the object type.
@@ -208,7 +210,7 @@ class Graph<V, E>
      */
     public static abstract
     class Vertex<T>
-    implements system.data.Type<Vertex<?>>
+    implements Type<Vertex<?>>
     {
         /** The object. */
         protected

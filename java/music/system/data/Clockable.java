@@ -2,7 +2,7 @@ package music.system.data;
 
 /**
  * {@code Clockable} classifies all musical data types that are visualized and convertible on rotating axes and systems, such as the musical notes, scales, and chord systems.
- * <p>
+ * <p/>
  * This interface defines all major small- and large-scale data types that are in charge of transformation within clockable data systems.
  *
  * @param <T> the clockable data type.

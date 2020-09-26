@@ -1,6 +1,6 @@
 package musical;
 
-import music.system.data.MusicXML;
+import music.system.data.Constant.MusicXML;
 
 /**
  * {@code Constant} holds all commonly accepted symbols and names in music theory.
@@ -463,21 +463,21 @@ class Constant
         interface Dynamics
         {
             static final String ForteName = "Forte";
-            static final String ForteSym = MusicXML.Constant.Dynamics.F;
+            static final String ForteSym = MusicXML.Dynamics.F;
             static final String FortissimoName = "Fortissimo";
-            static final String FortissimoSym = MusicXML.Constant.Dynamics.FF;
+            static final String FortissimoSym = MusicXML.Dynamics.FF;
             static final String FortississimoName = "Fortississimo";
-            static final String FortississimoSym = MusicXML.Constant.Dynamics.FFF;
+            static final String FortississimoSym = MusicXML.Dynamics.FFF;
             static final String MezzoForteName = "Forte";
-            static final String MezzoForteSym = MusicXML.Constant.Dynamics.MF;
+            static final String MezzoForteSym = MusicXML.Dynamics.MF;
             static final String MezzoPianoName = "Mezzo-piano";
-            static final String MezzoPianoSym = MusicXML.Constant.Dynamics.MP;
+            static final String MezzoPianoSym = MusicXML.Dynamics.MP;
             static final String PianoName = "Piano";
-            static final String PianoSym = MusicXML.Constant.Dynamics.P;
+            static final String PianoSym = MusicXML.Dynamics.P;
             static final String PianissimoName = "Pianossimo";
-            static final String PianissimoSym = MusicXML.Constant.Dynamics.PP;
+            static final String PianissimoSym = MusicXML.Dynamics.PP;
             static final String PianississimoName = "Pianossissimo";
-            static final String PianississimoSym = MusicXML.Constant.Dynamics.PPP;
+            static final String PianississimoSym = MusicXML.Dynamics.PPP;
         }
 
         /**

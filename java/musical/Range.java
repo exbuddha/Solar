@@ -7,7 +7,7 @@ import music.system.DataPoint;
 
 /**
  * {@code Range} classifies spectrums in music emphasizing a set of selected frequencies from a larger spectrum, with arbitrary degrees of freedom from the time and/or the pitch axis.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8
@@ -19,7 +19,7 @@ extends Spectrum
 {
     /**
      * {@code Band} categorizes pitch of musical sounds relative to instrument or hearing frequency ranges.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8
@@ -41,11 +41,11 @@ extends Spectrum
 
     /**
      * {@code Relation} represents linearly recognized relations among consecutive ranges, such as phrases.
-     * <p>
+     * <p/>
      * By convention, the supplied data point has coordinates that are themselves vectors.
      * Each coordinate identifies the sound quality inter-relation to, or of, the previous, the current, and the following localized range across their respective pulses.
      * Sound qualities combine an arbitrary, though usually small, number of spectrum effects identifying the vibrational characteristics of their target incident.
-     * <p>
+     * <p/>
      * This class implementation is in progress.
      *
      * @since 1.8

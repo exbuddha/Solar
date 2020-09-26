@@ -20,17 +20,17 @@ import system.data.Unique;
 
 /**
  * {@code Duration} represents a time interval in music relative to the whole note time value.
- * <p>
+ * <p/>
  * Musical durations are made up of beats and beat units.
  * Beats is the numerator value of the fraction that represents the duration and beat units is the denominator value.
  * Duration values cannot be negative.
  * The standard duration types provide adjustment coefficients representing the dotted notes, triplets, etc.
  * The standard whole note has the beats amount of 1 and the beat units amount of 1, constituting the unit of duration equal to the amount of 1.
- * <p>
+ * <p/>
  * All durations are Java number types and represent the fractional value of their time interval in music scores.
  * This class defines the well-known stem types in classical music that are statically present as standard durations.
  * These static durations are called singletons.
- * <p>
+ * <p/>
  * The standard durations, that all singletons are types of, are special forms of durations that behave differently from the regular duration types.
  * There are specialized methods re-implemented for standard durations, for which the results are treated differently than the base implementations of those methods.
  * These methods are named {@code plus}, {@code minus}, {@code times}, {@code by}, {@code inverted}, {@code adjusted}, and {@code unadjust}.
@@ -38,10 +38,10 @@ import system.data.Unique;
  * If a standard duration is added to, subtracted from, divided, multiplied, or inverted through these special methods, the result will always be a standard type also.
  * If the standard duration, however, is a singleton, a copy of that singleton will be created and returned as the result of the operation.
  * Operating on standard durations only affects the numerator and denominator while the adjustment remains unchanged, except for the {@code adjust} or {@code adjusted} methods where both the numerator and denominator values and the adjustment value are changed.
- * <p>
+ * <p/>
  * Furthermore, if a standard duration, operated on by the methods mentioned above, matches the value of a statically defined standard type then that static type is returned.
  * This way operating on standard durations will always return values from the domain of statically defined types or singletons, when one is available, or will return the same standard type that can automatically transform into a singleton at any point in logic.
- * <p>
+ * <p/>
  * Methods in this class implementation are not thread-safe.
  *
  * @since 1.8
@@ -426,11 +426,11 @@ implements
 
     /**
      * Creates a duration, as a fraction, with the specified symbol and from the specified string value.
-     * <p>
+     * <p/>
      * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
      * The numerator and denominator parts are parsed as {@code double} values.
      * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-     * <p>
+     * <p/>
      * The simplification flag is set to off.
      *
      * @param symbol the symbol.
@@ -453,11 +453,11 @@ implements
 
     /**
      * Creates a duration, as a fraction, from the specified string value and with a symbol equal to the same value.
-     * <p>
+     * <p/>
      * The string value must be a valid fraction, matching the pattern "a/b", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
      * The numerator and denominator parts are parsed as {@code double} values.
      * The division string between the two fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-     * <p>
+     * <p/>
      * The simplification flag is set to off.
      *
      * @param value the symbol and value.
@@ -503,7 +503,7 @@ implements
 
     /**
      * Returns the singleton equivalent to this duration using the specified comparator, or itself if none is found.
-     * <p>
+     * <p/>
      * This implementation calls {@link Comparator#compare(Object, Object)} with this duration as the first argument and the singletons as second arguments of that method.
      *
      * @param comparator the comparator.
@@ -514,7 +514,7 @@ implements
     Duration distinct(
         final Comparator<Fraction> comparator
         ) {
-        return (Standard) new Lambda.BinaryLocator<Fraction>(this, Singleton.Order, false, comparator).result(this);
+        return (Standard) new Lambda.BinaryLocator<Fraction>(this, Singleton.Order, false, comparator).element(this);
     }
 
     /**
@@ -530,17 +530,14 @@ implements
     Duration distinct(
         final Fraction... adjustments
         ) {
-        return distinct(new Comparator<Fraction>() {
-            @Override
-            public int compare(final Fraction f1, final Fraction f2) {
-                if (f1.compareTo(f2) == 0) {
-                    for (final Fraction adj : adjustments)
-                        if (((Standard) f2).getAdjustment().equals(adj))
-                            return 0;
-                }
-
-                return 1;
+        return distinct((final Fraction f1, final Fraction f2) -> {
+            if (f1.compareTo(f2) == 0) {
+                for (final Fraction adj : adjustments)
+                    if (((Standard) f2).getAdjustment().equals(adj))
+                        return 0;
             }
+
+            return 1;
         });
     }
 
@@ -551,7 +548,7 @@ implements
      */
     public
     Duration distinct() {
-        return (Standard) new Lambda.BinaryComparableLocator<Fraction>(this, Singleton.Order, false).result(this);
+        return (Standard) new Lambda.BinaryComparableLocator<Fraction>(this, Singleton.Order, false).element(this);
     }
 
     /**
@@ -605,10 +602,10 @@ implements
 
     /**
      * Adjusts the duration with the specified adjustment fractions and returns the adjusted duration.
-     * <p>
+     * <p/>
      * This implementation, unlike its standard type override, operates on the duration numerator and denominator values.
      * If this is a standard duration, the adjustments will be applied to the standard duration adjustment.
-     * <p>
+     * <p/>
      * If this is a standard duration with an equivalent singleton, the singleton is returned.
      *
      * @param adjustments the adjustment fractions.
@@ -629,7 +626,7 @@ implements
 
     /**
      * Returns the milliseconds in this duration for the specified tempo.
-     * <p>
+     * <p/>
      * This implementation returns a {@link java.time.Duration}.
      *
      * @param tempo the tempo.
@@ -643,7 +640,7 @@ implements
 
     /**
      * Divides this duration by the specified number and returns this duration.
-     * <p>
+     * <p/>
      * If this is a standard duration the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -703,7 +700,7 @@ implements
 
     /**
      * Inverts and returns this duration.
-     * <p>
+     * <p/>
      * If this is a standard duration the equivalent singleton will be returned, when one exists.
      *
      * @return the inverted duration or its equivalent singleton if this is a standard type.
@@ -724,14 +721,14 @@ implements
      * @return true if the runtime instances are the same, or false otherwise.
      */
     @Override
-    public boolean is(final system.data.Type<? extends Duration> type) {
+    public boolean is(final system.Type<? super Duration> type) {
         // Durations are not associated with a different duration type
         return this == type;
     }
 
     /**
      * Subtracts the specified number from this duration and returns this duration.
-     * <p>
+     * <p/>
      * If this is a standard duration the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -779,7 +776,7 @@ implements
 
     /**
      * Adds the specified number to this duration and returns this duration.
-     * <p>
+     * <p/>
      * If this is a standard duration the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -845,7 +842,7 @@ implements
 
     /**
      * Multiplies this duration by the specified number and returns this duration.
-     * <p>
+     * <p/>
      * If this is a standard duration the equivalent singleton will be returned, when one exists.
      *
      * @param n the number.
@@ -863,7 +860,7 @@ implements
 
     /**
      * Returns a string representation of the duration.
-     * <p>
+     * <p/>
      * This implementation return the duration symbol.
      *
      * @return the duration string.
@@ -875,7 +872,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation is empty.
      */
     @Override
@@ -883,7 +880,7 @@ implements
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation returns this duration.
      *
      * @return the duration.
@@ -910,7 +907,7 @@ implements
      *
      * @throws UnsupportedOperationException if this is a singleton and the specified symbol is not equal to the singleton symbol.
      *
-     * @see Symbolized.Singleton#setSymbol(Object)
+     * @see Symbolized.Singleton#setSymbol(Comparable)
      */
     @Override
     public void setSymbol(final String symbol) {
@@ -1182,6 +1179,19 @@ implements
         }
 
         /**
+         * Returns true if this duration is the same runtime instance of the specified type; otherwise returns false.
+         *
+         * @param type the other duration type.
+         *
+         * @return true if the runtime instances are the same, or false otherwise.
+         */
+        @Override
+        public boolean is(final system.Type<? super Duration> type) {
+            // Durations are not associated with a different duration type
+            return this == type;
+        }
+
+        /**
          * Clones this singleton and subtracts the specified number from the copy and returns it or the equivalent singleton if one exists.
          *
          * @param n the number.
@@ -1284,7 +1294,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation is empty.
          */
         @Override
@@ -1292,7 +1302,7 @@ implements
 
         /**
          * {@inheritDoc}
-         * <p>
+         * <p/>
          * This implementation returns this singleton.
          *
          * @return the singleton.
@@ -1482,7 +1492,7 @@ implements
             final short units,
             final Short defaultDenominator
             ) {
-            this(symbol, beats, units, defaultDenominator, Singleton.Unit);
+            this(symbol, beats, units, defaultDenominator, Duration.Singleton.Unit);
         }
 
         /**
@@ -1524,17 +1534,17 @@ implements
             final int beats,
             final short units
             ) {
-            this(symbol, beats, units, Singleton.Unit);
+            this(symbol, beats, units, Duration.Singleton.Unit);
         }
 
         /**
          * Creates a standard duration with the specified symbol and from the specified string value.
-         * <p>
+         * <p/>
          * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
          * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link Constant.Duration#MultiplierSym}.
-         * <p>
+         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link musical.Constant.Duration#MultiplierSym}.
+         * <p/>
          * The simplification flag is set to off.
          *
          * @param symbol the symbol.
@@ -1565,12 +1575,12 @@ implements
 
         /**
          * Creates a standard duration from the specified string value with a symbol equal to the same value.
-         * <p>
+         * <p/>
          * The string value must be a valid fraction, matching the pattern "a/b" or "a/b * c/d", and may contain decimal numerator and denominator parts and leading or trailing whitespace in each part.
          * The numerator and denominator parts for both the duration and the optional adjustment are parsed as {@code double} values.
          * The division string between the fraction parts must match the value set by {@link Constant.Fraction#DividerSym}.
-         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link Constant.Duration#MultiplierSym}.
-         * <p>
+         * If adjustment is included in the value, the multiplier string between the two fraction parts must match the value set by {@link musical.Constant.Duration#MultiplierSym}.
+         * <p/>
          * The simplification flag is set to off.
          *
          * @param value the symbol and value.
@@ -1669,7 +1679,7 @@ implements
 
         /**
          * Returns true if the standard duration value is equal to the value of the specified numeric object; and false otherwise.
-         * <p>
+         * <p/>
          * If the specified object is a standard duration type, the adjustments are also compared.
          *
          * @param obj the object.

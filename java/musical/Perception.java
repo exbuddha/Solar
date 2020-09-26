@@ -2,7 +2,7 @@ package musical;
 
 /**
  * {@code Perception} classifies universal human perception of musical expressions.
- * <p>
+ * <p/>
  * This class implementation is in progress.
  *
  * @since 1.8

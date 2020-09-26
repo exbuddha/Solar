@@ -43,7 +43,7 @@ extends
 
     /**
      * {@inheritDoc}
-     * <p>
+     * <p/>
      * This implementation returns the {@code Byte} class.
      *
      * @return the {@code Byte} class.

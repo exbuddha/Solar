@@ -1,8 +1,8 @@
 package musical;
 
 /**
- * {@code Adjusting} classifies musical data types that are adjustable to a similar or different type by an adjustment type.
- * <p>
+ * {@code Adjusting} classifies system data types that are adjustable to a similar or different type by an adjustment type.
+ * <p/>
  * In all common cases, the adjusted data type is similar to the adjusting data type.
  *
  * @param <T> the adjusted data type.
