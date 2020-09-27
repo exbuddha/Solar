@@ -306,7 +306,7 @@ implements
          */
         public abstract
         class Execution
-        extends Handler.Restriction
+        implements Handler
         {}
     }
 
