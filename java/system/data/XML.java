@@ -149,10 +149,9 @@ implements
     Node clone(
         final Node source
         ) {
-        if (source == null)
-            return null;
-
-        return cloneChildren(source, source.getOwnerDocument().createElement(source.getNodeName()));
+        return source == null
+               ? null
+               : cloneChildren(source, source.getOwnerDocument().createElement(source.getNodeName()));
     }
 
     /**
