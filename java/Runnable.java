@@ -13,7 +13,7 @@ extends java.lang.Runnable
      *
      * @param args the command-line arguments.
      */
-    public static void main(final String... args) {
+    static void main(final String... args) {
         system.Observation.execute(args);
     }
 
@@ -21,7 +21,7 @@ extends java.lang.Runnable
      * Runs the main executable thread.
      */
     @Override
-    public default void run() {
+    default void run() {
         main();
     }
 }

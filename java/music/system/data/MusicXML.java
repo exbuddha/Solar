@@ -14612,6 +14612,7 @@ extends XML
 
             /** The array of accepted values. */
             java.lang.String[] Values = Lambda.combineArrays(
+                java.lang.String[].class,
                 new java.lang.String[] {
                     ARROW__DOWN,
                     ARROW__UP,
@@ -16699,6 +16700,7 @@ extends XML
 
             /** The array of accepted values. */
             java.lang.String[] Values = Lambda.combineArrays(
+                java.lang.String[].class,
                 new java.lang.String[] {
                     PLUS,
                 },
@@ -19643,6 +19645,7 @@ extends XML
 
             /** The array of accepted values. */
             java.lang.String[] Values = Lambda.combineArrays(
+                java.lang.String[].class,
                 new java.lang.String[] {
                     PLUS,
                     SLASH,

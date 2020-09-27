@@ -1,5 +1,6 @@
 package system.data;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -57,15 +58,27 @@ class Lambda
      *
      * @param arrays the arrays.
      *
+     * @param type the combined array class type.
      * @param <T> the array type.
      *
      * @return the combined array.
      */
     public static <T>
     T[] combineArrays(
+        final Class<T[]> type,
         final T[]... arrays
         ) {
-        return null;
+        int length = 0;
+        for (int i = 0; i < arrays.length; i++)
+            length += arrays[i].length;
+
+        final T[] combo = (T[]) Array.newInstance(type, length);
+        int j = 0;
+        for (int n = 0; n < arrays.length; n++)
+            for (int i = 0; i < arrays[n].length; i++)
+                combo[j++] = arrays[n][i];
+
+        return combo;
     }
 
     /**
