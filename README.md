@@ -319,7 +319,7 @@ States are well-defined normalized objects that describe the anatomical forms of
 
 Even though a state can re-occur many times during performance, it is never the case that two equal states point to the same memory address. This means that each state has a unique object that is created for its part at certain instance (or snapshot) of/in performance. This design allows fine-tuning states to even finer granularity which is a very desirable feature to have. It also means that states must be optimized for memory and this, in turn, enforces cleaning the `PerformanceGraph` at the earliest possible point in performance.
 
-[Description](https://github.com/exbuddha/Solar/blob/master/java/musical/Description.java) is used all throughout this mentioned configuration to explain and resolve ambiguities for instantaneous interactions or technical configurations.
+[Description](https://github.com/exbuddha/Solar/blob/master/java/musical/performance/system/data/Description.java) is used all throughout this mentioned configuration to explain and resolve ambiguities for instantaneous interactions or technical configurations.
 
 The state graph is a structure that connects all states to many other states and/or snapshots giving meaning to the statement above. It is by the use of the state graph that some anatomical features about instruments and performers are set or defined and are expanded upon.
 
