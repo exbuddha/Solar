@@ -1,8 +1,7 @@
 package music.system.data;
 
 import static music.system.data.Constant.MusicXML.*;
-import static music.system.data.Constant.MusicXML.Entity.*;
-import static system.data.Constant.XmlElementUnsupported;
+import static system.data.Constant.XML.Entity.*;
 
 import java.util.LinkedList;
 
@@ -841,24 +840,33 @@ extends XML
             java.lang.String[] Values = Entity.PCDATA_Literal;
 
             @Override
-            default AccidentalText per(final Class<?> type) {
-                if (type == PartNameDisplay.class || type == PartAbbreviationDisplay.class)
-                    return new AccidentalText() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+            default Class<? extends AccidentalText> per(final Class<?> type) {
+                if (type == PartNameDisplay.class ||
+                    type == PartAbbreviationDisplay.class)
+                    return AccidentalText_PerMany1.class;
                 else
                 if (type == NoteheadText.class)
-                    return new AccidentalText() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.OneOrMore;
-                        }
-                    };
+                    return AccidentalText_PerNoteheadText.class;
 
                 return null;
+            }
+
+            interface AccidentalText_PerNoteheadText
+            extends AccidentalText
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.OneOrMore;
+                }
+            }
+
+            interface AccidentalText_PerMany1
+            extends AccidentalText
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
             }
         }
 
@@ -2396,26 +2404,31 @@ extends XML
                 };
 
                 @Override
-                default Direction per(final Class<?> type) {
+                default Class<? extends Direction> per(final Class<?> type) {
                     if (type == Arpeggiate.class)
-                        return new Direction() {
-                            java.lang.String[] Values = Entity.UpDown_Values;
-                        };
+                        return Direction_PerArpeggiate.class;
                     else
                     if (type == Repeat.class)
-                        return new Direction() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                BACKWARD,
-                                FORWARD
-                            };
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Direction_PerRepeat.class;
 
                     return null;
+                }
+
+                interface Direction_PerArpeggiate
+                extends Direction
+                {
+                    java.lang.String[] Values = Entity.UpDown_Values;
+                }
+
+                interface Direction_PerRepeat
+                extends
+                    Direction,
+                    RequiredAttribute
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        BACKWARD,
+                        FORWARD
+                    };
                 }
             }
 
@@ -2527,24 +2540,29 @@ extends XML
                 };
 
                 @Override
-                default Element_ per(final Class<?> type) {
+                default Class<? extends Element_> per(final Class<?> type) {
                     if (type == Bookmark.class ||
                         type == Link.class)
-                        return new Element_() {
-                            java.lang.String[] Values = Entity.NMTOKEN_Literal;
-                        };
+                        return Element_PerMany1.class;
                     else
                     if (type == Supports.class)
-                        return new Element_() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Element_PerSupports.class;
 
                     return null;
+                }
+
+                interface Element_PerMany1
+                extends Element_
+                {
+                    java.lang.String[] Values = Entity.NMTOKEN_Literal;
+                }
+
+                interface Element_PerSupports
+                extends
+                    Element_,
+                    RequiredAttribute
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
                 }
             }
 
@@ -2907,45 +2925,65 @@ extends XML
                 };
 
                 @Override
-                default ID per(final Class<?> type) {
+                default Class<? extends ID> per(final Class<?> type) {
                     if (type == MidiDevice.class ||
                         type == Play.class)
-                        return new ID() {
-                            java.lang.String[] Values = Entity.IDREF_Literal;
-                        };
+                        return ID_PerMany1.class;
                     else
                     if (type == Instrument.class ||
                         type == MidiInstrument.class ||
                         type == Part.class)
-                        return new ID() {
-                            java.lang.String[] Values = Entity.IDREF_Literal;
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return ID_PerMany2.class;
                     else
                     if (type == Barline.class ||
                         type == Beam.class ||
                         type == DirectionType.class)
-                        return new ID() {
-                            java.lang.String[] Values = Entity.ID_Literal;
-                        };
+                        return ID_PerMany3.class;
                     else
                     if (type == Bookmark.class ||
                         type == ScoreInstrument.class ||
                         type == ScorePart.class)
-                        return new ID() {
-                            java.lang.String[] Values = Entity.ID_Literal;
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return ID_PerMany4.class;
 
                     return null;
+                }
+
+                interface ID_PerMany1
+                extends ID
+                {
+                    java.lang.String[] Values = Entity.IDREF_Literal;
+                }
+
+                interface ID_PerMany2
+                extends
+                    ID,
+                    RequiredAttribute
+                {
+                    java.lang.String[] Values = Entity.IDREF_Literal;
+
+                    @Override
+                    default boolean isRequired() {
+                        return true;
+                    }
+                }
+
+                interface ID_PerMany3
+                extends ID
+                {
+                    java.lang.String[] Values = Entity.ID_Literal;
+                }
+
+                interface ID_PerMany4
+                extends
+                    ID,
+                    RequiredAttribute
+                {
+                    java.lang.String[] Values = Entity.ID_Literal;
+
+                    @Override
+                    default boolean isRequired() {
+                        return true;
+                    }
                 }
             }
 
@@ -3042,18 +3080,26 @@ extends XML
                 };
 
                 @Override
-                default Line per(final Class<?> type) {
+                default Class<? extends Line> per(final Class<?> type) {
                     if (type == Pedal.class)
-                        return new Line() {
-                            java.lang.String[] Values = Entity.YesNo_Values;
-                        };
+                        return Line_PerPedal.class;
                     else
                     if (type == StaffTuning.class)
-                        return new Line() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-                        };
+                        return Line_PerStaffTuning.class;
 
                     return null;
+                }
+
+                interface Line_PerPedal
+                extends Line
+                {
+                    java.lang.String[] Values = Entity.YesNo_Values;
+                }
+
+                interface Line_PerStaffTuning
+                extends Line
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
                 }
             }
 
@@ -3189,7 +3235,7 @@ extends XML
                 };
 
                 @Override
-                default LineType per(final Class<?> type) {
+                default Class<? extends LineType> per(final Class<?> type) {
                     if (type == Bracket.class ||
                         type == Wedge.class)
                         return new LineType() {
@@ -3197,7 +3243,7 @@ extends XML
                             public java.lang.String defaultValue() {
                                 return SOLID;
                             }
-                        };
+                        }.getClass();
 
                     return null;
                 }
@@ -3235,48 +3281,64 @@ extends XML
                 };
 
                 @Override
-                default Location per(final Class<?> type) {
+                default Class<? extends Location> per(final Class<?> type) {
                     if (type == Barline.class)
-                        return new Location() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                LEFT,
-                                MIDDLE,
-                                RIGHT
-                            };
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return RIGHT;
-                            }
-                        };
+                        return Location_PerBarline.class;
                     else
                     if (type == BassAlter.class ||
                         type == FirstFret.class ||
                         type == RootAlter.class)
-                        return new Location() {
-                            java.lang.String[] Values = Entity.LeftRight_Values;
-                        };
+                        return Location_PerMany1.class;
                     if (type == Element.Cancel.class)
-                        return new Location() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                BEFORE_BARLINE,
-                                LEFT,
-                                RIGHT
-                            };
-                        };
+                        return Location_PerCancel.class;
                     else
                     if (type == HarmonClosed.class ||
                         type == HoleClosed.class)
-                        return new Location() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                BOTTOM,
-                                LEFT,
-                                RIGHT,
-                                TOP
-                            };
-                        };
+                        return Location_PerMany2.class;
 
                     return null;
+                }
+
+                interface Location_PerBarline
+                extends Location
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        LEFT,
+                        MIDDLE,
+                        RIGHT
+                    };
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return RIGHT;
+                    }
+                }
+
+                interface Location_PerMany1
+                extends Location
+                {
+                    java.lang.String[] Values = Entity.LeftRight_Values;
+                }
+
+                interface Location_PerCancel
+                extends Location
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        BEFORE_BARLINE,
+                        LEFT,
+                        RIGHT
+                    };
+                }
+
+                interface Location_PerMany2
+                extends Location
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        BOTTOM,
+                        LEFT,
+                        RIGHT,
+                        TOP
+                    };
                 }
             }
 
@@ -3545,17 +3607,10 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default Number per(final Class<?> type) {
+                default Class<? extends Number> per(final Class<?> type) {
                     if (type == Beam.class ||
                         type == MetronomeBeam.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.BeamLevel_Values;
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return "1";
-                            }
-                        };
+                        return Number_PerMany1.class;
                     else
                     if (type == Arpeggiate.class ||
                         type == Bracket.class ||
@@ -3570,28 +3625,17 @@ extends XML
                         type == Slide.class ||
                         type == Slur.class ||
                         type == Wedge.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.NumberLevel_Values;
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return "1";
-                            }
-                        };
+                        return Number_PerMany2.class;
                     else
                     if (type == Tied.class ||
                         type == Tuplet.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.NumberLevel_Values;
-                        };
+                        return Number_PerMany3.class;
                     else
                     if (type == KeyOctave.class ||
                         type == Lyric.class ||
                         type == LyricFont.class ||
                         type == LyricLanguage.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.NMTOKEN_Literal;
-                        };
+                        return Number_PerMany4.class;
                     else
                     if (type == Clef.class ||
                         type == Key.class ||
@@ -3599,33 +3643,76 @@ extends XML
                         type == StaffDetails.class ||
                         type == Time.class ||
                         type == Transpose.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-                        };
+                        return Number_PerMany5.class;
                     else
                     if (type == Ending.class ||
                         type == Measure.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Number_PerMany6.class;
                     else
                     if (type == Grouping.class ||
                         type == PartGroup.class)
-                        return new Number() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return "1";
-                            }
-                        };
+                        return Number_PerMany7.class;
 
                     return null;
+                }
+
+                interface Number_PerMany1
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.BeamLevel_Values;
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return "1";
+                    }
+                }
+
+                interface Number_PerMany2
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.NumberLevel_Values;
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return "1";
+                    }
+                }
+
+                interface Number_PerMany3
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.NumberLevel_Values;
+                }
+
+                interface Number_PerMany4
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.NMTOKEN_Literal;
+                }
+
+                interface Number_PerMany5
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
+                }
+
+                interface Number_PerMany6
+                extends
+                    Number,
+                    RequiredAttribute
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
+                }
+
+                interface Number_PerMany7
+                extends Number
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return "1";
+                    }
                 }
             }
 
@@ -4283,19 +4370,27 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default Size per(final Class<?> type) {
+                default Class<? extends Size> per(final Class<?> type) {
                     if (type == Clef.class ||
                         type == Type.class)
-                        return new Size() {
-                            java.lang.String[] Values = Entity.SymbolSize_Values;
-                        };
+                        return Size_PerMany1.class;
                     else
                     if (type == OctaveShift.class)
-                        return new Size() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-                        };
+                        return Size_PerOctaveShift.class;
 
                     return null;
+                }
+
+                interface Size_PerMany1
+                extends Size
+                {
+                    java.lang.String[] Values = Entity.SymbolSize_Values;
+                }
+
+                interface Size_PerOctaveShift
+                extends Size
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
                 }
             }
 
@@ -4338,19 +4433,26 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default Number per(final Class<?> type) {
-                    if (type == DelayedTurn.class || type == DelayedInvertedTurn.class || type == InvertedTurn.class || type == Turn.class)
-                        return new Number() {
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return NO;
-                            }
-                        };
+                default Class<? extends Slash> per(final Class<?> type) {
+                    if (type == DelayedTurn.class ||
+                        type == DelayedInvertedTurn.class ||
+                        type == InvertedTurn.class ||
+                        type == Turn.class)
+                        return Slash_PerMany1.class;
                     else
                     if (type == Grace.class)
-                        return new Number() {};
+                        return Slash.class;
 
                     return null;
+                }
+
+                interface Slash_PerMany1
+                extends Slash
+                {
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return NO;
+                    }
                 }
             }
 
@@ -4674,52 +4776,61 @@ extends XML
                 };
 
                 @Override
-                default Symbol per(final Class<?> type) {
+                default Class<? extends Symbol> per(final Class<?> type) {
                     if (type == DegreeValue.class)
-                        return new Symbol() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                AUGMENTED,
-                                DIMINISHED,
-                                HALF_DIMINISHED,
-                                MAJOR,
-                                MINOR
-                            };
-                        };
+                        return Symbol_PerDegreeValue.class;
                     else
                     if (type == Interchangeable.class ||
                         type == Time.class)
-                        return new Symbol() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                COMMON,
-                                CUT,
-                                DOTTED_NOTE,
-                                NORMAL,
-                                NOTE,
-                                SINGLE_NUMBER
-                            };
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return NORMAL;
-                            }
-                        };
+                        return Symbol_PerMany1.class;
                     else
                     if (type == PrincipalVoice.class)
-                        return new Symbol() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                HAUPTSTIMME,
-                                NEBENSTIMME,
-                                NONE,
-                                PLAIN
-                            };
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Symbol_PerPrincipalVoice.class;
 
                     return null;
+                }
+
+                interface Symbol_PerDegreeValue
+                extends Symbol
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        AUGMENTED,
+                        DIMINISHED,
+                        HALF_DIMINISHED,
+                        MAJOR,
+                        MINOR
+                    };
+                }
+
+                interface Symbol_PerMany1
+                extends Symbol
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        COMMON,
+                        CUT,
+                        DOTTED_NOTE,
+                        NORMAL,
+                        NOTE,
+                        SINGLE_NUMBER
+                    };
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return NORMAL;
+                    }
+                }
+
+                interface Symbol_PerPrincipalVoice
+                extends
+                    RequiredAttribute,
+                    Symbol
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        HAUPTSTIMME,
+                        NEBENSTIMME,
+                        NONE,
+                        PLAIN
+                    };
                 }
             }
 
@@ -4974,6 +5085,7 @@ extends XML
             interface Type
             extends
                 Analytic,
+                RequiredAttribute,
                 XML.Schematic.PerType
             {
                 /** The array of accepted element types. */
@@ -5043,7 +5155,7 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default Type per(final Class<?> type) {
+                default Class<? extends Type> per(final Class<?> type) {
                     if (type == Barre.class ||
                         type == BeatType.class ||
                         type == Dashes.class ||
@@ -5058,36 +5170,18 @@ extends XML
                         type == Slide.class ||
                         type == Tie.class ||
                         type == Tuplet.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.StartStop_Values;
-                        };
+                        return Type_PerMany1.class;
                     else
                     if (type == Bracket.class ||
                         type == Slur.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.StartStopContinue_Values;
-                        };
+                        return Type_PerMany2.class;
                     else
                     if (type == Creator.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                ARRANGER,
-                                COMPOSER,
-                                LYRICIST
-                            };
-                        };
+                        return Type_PerCreator.class;
                     else
                     if (type == CreditImage.class ||
                         type == Image.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                "application/postscript",
-                                "image/gif",
-                                "image/jpeg",
-                                "image/png",
-                                "image/tiff"
-                            };
-                        };
+                        return Type_PerMany3.class;
                     else
                     if (type == Creator.class ||
                         type == Encoder.class ||
@@ -5096,214 +5190,322 @@ extends XML
                         type == OtherPlay.class ||
                         type == Relation.class ||
                         type == Rights.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.CDATA_Literal;
-                        };
+                        return Type_PerMany4.class;
                     else
                     if (type == Distance.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                BEAM,
-                                HYPHEN
-                            };
-                        };
+                        return Type_PerDistance.class;
                     else
                     if (type == Ending.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                DISCONTINUE,
-                                START,
-                                STOP
-                            };
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Type_PerEnding.class;
                     else
                     if (type == Extend.class ||
                         type == WavyLine.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.StartStopContinue_Values;
-                        };
+                        return Type_PerMany5.class;
                     else
                     if (type == Fermata.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                INVERTED,
-                                UPRIGHT
-                            };
-                        };
+                        return Type_PerFermata.class;
                     else
                     if (type == Grouping.class ||
                         type == OtherNotation.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.StartStopSingle_Values;
-                        };
+                        return Type_PerMany6.class;
                     else
                     if (type == Glyph.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                C_CLEF,
-                                F_CLEF,
-                                G_CLEF_OTTAVA_BASSA,
-                                OCTAVE_SHIFT_CONTINUE_15,
-                                OCTAVE_SHIFT_CONTINUE_22,
-                                OCTAVE_SHIFT_CONTINUE_8,
-                                OCTAVE_SHIFT_DOWN_15,
-                                OCTAVE_SHIFT_DOWN_22,
-                                OCTAVE_SHIFT_DOWN_8,
-                                OCTAVE_SHIFT_UP_15,
-                                OCTAVE_SHIFT_UP_22,
-                                OCTAVE_SHIFT_UP_8,
-                                PERCUSSION_CLEF,
-                                QUARTER_REST
-                            };
-                        };
+                        return Type_PerGlyph.class;
                     else
                     if (type == Harmony.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                ALTERNATE,
-                                EXPLICIT,
-                                IMPLIED
-                            };
-                        };
+                        return Type_PerHarmony.class;
                     else
                     if (type == LineWidth.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                BEAM,
-                                BRACKET,
-                                DASHES,
-                                ENCLOSURE,
-                                ENDING,
-                                EXTEND,
-                                HEAVY__BARLINE,
-                                LEGER,
-                                LIGHT__BARLINE,
-                                OCTAVE__SHIFT,
-                                PEDAL,
-                                SLUR__MIDDLE,
-                                SLUR__TIP,
-                                STAFF,
-                                STEM,
-                                TIE__MIDDLE,
-                                TIE__TIP,
-                                TUPLET__BRACKET,
-                                WEDGE
-                            };
-                        };
+                        return Type_PerLineWidth.class;
                     else
                     if (type == NonArpeggiate.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.TopBottom_Values;
-                        };
+                        return Type_NonArpeggiate.class;
                     else
                     if (type == NoteSize.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                CUE,
-                                GRACE,
-                                GRACE_CUE,
-                                LARGE
-                            };
-                        };
+                        return Type_PerNoteSize.class;
                     else
                     if (type == OctaveShift.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                CONTINUE,
-                                DOWN,
-                                STOP,
-                                UP
-                            };
-                        };
+                        return Type_PerOctaveShift.class;
                     else
                     if (type == Pedal.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                CHANGE,
-                                CONTINUE,
-                                SOSTENUTO,
-                                START,
-                                STOP
-                            };
-                        };
+                        return Type_PerPedal.class;
                     else
                     if (type == Rights.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                ARRANGEMENT,
-                                MUSIC,
-                                WORDS
-                            };
-                        };
+                        return Type_PerRights.class;
                     else
                     if (type == StaffDivide.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                DOWN,
-                                UP,
-                                UP_DOWN
-                            };
-
-                            @Override
-                            public boolean isRequired() {
-                                return true;
-                            }
-                        };
+                        return Type_PerStaffDivide.class;
                     else
                     if (type == StringMute.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                OFF,
-                                ON
-                            };
-                        };
+                        return Type_PerStringMute.class;
                     else
                     if (type == StrongAccent.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.UpDown_Values;
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return UP;
-                            }
-                        };
+                        return Type_PerStrongAccent.class;
                     else
                     if (type == Tremolo.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.TremoloType_Values;
-
-                            @Override
-                            public java.lang.String defaultValue() {
-                                return SINGLE;
-                            }
-                        };
+                        return Type_PerTremolo.class;
                     else
                     if (type == Supports.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.YesNo_Values;
-                        };
+                        return Type_PerSupports.class;
                     else
                     if (type == Tied.class)
-                        return new Type() {
-                            java.lang.String[] Values = Entity.TiedType_Values;
-                        };
+                        return Type_PerTied.class;
                     else
                     if (type == Wedge.class)
-                        return new Type() {
-                            java.lang.String[] Values = new java.lang.String[] {
-                                CONTINUE,
-                                CRESCENDO,
-                                DIMINUENDO,
-                                STOP
-                            };
-                        };
+                        return Type_PerWedge.class;
 
                     return null;
+                }
+
+                interface Type_PerMany1
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.StartStop_Values;
+                }
+
+                interface Type_PerMany2
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.StartStopContinue_Values;
+                }
+
+                interface Type_PerCreator
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        ARRANGER,
+                        COMPOSER,
+                        LYRICIST
+                    };
+                }
+
+                interface Type_PerMany3
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        "application/postscript",
+                        "image/gif",
+                        "image/jpeg",
+                        "image/png",
+                        "image/tiff"
+                    };
+                }
+
+                interface Type_PerMany4
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.CDATA_Literal;
+                }
+
+                interface Type_PerDistance
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        BEAM,
+                        HYPHEN
+                    };
+                }
+
+                interface Type_PerEnding
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        DISCONTINUE,
+                        START,
+                        STOP
+                    };
+                }
+
+                interface Type_PerMany5
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.StartStopContinue_Values;
+                }
+
+                interface Type_PerFermata
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        INVERTED,
+                        UPRIGHT
+                    };
+                }
+
+                interface Type_PerMany6
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.StartStopSingle_Values;
+                }
+
+                interface Type_PerGlyph
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        C_CLEF,
+                        F_CLEF,
+                        G_CLEF_OTTAVA_BASSA,
+                        OCTAVE_SHIFT_CONTINUE_15,
+                        OCTAVE_SHIFT_CONTINUE_22,
+                        OCTAVE_SHIFT_CONTINUE_8,
+                        OCTAVE_SHIFT_DOWN_15,
+                        OCTAVE_SHIFT_DOWN_22,
+                        OCTAVE_SHIFT_DOWN_8,
+                        OCTAVE_SHIFT_UP_15,
+                        OCTAVE_SHIFT_UP_22,
+                        OCTAVE_SHIFT_UP_8,
+                        PERCUSSION_CLEF,
+                        QUARTER_REST
+                    };
+                }
+
+                interface Type_PerHarmony
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        ALTERNATE,
+                        EXPLICIT,
+                        IMPLIED
+                    };
+                }
+
+                interface Type_PerLineWidth
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        BEAM,
+                        BRACKET,
+                        DASHES,
+                        ENCLOSURE,
+                        ENDING,
+                        EXTEND,
+                        HEAVY__BARLINE,
+                        LEGER,
+                        LIGHT__BARLINE,
+                        OCTAVE__SHIFT,
+                        PEDAL,
+                        SLUR__MIDDLE,
+                        SLUR__TIP,
+                        STAFF,
+                        STEM,
+                        TIE__MIDDLE,
+                        TIE__TIP,
+                        TUPLET__BRACKET,
+                        WEDGE
+                    };
+                }
+
+                interface Type_NonArpeggiate
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.TopBottom_Values;
+                }
+
+                interface Type_PerNoteSize
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        CUE,
+                        GRACE,
+                        GRACE_CUE,
+                        LARGE
+                    };
+                }
+
+                interface Type_PerOctaveShift
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        CONTINUE,
+                        DOWN,
+                        STOP,
+                        UP
+                    };
+                }
+
+                interface Type_PerPedal
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        CHANGE,
+                        CONTINUE,
+                        SOSTENUTO,
+                        START,
+                        STOP
+                    };
+                }
+
+                interface Type_PerRights
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        ARRANGEMENT,
+                        MUSIC,
+                        WORDS
+                    };
+                }
+
+                interface Type_PerStaffDivide
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        DOWN,
+                        UP,
+                        UP_DOWN
+                    };
+                }
+
+                interface Type_PerStringMute
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        OFF,
+                        ON
+                    };
+                }
+
+                interface Type_PerStrongAccent
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.UpDown_Values;
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return UP;
+                    }
+                }
+
+                interface Type_PerTremolo
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.TremoloType_Values;
+
+                    @Override
+                    default java.lang.String defaultValue() {
+                        return SINGLE;
+                    }
+                }
+
+                interface Type_PerSupports
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.YesNo_Values;
+                }
+
+                interface Type_PerTied
+                extends Type
+                {
+                    java.lang.String[] Values = Entity.TiedType_Values;
+                }
+
+                interface Type_PerWedge
+                extends Type
+                {
+                    java.lang.String[] Values = new java.lang.String[] {
+                        CONTINUE,
+                        CRESCENDO,
+                        DIMINUENDO,
+                        STOP
+                    };
                 }
             }
 
@@ -5452,8 +5654,8 @@ extends XML
             {
                 /** The array of accepted entity names. */
                 java.lang.String[] Names = new java.lang.String[] {
-                    VAlign,
-                    VAlignImage
+                    VALIGN,
+                    VALIGN_IMAGE
                 };
 
                 /** The array of accepted element types. */
@@ -5472,18 +5674,14 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default VAlign per(final java.lang.String name) {
+                default Class<? extends VAlign> per(final java.lang.String name) {
                     switch (name)
                     {
-                        case VAlign:
-                        return new VAlign() {
-                            java.lang.String[] Values = Entity.VAlign_Values;
-                        };
+                        case VALIGN:
+                        return VAlign_PerMany1.class;
 
-                        case VAlignImage:
-                        return new VAlign() {
-                            java.lang.String[] Values = Entity.VAlignImage_Values;
-                        };
+                        case VALIGN_IMAGE:
+                        return VAlign_PerKind.class;
                     }
 
                     return null;
@@ -5497,20 +5695,28 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default VAlign per(final Class<?> type) {
+                default Class<? extends VAlign> per(final Class<?> type) {
                     if (type == CreditImage.class ||
                         type == Frame.class ||
                         type == Image.class)
-                        return new VAlign() {
-                            java.lang.String[] Values = Entity.VAlign_Values;
-                        };
+                        return VAlign_PerMany1.class;
                     else
                     if (type == Kind.class)
-                        return new VAlign() {
-                            java.lang.String[] Values = Entity.VAlignImage_Values;
-                        };
+                        return VAlign_PerKind.class;
 
                     return null;
+                }
+
+                interface VAlign_PerMany1
+                extends VAlign
+                {
+                    java.lang.String[] Values = Entity.VAlign_Values;
+                }
+
+                interface VAlign_PerKind
+                extends VAlign
+                {
+                    java.lang.String[] Values = Entity.VAlignImage_Values;
                 }
             }
 
@@ -5741,26 +5947,31 @@ extends XML
                  * @return the attribute.
                  */
                 @Override
-                default XmlLang per(final Class<?> type) {
+                default Class<?extends XmlLang> per(final Class<?> type) {
                     if (type == Directive.class ||
                         type == Text.class)
-                        return new XmlLang() {
-                            @Override
-                            public boolean isRequired() {
-                                return false;
-                            }
-                        };
+                        return XmlLang_PerMany1.class;
                     else
-                        if (type == LyricLanguage.class)
-                            return new XmlLang() {
-                                @Override
-                                public boolean isRequired() {
-                                    return true;
-                                }
-                            };
+                    if (type == LyricLanguage.class)
+                        return XmlLang_PerLyricLanguage.class;
 
                     return null;
                 }
+
+                interface XmlLang_PerMany1
+                extends XmlLang
+                {
+                    @Override
+                    default boolean isRequired() {
+                        return false;
+                    }
+                }
+
+                interface XmlLang_PerLyricLanguage
+                extends
+                    RequiredAttribute,
+                    XmlLang
+                {}
             }
 
             /**
@@ -8211,24 +8422,33 @@ extends XML
             }
 
             @Override
-            default AccidentalText per(final Class<?> type) {
-                if (type == PartNameDisplay.class || type == PartAbbreviationDisplay.class)
-                    return new AccidentalText() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+            default Class<? extends AccidentalText> per(final Class<?> type) {
+                if (type == PartNameDisplay.class
+                    || type == PartAbbreviationDisplay.class)
+                    return AccidentalText_PerMany1.class;
                 else
-                    if (type == NoteheadText.class)
-                        return new AccidentalText() {
-                            @Override
-                            public java.lang.String occurrence() {
-                                return Occurrence.OneOrMore;
-                            }
-                        };
+                if (type == NoteheadText.class)
+                    return AccidentalText_PerNoteheadText.class;
 
-                throw new IllegalArgumentException(XmlElementUnsupported);
+                return null;
+            }
+
+            interface AccidentalText_PerMany1
+            extends AccidentalText
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
+            }
+
+            interface AccidentalText_PerNoteheadText
+            extends AccidentalText
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.OneOrMore;
+                }
             }
         }
 
@@ -8619,24 +8839,32 @@ extends XML
             };
 
             @Override
-            default Dynamics per(final Class<?> type) {
+            default Class<? extends Dynamics> per(final Class<?> type) {
                 if (type == Notations.class)
-                    return new Dynamics() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+                    return Dynamics_PerNotations.class;
                 else
-                    if (type == DirectionType.class)
-                        return new Dynamics() {
-                            @Override
-                            public java.lang.String occurrence() {
-                                return Occurrence.OneOrMore;
-                            }
-                        };
+                if (type == DirectionType.class)
+                    return Dynamics_PerDirectionType.class;
 
-                throw new IllegalArgumentException(XmlElementUnsupported);
+                return null;
+            }
+
+            interface Dynamics_PerNotations
+            extends Dynamics
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
+            }
+
+            interface Dynamics_PerDirectionType
+            extends Dynamics
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.OneOrMore;
+                }
             }
         }
 
@@ -9284,12 +9512,6 @@ extends XML
             Analytic,
             XML.Schematic.PerType
         {
-            /** The array of accepted parent element types. */
-            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
-                Barline.class,
-                Notations.class,
-            };
-
             /** The array of supported attributes. */
             Class<? extends Element.Attribute>[] Attributes = (Class<? extends Element.Attribute>[]) new Class<?>[] {
                 Element.Attribute.Type.class,
@@ -9303,6 +9525,12 @@ extends XML
                 Element.Attribute.FontWeight.class,
                 Element.Attribute.Color.class,
                 Element.Attribute.ID.class,
+            };
+
+            /** The array of accepted parent element types. */
+            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
+                Barline.class,
+                Notations.class,
             };
 
             /** The array of accepted values. */
@@ -9319,24 +9547,32 @@ extends XML
             };
 
             @Override
-            default Fermata per(final Class<?> type) {
+            default Class<?extends Fermata> per(final Class<?> type) {
                 if (type == Barline.class)
-                    return new Fermata() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrOneOrTwo;
-                        }
-                    };
+                    return Fermata_PerBarline.class;
                 else
                 if (type == Notations.class)
-                    return new Fermata() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+                    return Fermata_PerNotations.class;
 
                 return null;
+            }
+
+            interface Fermata_PerBarline
+            extends Fermata
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrOneOrTwo;
+                }
+            }
+
+            interface Fermata_PerNotations
+            extends Fermata
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
             }
         }
 
@@ -12635,12 +12871,12 @@ extends XML
                 };
 
             @Override
-            default Measure per(final Class<?> type) {
+            default Class<? extends Measure> per(final Class<?> type) {
                 if (type == ScorePartwise.class)
-                    return new Measure_PerScorePartwise() {};
+                    return Measure_PerScorePartwise.class;
                 else
                 if (type == ScoreTimewise.class)
-                    return new Measure_PerScoreTimewise() {};
+                    return Measure_PerScoreTimewise.class;
 
                 return null;
             }
@@ -15396,12 +15632,12 @@ extends XML
             };
 
             @Override
-            default Part per(final Class<?> type) {
+            default Class<? extends Part> per(final Class<?> type) {
                 if (type == ScorePartwise.class)
-                    return new Part_PerScorePartwise() {};
+                    return Part_PerScorePartwise.class;
                 else
                 if (type == ScoreTimewise.class)
-                    return new Part_PerScoreTimewise() {};
+                    return Part_PerScoreTimewise.class;
 
                 return null;
             }
@@ -16125,12 +16361,6 @@ extends XML
             Analytic,
             XML.Schematic.PerType
         {
-            /** The array of accepted parent elements. */
-            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
-                Note.class,
-                Sound.class,
-            };
-
             /** The array of supported attributes. */
             Class<? extends Element.Attribute>[] Attributes = (Class<? extends Element.Attribute>[]) new Class<?>[] {
                 Element.Attribute.ID.class,
@@ -16144,25 +16374,39 @@ extends XML
                 OtherPlay.class,
             };
 
+            /** The array of accepted parent elements. */
+            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
+                Note.class,
+                Sound.class,
+            };
+
             @Override
-            default Play per(final Class<?> type) {
+            default Class<? extends Play> per(final Class<?> type) {
                 if (type == Note.class)
-                    return new Play() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrOne;
-                        }
-                    };
+                    return Play_PerNote.class;
                 else
                 if (type == Sound.class)
-                    return new Play() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+                    return Play_PerSound.class;
 
                 return null;
+            }
+
+            interface Play_PerNote
+            extends Play
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrOne;
+                }
+            }
+
+            interface Play_PerSound
+            extends Play
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
             }
         }
 
@@ -18551,12 +18795,6 @@ extends XML
             Analytic,
             XML.Schematic.PerType
         {
-            /** The array of accepted parent element types. */
-            Class<? extends Element>[] Elements = (Class<? extends Element>[]) new Class<?>[] {
-                Barline.class,
-                Ornaments.class,
-            };
-
             /** The array of supported attributes. */
             Class<? extends Element.Attribute>[] Attributes = (Class<? extends Element.Attribute>[]) new Class<?>[] {
                 Element.Attribute.Type.class,
@@ -18577,26 +18815,40 @@ extends XML
                 Element.Attribute.LastBeat.class,
             };
 
+            /** The array of accepted parent element types. */
+            Class<? extends Element>[] Elements = (Class<? extends Element>[]) new Class<?>[] {
+                Barline.class,
+                Ornaments.class,
+            };
+
             @Override
-            default Staff per(final Class<?> type) {
+            default Class<? extends Staff> per(final Class<?> type) {
                 if (type == Barline.class ||
                     type == Forward.class)
-                    return new Staff() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrOne;
-                        }
-                    };
+                    return Staff_PerMany1.class;
                 else
-                    if (type == Ornaments.class)
-                        return new Staff() {
-                            @Override
-                            public java.lang.String occurrence() {
-                                return Occurrence.ZeroOrMore;
-                            }
-                        };
+                if (type == Ornaments.class)
+                    return Staff_PerOrnaments.class;
 
                 return null;
+            }
+
+            interface Staff_PerMany1
+            extends Staff
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrOne;
+                }
+            }
+
+            interface Staff_PerOrnaments
+            extends Staff
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
             }
         }
 
@@ -21305,12 +21557,6 @@ extends XML
             Analytic,
             XML.Schematic.PerType
         {
-            /** The array of accepted parent element types. */
-            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
-                Barline.class,
-                Ornaments.class,
-            };
-
             /** The array of supported attributes. */
             Class<? extends Element.Attribute>[] Attributes = (Class<? extends Element.Attribute>[]) new Class<?>[] {
                 Element.Attribute.Type.class,
@@ -21331,25 +21577,39 @@ extends XML
                 Element.Attribute.LastBeat.class,
             };
 
+            /** The array of accepted parent element types. */
+            Class<? extends Element>[] Types = (Class<? extends Element>[]) new Class<?>[] {
+                Barline.class,
+                Ornaments.class,
+            };
+
             @Override
-            default WavyLine per(final Class<?> type) {
+            default Class<? extends WavyLine> per(final Class<?> type) {
                 if (type == Barline.class)
-                    return new WavyLine() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrOne;
-                        }
-                    };
+                    return WavyLine_PerBarline.class;
                 else
                 if (type == Ornaments.class)
-                    return new WavyLine() {
-                        @Override
-                        public java.lang.String occurrence() {
-                            return Occurrence.ZeroOrMore;
-                        }
-                    };
+                    return WavyLine_PerOrnaments.class;
 
                 return null;
+            }
+
+            interface WavyLine_PerBarline
+            extends WavyLine
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrOne;
+                }
+            }
+
+            interface WavyLine_PerOrnaments
+            extends WavyLine
+            {
+                @Override
+                default java.lang.String occurrence() {
+                    return Occurrence.ZeroOrMore;
+                }
             }
         }
 
@@ -22334,6 +22594,16 @@ extends XML
             Standard(org.w3c.dom.Document document) {
                 super(document);
             }
+        }
+    }
+
+    public
+    interface RequiredAttribute
+    extends Element.Attribute
+    {
+        @Override
+        default boolean isRequired() {
+            return true;
         }
     }
 

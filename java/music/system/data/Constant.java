@@ -1052,24 +1052,6 @@ class Constant
         }
 
         /**
-         * {@code Entity} holds all MusicXML entities defined in the schema files.
-         *
-         * @since 1.8
-         * @author Alireza Kamran
-         */
-        interface Entity
-        {
-            String VAlign = "valign";
-            String VAlignImage = "valign-image";
-
-            String CDATA = "CDATA";
-            String ID = "ID";
-            String IDREF = "IDREF";
-            String NMTOKEN = "NMTOKEN";
-            String PCDATA = "#PCDATA";
-        }
-
-        /**
          * {@code Sound} holds all standard MusicXML sounds.
          *
          * @since 1.8

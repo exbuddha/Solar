@@ -67,6 +67,21 @@ class Constant
         String IndentKey = "{http://xml.apache.org/xslt}indent-amount";
 
         /**
+         * {@code Entity} holds all XML entities defined in the schema files.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        interface Entity
+        {
+            String CDATA = "CDATA";
+            String ID = "ID";
+            String IDREF = "IDREF";
+            String NMTOKEN = "NMTOKEN";
+            String PCDATA = "#PCDATA";
+        }
+
+        /**
          * {@code Occurrence} holds all standard XML entity occurrence indicator values used in the schema files.
          *
          * @since 1.8
