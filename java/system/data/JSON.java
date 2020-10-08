@@ -13,7 +13,6 @@ import system.data.Format.Interpretable;
  * {@code JSON} represents a JSON document.
  * <p/>
  * It also holds static members for generating JSON elements from an input stream or character sequence, writing elements to output streams, and traversing them.
- * The static methods in this class are thread-safe.
  * <p/>
  * This class implementation is in progress.
  *
@@ -485,6 +484,9 @@ implements Hierarchical
      * By design, the generic type of this class defines the handler's result element type.
      *
      * @param <T> the document node type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     public static abstract
     class Handler<T extends Element>

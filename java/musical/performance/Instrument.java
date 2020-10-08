@@ -456,7 +456,7 @@ implements
             ) { return null; }
 
         @Override
-        public boolean is(final Type<? extends Color> type) {
+        public boolean is(final Type<? super Color> type) {
             return type == this;
         }
 

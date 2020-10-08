@@ -39,7 +39,7 @@ extends musical.Interpreted
     /**
      * {@code OrderedSet} classifies a sorted set with interpreted ordering.
      * <p/>
-     * Ordered sets are equivalent of java standard {@link SortedSet} with the twist that each element in the set can be attached to other adjacent elements creating a group with specific significance.
+     * Ordered sets are equivalent of Java standard {@link SortedSet} with the twist that each element in the set can be attached to other adjacent elements creating a group with specific significance.
      * <p/>
      * This class implementation is in progress.
      *

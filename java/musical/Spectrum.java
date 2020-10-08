@@ -69,7 +69,7 @@ extends Sound
         Transient;
 
         @Override
-        public boolean is(final Type<? extends Effect> type) {
+        public boolean is(final Type<? super Effect> type) {
             return this == type;
         }
     }

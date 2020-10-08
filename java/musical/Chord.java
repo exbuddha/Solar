@@ -201,7 +201,7 @@ extends
         }
 
         @Override
-        public boolean is(final Type<? extends Mode> type) {
+        public boolean is(final Type<? super Mode> type) {
             return this == type;
         }
 

@@ -85,7 +85,7 @@ implements
      * @return true if the specified action type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final Type<? extends Action> type) {
+    public boolean is(final Type<? super Action> type) {
         if (type == null)
             return false;
 

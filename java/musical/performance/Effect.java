@@ -100,7 +100,7 @@ implements
      * @return true if the specified effect type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final Type<? extends Effect> type) {
+    public boolean is(final Type<? super Effect> type) {
         if (type == null)
             return false;
 

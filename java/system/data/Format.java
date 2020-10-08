@@ -145,7 +145,7 @@ interface Format
             /**
              * {@code Element} classifies all document elements.
              * <p/>
-             * Document elements are the uniquely recognized atomic units in documents that are meaningful in logical contexts.
+             * Document elements are the uniquely recognized units in documents that are meaningful in logical contexts.
              * They are commonly associated with all data types within a specific documents.
              *
              * @since 1.8
@@ -158,7 +158,7 @@ interface Format
             /**
              * {@code ElementPart} classifies all document element parts.
              * <p/>
-             * A document element part can be any arbitrary section of an element that can stand alone as a recognized piece in that element.
+             * A document element part can be any arbitrary non-element section of an element that can stand alone as a recognized piece in that element.
              *
              * @since 1.8
              * @author Alireza Kamran
@@ -234,7 +234,7 @@ interface Format
                 interface Conditional
                 {
                     /**
-                     * {@code Operator} classifies conditional data types that are composed of one of many conditional data types.
+                     * {@code Operator} classifies conditional data types that are composed of one or many conditional data types.
                      *
                      * @since 1.8
                      * @author Alireza Kamran

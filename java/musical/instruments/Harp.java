@@ -3,7 +3,7 @@ package musical.instruments;
 import musical.Note;
 
 /**
- * {@code Harp} represents the most common form of the harp instrument.
+ * {@code Harp} classifies the most common form of the harp instrument.
  * <p/>
  * This class implementation is in progress.
  *

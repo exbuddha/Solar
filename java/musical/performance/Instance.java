@@ -66,7 +66,7 @@ implements
     }
 
     @Override
-    public boolean is(final Type<? extends Temporal> type) {
+    public boolean is(final Type<? super Temporal> type) {
         return this == type;
     }
 

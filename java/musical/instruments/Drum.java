@@ -4,6 +4,9 @@ import system.Type;
 
 /**
  * {@code Drum} classifies all common forms of drum instruments in which sound is produced by a struck membrane.
+ *
+ * @since 1.8
+ * @author Alireza Kamran
  */
 public abstract
 class Drum
@@ -22,7 +25,7 @@ extends StruckMembranophone
     extends StruckMembranophone.Accessory
     {
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof Accessory;
         }
     }

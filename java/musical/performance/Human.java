@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * {@code Human} represents a performer's physical body.
+ * {@code Human} classifies a performer's physical body.
  * <p/>
  * This superclass defines a model of the human anatomy, sufficiently simplified for representing the postures and movements in music performance.
  *
@@ -844,7 +844,7 @@ extends Instrument
     extends Part
     {
         @Override
-        public default boolean is(final Type<? extends Part> type) {
+        public default boolean is(final Type<? super Part> type) {
             return type instanceof BodyPart;
         }
 

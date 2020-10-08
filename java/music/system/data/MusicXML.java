@@ -624,18 +624,6 @@ extends XML
         }
 
         /**
-         * Returns the occurrence character flag for the element.
-         * <p/>
-         * This implementation returns null.
-         *
-         * @return the occurrence character flag.
-         */
-        @Override
-        default java.lang.String occurrence() {
-            return Occurrence.OnlyOne;
-        }
-
-        /**
          * {@code Accent} classifies the MusicXML element, {@code accent}.
          * <p/>
          * This element is declared by the element type {@code accent} for the element type {@code articulations} in the note.mod schema file.
@@ -838,6 +826,16 @@ extends XML
 
             /** The array of accepted values. */
             java.lang.String[] Values = Entity.PCDATA_Literal;
+
+            /**
+            * {@inheritDoc}
+            *
+            * @return {@link Occurrence#OnlyOne}.
+            */
+            @Override
+            default java.lang.String occurrence() {
+                return Occurrence.OnlyOne;
+            }
 
             @Override
             default Class<? extends AccidentalText> per(final Class<?> type) {

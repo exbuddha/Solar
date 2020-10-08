@@ -1,7 +1,7 @@
 package musical;
 
 /**
- * {@code IntervalType} classifies all articulations.
+ * {@code Articulation} classifies all articulations.
  *
  * @since 1.8
  * @author Alireza Kamran

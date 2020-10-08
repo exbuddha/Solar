@@ -11,7 +11,7 @@ import java.util.Iterator;
  * for (T element : finder) { ... }
  * </code></pre>
  * Finders are not concurrent objects.
- * If the underlying data structure is changed after creation, they results can be inaccurate or erroneous.
+ * If the underlying data structure is changed after creation, the results can be inaccurate or erroneous.
  *
  * @param <T> the type of elements returned by this finder.
  *

@@ -29,7 +29,7 @@ extends
      *
      * @return true if the phrase is instantaneous.
      */
-    public default
+    default
     boolean isInstantaneous() {
         return false;
     }
@@ -49,7 +49,7 @@ extends
      * @since 1.8
      * @author Alireza Kamran
      */
-    public static abstract
+    abstract
     class Detection
     implements
         Consumer<Instance>,
@@ -72,7 +72,6 @@ extends
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     enum Sensation
     implements
         Perception,
@@ -89,6 +88,6 @@ extends
         Unrestful;
 
         @Override
-        public boolean is(Type<? extends Perception> type) { return false; }
+        public boolean is(Type<? super Perception> type) { return false; }
     }
 }

@@ -81,7 +81,7 @@ implements
     }
 
     @Override
-    public boolean is(final Type<? extends Enum<Clef>> type) {
+    public boolean is(final Type<? super Enum<Clef>> type) {
         if (type == null)
             return false;
 

@@ -120,6 +120,14 @@ implements
     public static final
     Singleton TwoHundredFiftySixth = new Singleton(TwoHundredFiftySixthSym, 1, (short) 256, (short) 256);
 
+    /** The two hundred fifty-sixth note. */
+    public static final
+    Singleton FiveHundredTwelfth = new Singleton(TwoHundredFiftySixthSym, 1, (short) 512, (short) 512);
+
+    /** The two hundred fifty-sixth note. */
+    public static final
+    Singleton OneThousandTwentyFourth = new Singleton(TwoHundredFiftySixthSym, 1, (short) 1024, (short) 1024);
+
     /** Grace note. (instantanous) */
     public static final
     Singleton Grace = new Singleton(GraceSym, 0, (short) 8);
@@ -307,6 +315,30 @@ implements
     /** The triple-dotted two hundred fifty-sixth note. */
     public static final
     Singleton TripleDottedTwoHundredFiftySixth = new Singleton(TripleDottedTwoHundredFiftySixthSym, TwoHundredFiftySixth, (short) 2048, TripleDotted);
+
+    /** The dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DottedFiveHundredTwelfth = new Singleton(DottedFiveHundredTwelfthSym, FiveHundredTwelfth, (short) 1024, Dotted);
+
+    /** The double-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DoubleDottedFiveHundredTwelfth = new Singleton(DoubleDottedFiveHundredTwelfthSym, FiveHundredTwelfth, (short) 2048, DoubleDotted);
+
+    /** The triple-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton TripleDottedFiveHundredTwelfth = new Singleton(TripleDottedFiveHundredTwelfthSym, TwoHundredFiftySixth, (short) 4096, TripleDotted);
+
+    /** The dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DottedOneThousandTwentyFourth = new Singleton(DottedOneThousandTwentyFourthSym, OneThousandTwentyFourth, (short) 2048, Dotted);
+
+    /** The double-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton DoubleDottedOneThousandTwentyFourth = new Singleton(DoubleDottedOneThousandTwentyFourthSym, OneThousandTwentyFourth, (short) 4096, DoubleDotted);
+
+    /** The triple-dotted two hundred fifty-sixth note. */
+    public static final
+    Singleton TripleDottedOneThousandTwentyFourth = new Singleton(TripleDottedOneThousandTwentyFourthSym, OneThousandTwentyFourth, (short) 8192, TripleDotted);
 
     /** The duration symbol. */
     protected
@@ -1012,6 +1044,14 @@ implements
             DoubleDottedTwoHundredFiftySixth,
             DottedTwoHundredFiftySixth,
             TwoHundredFiftySixth,
+            FiveHundredTwelfth,
+            TripleDottedFiveHundredTwelfth,
+            DoubleDottedFiveHundredTwelfth,
+            DottedFiveHundredTwelfth,
+            OneThousandTwentyFourth,
+            TripleDottedOneThousandTwentyFourth,
+            DoubleDottedOneThousandTwentyFourth,
+            DottedOneThousandTwentyFourth,
 
             Grace
         };

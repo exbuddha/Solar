@@ -28,7 +28,7 @@ implements musical.Instrument
     void createKeyboard();
 
     @Override
-    public boolean is(final Type<? extends Instrument> type) {
+    public boolean is(final Type<? super Instrument> type) {
         return !(type instanceof musical.performance.Human);
     }
 
@@ -45,7 +45,7 @@ implements musical.Instrument
     extends musical.performance.Instrument.Accessory
     {
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof Accessory;
         }
     }
@@ -278,7 +278,7 @@ implements musical.Instrument
         }
 
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof Pedal &&
                    ((Pedal) type).getSymbol().equalsIgnoreCase(getSymbol());
         }

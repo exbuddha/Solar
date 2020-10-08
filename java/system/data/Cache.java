@@ -62,7 +62,7 @@ interface Cache
     }
 
     /**
-     * {@code Table} is an boolean n-tree dictionary used for string key matching.
+     * {@code Table} is a boolean n-tree dictionary used for string key matching.
      * <p/>
      * This class implementation is in progress.
      *

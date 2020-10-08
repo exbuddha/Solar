@@ -20,7 +20,7 @@ import java.util.Iterator;
  * As a result of this difference, locators allow enumeration of all the elements in their container type; whereas finders only allow enumeration of the found elements.
  * <p/>
  * Locators are not concurrent objects.
- * If the underlying data structure is changed after creation, they results can be inaccurate or erroneous.
+ * If the underlying data structure is changed after creation, the results can be inaccurate or erroneous.
  *
  * @param <T> the type of elements returned by this locator.
  *

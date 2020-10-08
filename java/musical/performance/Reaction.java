@@ -72,7 +72,7 @@ implements
      * @return true if the specified reaction type is of this type, and false otherwise.
      */
     @Override
-    public boolean is(final Type<? extends Reaction> type) {
+    public boolean is(final Type<? super Reaction> type) {
         if (type == null)
             return false;
 

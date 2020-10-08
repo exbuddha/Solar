@@ -92,7 +92,7 @@ extends
         }
 
         @Override
-        default boolean is(final Type<? extends Snapshot> type) {
+        default boolean is(final Type<? super Snapshot> type) {
             return this == type;
         }
     }

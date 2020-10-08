@@ -121,18 +121,8 @@ interface Null
         }
 
         @Override
-        default boolean equals(Object o) {
-            return false;
-        }
-
-        @Override
         default T get(int index) {
             return null;
-        }
-
-        @Override
-        default int hashCode() {
-            return 0;
         }
 
         @Override

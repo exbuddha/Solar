@@ -631,7 +631,7 @@ implements Snapshot
              * @return true if the specified motion type is of this type, and false otherwise.
              */
             @Override
-            public boolean is(final Type<? extends Motion> type) {
+            public boolean is(final Type<? super Motion> type) {
                 return type == this;
             }
 
@@ -673,7 +673,7 @@ implements Snapshot
                 public Object apply(ExecutionModel model, Motion motion) { return null; }
 
                 @Override
-                public boolean is(final Type<? extends Acceleration> type) {
+                public boolean is(final Type<? super Acceleration> type) {
                     // Accelerations are not associated with another type
                     return false;
                 }

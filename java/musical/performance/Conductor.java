@@ -102,7 +102,7 @@ implements
         }
 
         @Override
-        public boolean is(final Type<? extends Conductor<? super Interpretable>> type) {
+        public boolean is(final Type<? super Conductor<? super Interpretable>> type) {
             return type instanceof ExecutionModel;
         }
 

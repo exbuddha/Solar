@@ -46,7 +46,7 @@ extends MusicalInstrument
         }
 
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof String;
         }
 
@@ -98,7 +98,7 @@ extends MusicalInstrument
             }
 
             @Override
-            public boolean is(final Type<? extends Part> type) {
+            public boolean is(final Type<? super Part> type) {
                 return type instanceof Point;
             }
 

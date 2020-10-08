@@ -122,7 +122,7 @@ implements
     }
 
     @Override
-    public boolean is(final system.Type<? extends Instrument> type) {
+    public boolean is(final system.Type<? super Instrument> type) {
         return type instanceof Performer;
     }
 
