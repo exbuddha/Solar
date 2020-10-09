@@ -15,7 +15,7 @@ public
 interface Null
 {
     /**
-     * {@code List} classifies a null iterable.
+     * {@code Iterable} classifies a null iterable.
      *
      * @param <T> the type of elements returned by the iterator.
      *

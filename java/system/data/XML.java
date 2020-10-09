@@ -2618,7 +2618,7 @@ implements
     }
 
     /**
-     * {@code DocumentHandler} represent a handler that is in charge of parsing entire XML documents.
+     * {@code DocumentHandler} classifies a handler that is in charge of parsing entire XML documents.
      *
      * @since 1.8
      * @author Alireza Kamran
@@ -4348,7 +4348,7 @@ implements
         }
 
         /**
-         * {@code Element} classifies all XML data element attributes.
+         * {@code Attribute} classifies all XML data element attributes.
          *
          * @since 1.8
          * @author Alireza Kamran
@@ -4642,9 +4642,8 @@ implements
          * The null value indicates that the element is uniquely required.
          * <p/>
          * Each schematic element type also defines a sorted array of supported text values (ascending) and attribute values when available.
-         * In such cases, the {@code def()} method returns the index of the default text value.
-         * If there is no default value declared for the element type, this method can return zero.
-         * Whether the zero index value implies a default value or not must be determined logically per usage.
+         * In such cases, the {@code defaultValue()} method returns the default text value.
+         * If there is no default value declared for the element type, this method can return null.
          *
          * @since 1.8
          * @author Alireza Kamran
@@ -6076,7 +6075,7 @@ implements
      * {@code Schematic} is the base interface for all schematic element and attribute types.
      * <p/>
      * Each schematic data type also defines a sorted array of supported values when available.
-     * In such cases, the {@code def()} method returns the index of the default value.
+     * In such cases, the {@code defaultValue()} method returns the default value.
      * <p/>
      * Each schematic data type also defines a required/optional boolean flag specified by the {@code isRequired()} method.
      *
@@ -6574,7 +6573,7 @@ implements
     }
 
     /**
-     * {@code Validation} is a special meta-data representing the result of analyzing a XML documents, elements, or attributes for performance.
+     * {@code Validation} is a special meta-data representing the result of analyzing XML documents, elements, or attributes for performance.
      *
      * @since 1.8
      * @author Alireza Kamran

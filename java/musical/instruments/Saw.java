@@ -1,7 +1,7 @@
 package musical.instruments;
 
 /**
- * {@code Saw} classifies the most common for of the saw instrument.
+ * {@code Saw} classifies the most common form of the saw instrument.
  * <p/>
  * This class implementation is in progress.
  *

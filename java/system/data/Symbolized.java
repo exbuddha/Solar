@@ -159,6 +159,9 @@ interface Symbolized<T extends Comparable<T>>
      * {@code Singleton} classifies a symbolized data that does not allow its symbol to be set.
      *
      * @param <T> the symbol type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
     interface Singleton<T extends Comparable<T>>
     extends Symbolized<T>

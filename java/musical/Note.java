@@ -4368,7 +4368,7 @@ implements
     }
 
     /**
-     * {@code Scientific} classifies all scientific note system in music theory.
+     * {@code Scientific} classifies all scientific note systems in music theory.
      * <p/>
      * This class implementation is in progress.
      *
@@ -4457,7 +4457,7 @@ implements
     }
 
     /**
-     * {@code Step} classifies categorizes note increment steps that are well-defined in the context of note transformation.
+     * {@code Step} categorizes note increment steps that are well-defined in the context of note transformation.
      *
      * @since 1.8
      * @author Alireza Kamran

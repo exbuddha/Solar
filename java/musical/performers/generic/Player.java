@@ -17,10 +17,10 @@ import musical.performance.system.Type;
  * An end user works directly with the hub classes to communicate to the underlying instrument of choice represented by that hub class.
  * This design eliminates the necessity for handling large amounts of existing corner cases in individual performer styles and the language of their instruments, hides implementation details, and brings all similar instrument types under one umbrella for seamless communication for generating performance instructions.
  * <p/>
- * There are many forms of overlap existing among instrument types in this categorization due to the composite nature of instruments with regards the parts that consist their instrument body.
+ * There are many forms of overlap existing among instrument types in this categorization due to the composite nature of instruments with regards to the parts that consist their instrument body.
  * Whenever these forms of overlap occur the collision is resolved by taking into account the most fundamental aspects of interaction and part types for that specific instrument.
- * For example, the piano player and the mbira player are both categorized as board players but the dulcimer player is considered to be an string player because of the immediate connection that exists between the strings and the performer fingers during performance for the former two.
- * This class also support all electronic instruments that cannot clearly be given a category from the available hub classes in the package.
+ * For example, the piano player and the mbira player are both categorized as board players but the dulcimer player is considered to be a string player because of the immediate connection that exists between the strings and the performer fingers during performance for the former two.
+ * This class also supports all electronic instruments that cannot clearly be given a category from the available hub classes in the package.
  * For such instruments, a wrapping functionality, named {@link #initialize()}, creates the electronic instrument with a known hub class type as an interface for accessing the features of the subject instrument.
  * <p/>
  * This class implementation is in progress.

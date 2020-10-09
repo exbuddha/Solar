@@ -23,7 +23,7 @@ import system.data.Unique;
  * <p/>
  * The instances of this class must satisfy the conditions below in order to benefit from all the functionality presented in this class:
  * <ul>
- * <li>If a scale has a null root, it is considered to be a scale template, evaluating to scale intervals, and are used to create defined scales.
+ * <li>If a scale has a null root, it is considered to be a scale template, evaluating to scale intervals, and is used to create defined scales.
  * <li>By convention, a scale can't have null intervals array or array elements.
  * <li>A scale can contain only a single perfect octave interval.
  * <li>Scale intervals must cover an entire octave; no less and no more.
@@ -1563,7 +1563,7 @@ implements
      * <p/>
      * The aim of this superclass is to provide theoretical knowledge in music for constructing broader ideas such as style, genre, taste, or tradition.
      * A scale system is defined as a functional relationship among smaller ranges in the scale using two optional variables: a visualized one and a free-form predefined object.
-     * The visualized variable can, but necessarily has to, represent an ordered value.
+     * The visualized variable can, but not necessarily has to, represent an ordered value.
      * The free-form variable, defined as templator, creates the range of known theoretical music elements that have significance in the knowledge base of the scale.
      * Together, or singly if the design implies so, the last two variables cover a hypothetical two-dimensional space for the scale system.
      * <p/>

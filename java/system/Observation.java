@@ -29,7 +29,7 @@ interface Observation
      *
      * @param args the command arguments.
      */
-    public static
+    static
     void execute(final String... args) {
         configure(args)
         .apply(args)
@@ -43,7 +43,7 @@ interface Observation
      *
      * @return the qualified class name.
      */
-    public static
+    static
     String className(
         final String name
         ) {
@@ -63,7 +63,7 @@ interface Observation
      *
      * @return the application task agent.
      */
-    public static
+    static
     Function<String[], ? extends Runnable> configure(
         final String... params
         ) {
@@ -89,51 +89,48 @@ interface Observation
      *
      * @return the system.
      */
-    public static
+    static
     Runnable system(
         final String... args
         ) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (args.length > 2 && args[1].equalsIgnoreCase(TaskCmd)) {
-                    final String[] inputs
-                    = args.length > 3
-                    ? Arrays.copyOfRange(args, 3, args.length)
-                    : null;
+        return () -> {
+            if (args.length > 2 && args[1].equalsIgnoreCase(TaskCmd)) {
+                final String[] inputs
+                = args.length > 3
+                ? Arrays.copyOfRange(args, 3, args.length)
+                : null;
 
-                    Agent<String, Task> config = null;
-                    try {
-                        config = ((Agent<String, Task>) Class.forName(args[2].startsWith(SystemTaskPkg) ? "" : SystemTaskPkg + className(args[2])).newInstance());
-                    }
-                    catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                        e.printStackTrace();
-                        java.lang.System.exit(TaskInstantiationErrCode);
-                    }
-                    finally {
-                        java.lang.System.runFinalization();
-                    }
-
-                    Task task = null;
-                    try {
-                        task = config.apply(inputs);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        java.lang.System.exit(TaskConfigurationErrCode);
-                    }
-                    finally {
-                        java.lang.System.runFinalization();
-                    }
-
-                    if (task == null) {
-                        java.lang.System.out.println(TaskNotFound);
-                        java.lang.System.runFinalization();
-                        java.lang.System.exit(TaskNotFoundErrCode);
-                    }
-
-                    task.run();
+                Agent<String, Task> config = null;
+                try {
+                    config = ((Agent<String, Task>) Class.forName(args[2].startsWith(SystemTaskPkg) ? "" : SystemTaskPkg + className(args[2])).newInstance());
                 }
+                catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    java.lang.System.exit(TaskInstantiationErrCode);
+                }
+                finally {
+                    java.lang.System.runFinalization();
+                }
+
+                Task task = null;
+                try {
+                    task = config.apply(inputs);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    java.lang.System.exit(TaskConfigurationErrCode);
+                }
+                finally {
+                    java.lang.System.runFinalization();
+                }
+
+                if (task == null) {
+                    java.lang.System.out.println(TaskNotFound);
+                    java.lang.System.runFinalization();
+                    java.lang.System.exit(TaskNotFoundErrCode);
+                }
+
+                task.run();
             }
         };
     }
@@ -146,8 +143,10 @@ interface Observation
      *
      * @param <I> the parameter type.
      * @param <O> the runnable type.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
      */
-    public
     interface Agent<I, O extends Runnable>
     extends Function<I[], O>
     {
@@ -156,7 +155,6 @@ interface Observation
          *
          * @return the parameters.
          */
-        public
         I[] getParameters();
     }
 
@@ -168,7 +166,6 @@ interface Observation
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     enum Static
     implements
         Agent<String, Task>,
@@ -183,34 +180,22 @@ interface Observation
         ((final String[] args)
         -> args.length > 0 && args[0].equalsIgnoreCase(SystemCmd)
         ? Systematization
-        : new Task() {
-              @Override
-              public void run() {}
-          }),
+        : () -> {}),
 
         /** Application and system migration tasks. */
         Migration
         ((String[] args)
-        -> new Task() {
-               @Override
-               public void run() {}
-           }),
+        -> () -> {}),
 
         /** Application audio-intensive tasks. */
         Sonification
         ((final String[] args)
-        -> new Task() {
-               @Override
-               public void run() {}
-           }),
+        -> () -> {}),
 
         /** Application video-intensive tasks. */
         Visualization
         ((final String[] args)
-        -> new Task() {
-               @Override
-               public void run() {}
-           });
+        -> () -> {});
 
         /** The system parameters. */
         private static
@@ -242,7 +227,6 @@ interface Observation
          *
          * @param config the configuration task agent.
          */
-        private
         Static(
             final Function<String[], Task> config
             ) {
@@ -318,7 +302,6 @@ interface Observation
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface System
     extends Task
     {}
@@ -331,7 +314,6 @@ interface Observation
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Task
     extends Runnable
     {}

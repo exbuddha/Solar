@@ -22598,6 +22598,12 @@ extends XML
         }
     }
 
+    /**
+     * {@code RequiredAttribute} classifies all required MusicXML element attributes.
+     *
+     * @since 1.8
+     * @author Alireza Kamran
+     */
     public
     interface RequiredAttribute
     extends Element.Attribute
