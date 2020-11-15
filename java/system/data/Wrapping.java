@@ -14,6 +14,18 @@ public
 interface Wrapping<T>
 {
     /**
+     * Wraps and return the instance using a true rewrap flag.
+     *
+     * @return the wrapped instance.
+     *
+     * @see #wrapped(boolean)
+     */
+    default
+    T wrapped() {
+        return wrapped(true);
+    }
+
+    /**
      * Wraps and returns the instance.
      * <p/>
      * If the rewrap flag is set to true, the data will be rewrapped which usually means that wrapping will be performed on all data elements even if they are already wrapped.
@@ -26,16 +38,4 @@ interface Wrapping<T>
     T wrapped(
         boolean rewrap
         );
-
-    /**
-     * Wraps and return the instance using a true rewrap flag.
-     *
-     * @return the wrapped instance.
-     *
-     * @see #wrapped(boolean)
-     */
-    default
-    T wrapped() {
-        return wrapped(true);
-    }
 }

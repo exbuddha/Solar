@@ -11,10 +11,8 @@ package system.data;
 public
 interface Reflective
 {
-    static final
     Object[] Ambiguity = null;
 
-    static final
     Object[] Empty = new Object[] {};
 
     /**
@@ -39,7 +37,7 @@ interface Reflective
         if (coords.length == 0)
             return Empty;
 
-        Object[] transposed = Ambiguity;
+        Object[] transposed;
         if (coords[0].getClass().isArray()) {
             // one- or multi-dimensional matrix
             transposed = new Object[dimension];
@@ -49,7 +47,7 @@ interface Reflective
             }
         }
         else {
-            // one-dimentional matrix
+            // one-dimensional matrix
             transposed = new Object[] { new Object[coords.length] };
             for (int j = 0; j < coords.length; ((Object[]) transposed[0])[j] = coords[j++])
                 if (coords[j].getClass().isArray()) {
@@ -101,7 +99,6 @@ interface Reflective
      *
      * @return the transformed coordinates.
      */
-    public
     Object[] transform(
         Object... coords
         );
@@ -114,7 +111,6 @@ interface Reflective
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Translation
     extends Reflective
     {
@@ -149,7 +145,6 @@ interface Reflective
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Transposition
     extends Reflective
     {

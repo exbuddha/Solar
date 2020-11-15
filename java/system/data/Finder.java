@@ -29,5 +29,6 @@ extends
      *
      * @return the advanced finder.
      */
+    @Override
     Finder<T> found();
 }

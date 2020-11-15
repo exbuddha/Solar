@@ -287,7 +287,7 @@ extends Lute
     extends Lute.Accessory
     {
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof Accessory;
         }
     }
@@ -346,7 +346,7 @@ extends Lute
         Perpendicular;
 
         @Override
-        public boolean is(Type<? extends MusicalInstrument.Direction> type) {
+        public boolean is(Type<? super MusicalInstrument.Direction> type) {
             // Guitar directions are not associated with a different direction type
             return false;
         }

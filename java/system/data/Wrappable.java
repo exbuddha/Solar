@@ -10,6 +10,16 @@ public
 interface Wrappable
 {
     /**
+     * Wraps the data using a true rewrap flag.
+     *
+     * @see #wrap(boolean)
+     */
+    default
+    void wrap() {
+        wrap(true);
+    }
+
+    /**
      * Wraps the data.
      * <p/>
      * If the rewrap flag is set to true, the data will be rewrapped which usually means that wrapping will be performed on all data elements even if they are already wrapped.
@@ -20,14 +30,4 @@ interface Wrappable
     void wrap(
         boolean rewrap
         );
-
-    /**
-     * Wraps the data using a true rewrap flag.
-     *
-     * @see #wrap(boolean)
-     */
-    default
-    void wrap() {
-        wrap(true);
-    }
 }

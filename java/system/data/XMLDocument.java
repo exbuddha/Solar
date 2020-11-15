@@ -21,6 +21,8 @@ import org.w3c.dom.UserDataHandler;
 
 /**
  * {@code XMLDocument} implements a wrapper interface for the standard {@link Document} interface.
+ * <p/>
+ * All methods in this class call their respective super implementation.
  *
  * @since 1.8
  * @author Alireza Kamran

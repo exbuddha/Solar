@@ -10,7 +10,7 @@ public final
 class Constant
 {
     // Error messages
-    static final String TaskNotFound = "Task not found.";
+    static final String TaskNotFound = "Task not found";
 
     // Error codes
     static final byte TaskConfigurationErrCode = (byte) 128;
@@ -27,8 +27,8 @@ class Constant
     interface Observation
     {
         // Application commands and default package names
-        static final String TaskCmd = "task";
-        static final String SystemCmd = "system";
-        static final String SystemTaskPkg = "system.task.";
+        String TaskCmd = "task";
+        String SystemCmd = "system";
+        String SystemTaskPkg = "system.task.";
     }
 }

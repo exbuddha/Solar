@@ -96,12 +96,11 @@ interface Operable<T extends Number>
     /**
      * {@code Locked} classifies operable data types that do not support addition, subtraction, multiplication, or division unless their state remains the same after those operations are performed.
      *
-     * @param <T> the operation data type.
+     * @param <T> the numeric data type.
      *
      * @since 1.8
      * @author Alireza Kamran
      */
-    public
     interface Locked<T extends Number>
     extends Operable<T>
     {
@@ -148,16 +147,16 @@ interface Operable<T extends Number>
         }
 
         /**
-         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to 1.
+         * This implementation throws an {@code UnsupportedOperationException} unless the number is equal to zero.
          *
          * @param n the number.
          *
          * @throws NullPointerException if the number is null.
-         * @throws UnsupportedOperationException if the number is not equal to 1.
+         * @throws UnsupportedOperationException if the number is not equal to zero.
          */
         @Override
         default void subtract(final T n) {
-            if (!n.equals(1))
+            if (!n.equals(0))
                 throw new UnsupportedOperationException(StandardObjectInoperable);
         }
     }

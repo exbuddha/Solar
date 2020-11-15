@@ -279,7 +279,7 @@ implements
      * @since 1.8
      * @author Alireza Kamran
      */
-    public abstract
+    public abstract static
     class Conductor
     extends DocumentHandler
     implements Handler
@@ -297,7 +297,20 @@ implements
         }
 
         /**
-         * {@code Execution} represents specialized MusicXML filters that are intended for just-in-time processing of score documents.
+         * {@code Allocation} classifies an initial step in interpretation of scores where a score part is assigned to an instrument and performer class.
+         * This step can be considered as a part of score interpretation.
+         * <p/>
+         * This class implementation is in progress.
+         *
+         * @since 1.8
+         * @author Alireza Kamran
+         */
+        public
+        interface Allocation
+        {}
+
+        /**
+         * {@code Execution} represents specialized MusicXML handlers that are intended for just-in-time processing of score documents.
          * <p/>
          * This class implementation is in progress.
          *

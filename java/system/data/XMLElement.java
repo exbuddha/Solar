@@ -14,6 +14,8 @@ import system.data.Format.Interpretable;
 
 /**
  * {@code XMLElement} implements a wrapper interface for the standard {@link org.w3c.dom.Element} interface.
+ * <p/>
+ * All methods in this class call their respective super implementation.
  *
  * @since 1.8
  * @author Alireza Kamran

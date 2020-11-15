@@ -33,7 +33,7 @@ extends StruckIdiophone
     extends StruckIdiophone.Accessory
     {
         @Override
-        public boolean is(final Type<? extends Part> type) {
+        public boolean is(final Type<? super Part> type) {
             return type instanceof Accessory;
         }
     }

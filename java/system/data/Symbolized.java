@@ -1,11 +1,7 @@
 package system.data;
 
-import system.Type;
-
 import static system.data.Constant.BaseImplementationRestricted;
 import static system.data.Constant.StandardObjectInoperable;
-
-import java.util.function.Function;
 
 /**
  * {@code Symbolized} classifies data types that can be symbolized by comparable types.
@@ -19,16 +15,16 @@ public
 interface Symbolized<T extends Comparable<T>>
 {
     /**
-     * Compares the two symbolized instances based on their symbol values and returns a negative integer if the first non-null symbol is less than the second symbol, zero if both symbols are equal, and a positive integer if the non-null first symbol is less than the second symbol.
+     * Compares the two symbolized instances based on their symbol values and returns a negative integer if the non-null first symbol is less than the second symbol, zero if both symbols are equal, and a positive integer if the non-null first symbol is less than the second symbol.
      * <p/>
      * This implementation returns zero if both instances are null, and {@link Integer#MAX_VALUE} or -{@link Integer#MAX_VALUE} appropriately in cases where one instance is null and the other is non-null; otherwise, if both instances are non-null the value of {@link Comparable#compareTo(Object)} is returned.
      *
      * @param s1 the first symbolized instance.
      * @param s2 the second symbolized instance.
      *
-     * @return a negative integer, zero, or a positive integer as this symbolized instance is less than, equal to, or greater than the specified object.
+     * @return a negative integer, zero, or a positive integer as the first symbolized instance is less than, equal to, or greater than the second symbolized instance.
      */
-    default
+    static <T extends Comparable<T>>
     int compareSymbols(final Symbolized<T> s1, final Symbolized<T> s2) {
         return s1 == null
                ? (s2 == null
@@ -79,7 +75,7 @@ interface Symbolized<T extends Comparable<T>>
     T getSymbol();
 
     /**
-     * {@code Instance} is the default implementation of symbolized units in music.
+     * {@code Instance} is the default implementation of symbolized units in the system.
      *
      * @since 1.8
      * @author Alireza Kamran
@@ -88,7 +84,7 @@ interface Symbolized<T extends Comparable<T>>
     implements
         Comparable<Symbolized<String>>,
         Symbolized<String>,
-            Type<T>
+        system.Type<T>
     {
         /** The symbol. */
         protected
@@ -121,11 +117,13 @@ interface Symbolized<T extends Comparable<T>>
         }
 
         /**
-         * Returns true if the specified symbolized type has the same symbol as this instance; otherwise returns false.
+         * Returns true if the specified symbolized instance type has the same symbol as this instance; otherwise returns false.
          *
          * @param type the other data type.
          *
-         * @return if the symbols are the same, and false otherwise.
+         * @return true if the symbols are the same, and false otherwise.
+         *
+         * @throws ClassCastException if the specified type is not an {@code Instance<T>} type.
          *
          * @see #compareSymbols(Symbolized, Symbolized)
          */

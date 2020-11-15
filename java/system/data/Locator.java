@@ -38,5 +38,6 @@ extends
      *
      * @return the advanced locator.
      */
+    @Override
     Locator<T> found();
 }

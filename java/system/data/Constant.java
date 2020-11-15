@@ -74,6 +74,7 @@ class Constant
          */
         interface Entity
         {
+            String XMLNS = "http://www.w3.org/1999/xlink";
             String CDATA = "CDATA";
             String ID = "ID";
             String IDREF = "IDREF";
@@ -89,11 +90,11 @@ class Constant
          */
         interface Occurrence
         {
-            String OneOrMore = "+";
-            String OnlyOne = "";
-            String ZeroOrMore = "*";
-            String ZeroOrOne = "?";
-            String ZeroOrOneOrTwo = "??";
+            Character OneOrMore = '+';
+            Character OnlyOne = ' ';
+            Character ZeroOrMore = '*';
+            Character ZeroOrOne = '?';
+            Character ZeroOrOneOrTwo = '$';
         }
     }
 }

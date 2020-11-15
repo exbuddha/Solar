@@ -81,18 +81,18 @@ implements
     private static
     TransformerFactory TRANSFORMER_FACTORY;
 
-    /** The empty iterable. */
-    private static final
-    Null.Iterable<Node> EmptyIterable = new Null.Iterable<Node>() {
-                                       @Override
-                                       public String msg() {
-                                           return XmlChildNotFound;
-                                       }
-                                   };
-
     /** The document handler. */
     protected
     Document.Handler handler;
+
+    /** The empty iterable. */
+    private static final
+    Null.Iterable<Node> EmptyIterable = new Null.Iterable<Node>() {
+        @Override
+        public String msg() {
+            return XmlChildNotFound;
+        }
+    };
 
     /**
      * Creates an XML document with the specified handler.
@@ -301,7 +301,7 @@ implements
     /**
      * Returns the attribute of the specified element, starting from and ending in the specified indexes, and matching the specified attribute condition, or null if the attribute doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the attributes length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the attributes' length.
      * <p/>
      * The attribute predicate must accept the attribute as argument.
      *
@@ -410,7 +410,7 @@ implements
     /**
      * Returns the first child element within the specified parent element, starting from and ending in the specified indexes, and matching the specified child element condition, or null if the child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      *
@@ -487,7 +487,7 @@ implements
     /**
      * Returns the first child element within the specified parent element, starting from and ending in the specified indexes, and matching the child element name, or null if the child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      *
      * @param parent the parent element.
      * @param start the starting child element index. (inclusive)
@@ -559,7 +559,7 @@ implements
     /**
      * Returns the first child element within the specified parent element, starting from and ending in the specified indexes, and matching the specified child element and attribute conditions, or null if the child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      * The child element attribute predicate must accept the attribute as argument.
@@ -651,6 +651,8 @@ implements
     /**
      * Returns the first child element within the specified parent element, starting from and ending in the specified indexes, and matching the child element name, attribute name, and value, or null if the child element doesn't exist.
      * <p/>
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
+     * <p/>
      * If the child element attribute value is null, any value will be accepted.
      *
      * @param parent the parent element.
@@ -695,23 +697,23 @@ implements
         return parent == null || !parent.hasChildNodes()
                ? EmptyIterable
                : () -> new Iterator<Node>() {
-                    Node child = parent.getFirstChild();
+                   Node child = parent.getFirstChild();
 
-                    @Override
-                    public boolean hasNext() {
-                        return child != null;
-                    }
+                   @Override
+                   public boolean hasNext() {
+                       return child != null;
+                   }
 
-                    @Override
-                    public Node next() {
-                        if (child == null)
-                            throw new NoSuchElementException(XmlChildNotFound);
+                   @Override
+                   public Node next() {
+                       if (child == null)
+                           throw new NoSuchElementException(XmlChildNotFound);
 
-                        final Node ch = child;
-                        child = child.getNextSibling();
-                        return ch;
-                    }
-                };
+                       final Node ch = child;
+                       child = child.getNextSibling();
+                       return ch;
+                   }
+               };
     }
 
     /**
@@ -880,7 +882,7 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element and matching the specified grand child element condition, or null if the grand child element doesn't exist.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param pred the grand child element condition bi-predicate.
@@ -900,7 +902,7 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from the specified parent element index, and matching the specified grand child element condition, or null if the grand child element doesn't exist.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param start the starting parent element index. (inclusive)
@@ -922,9 +924,9 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from and ending in the specified parent element indexes, and matching the specified grand child element condition, or null if the grand child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param start the starting parent element index. (inclusive)
@@ -1002,7 +1004,7 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from and ending in the specified parent element indexes, and matching the grand child element name, or null if the grand child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      *
      * @param ancestor the ancestor element.
      * @param start the starting parent element index. (inclusive)
@@ -1026,9 +1028,9 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from and ending in the specified parent element indexes, and matching the specified grand child element and attribute conditions, or null if the grand child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      * The grand child element attribute predicate must accept the attribute as argument.
      *
      * @param ancestor the ancestor element.
@@ -1095,7 +1097,7 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from the specified parent index, and matching the grand child element name, attribute name, and value, or null if the grand child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
      * If the grand child element attribute value is null, any value will be accepted.
      *
@@ -1123,7 +1125,7 @@ implements
     /**
      * Returns the first grand child element within the specified ancestor element, starting from and ending in the specified parent element indexes, and matching the grand child element name, attribute name, and value, or null if the grand child element doesn't exist.
      * <p/>
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
      * If the grand child element attribute value is null, any value will be accepted.
      *
@@ -1169,39 +1171,39 @@ implements
         return ancestor == null || !ancestor.hasChildNodes()
                ? EmptyIterable
                : () -> new Iterator<Node>() {
-                    Node parent = ancestor.getFirstChild();
+                   Node parent = ancestor.getFirstChild();
 
-                    Node child = nextChild(parent.getFirstChild());
+                   Node child = nextChild(parent.getFirstChild());
 
-                    Node nextChild(
-                        Node ch
-                        ) {
-                        while (ch == null) {
-                            parent = parent.getNextSibling();
-                            if (parent == null)
-                                break;
+                   Node nextChild(
+                       Node ch
+                       ) {
+                       while (ch == null) {
+                           parent = parent.getNextSibling();
+                           if (parent == null)
+                               break;
 
-                            ch = parent.getFirstChild();
-                        }
+                           ch = parent.getFirstChild();
+                       }
 
-                        return ch;
-                    }
+                       return ch;
+                   }
 
-                    @Override
-                    public boolean hasNext() {
-                        return child != null;
-                    }
+                   @Override
+                   public boolean hasNext() {
+                       return child != null;
+                   }
 
-                    @Override
-                    public Node next() {
-                        if (child == null)
-                            throw new NoSuchElementException(XmlChildNotFound);
+                   @Override
+                   public Node next() {
+                       if (child == null)
+                           throw new NoSuchElementException(XmlChildNotFound);
 
-                        final Node ch = child;
-                        child = nextChild(child.getNextSibling());
-                        return ch;
-                    }
-                };
+                       final Node ch = child;
+                       child = nextChild(child.getNextSibling());
+                       return ch;
+                   }
+               };
     }
 
     /**
@@ -1209,7 +1211,7 @@ implements
      * <p/>
      * If the ancestor element is null, an empty iterable will be returned.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param pred the grand child element condition bi-predicate.
@@ -1228,24 +1230,24 @@ implements
 
         final Node p = ancestor.getFirstChild();
         return () -> new NodeListIterator(p.getChildNodes()) {
-                         Node parent = p;
+            Node parent = p;
 
-                         @Override
-                         protected void updateHasNext() {
-                             while (parent != null) {
-                                 for (; i < elements.getLength(); i++)
-                                     if (pred.test(i, elements.item(i))) {
-                                         hasNext = true;
-                                         return;
-                                     }
+            @Override
+            protected void updateHasNext() {
+                while (parent != null) {
+                    for (; i < elements.getLength(); i++)
+                        if (pred.test(i, elements.item(i))) {
+                            hasNext = true;
+                            return;
+                        }
 
-                                 parent = parent.getNextSibling();
-                                 elements = parent.getChildNodes();
-                             }
+                    parent = parent.getNextSibling();
+                    elements = parent.getChildNodes();
+                }
 
-                             hasNext = false;
-                         }
-                     };
+                hasNext = false;
+            }
+        };
     }
 
     /**
@@ -1253,7 +1255,7 @@ implements
      * <p/>
      * If the ancestor element is null, an empty iterable will be returned.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      * The grand child element attribute predicate must accept the attribute as argument.
      *
      * @param ancestor the ancestor element.
@@ -1275,26 +1277,26 @@ implements
 
         final Node p = ancestor.getFirstChild();
         return () -> new NodeListIterator(p.getChildNodes()) {
-                         Node parent = p;
+            Node parent = p;
 
-                         @Override
-                         protected void updateHasNext() {
-                             while (parent != null) {
-                                 for (; i < elements.getLength(); i++) {
-                                     final Node child = elements.item(i);
-                                     if (pred.test(i, child) && findAttribute(child, attrPred) != null) {
-                                         hasNext = true;
-                                         return;
-                                     }
-                                 }
+            @Override
+            protected void updateHasNext() {
+                while (parent != null) {
+                    for (; i < elements.getLength(); i++) {
+                        final Node child = elements.item(i);
+                        if (pred.test(i, child) && findAttribute(child, attrPred) != null) {
+                            hasNext = true;
+                            return;
+                        }
+                    }
 
-                                 parent = parent.getNextSibling();
-                                 elements = parent.getChildNodes();
-                             }
+                    parent = parent.getNextSibling();
+                    elements = parent.getChildNodes();
+                }
 
-                             hasNext = false;
-                         }
-                     };
+                hasNext = false;
+            }
+        };
     }
 
     /**
@@ -1368,7 +1370,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      *
@@ -1394,7 +1396,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      *
@@ -1454,7 +1456,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      *
      * @param parent the parent element.
      * @param end the ending child element index. (exclusive)
@@ -1478,7 +1480,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      *
      * @param parent the parent element.
      * @param end the ending child element index. (exclusive)
@@ -1527,7 +1529,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      * The child element attribute bi-predicate must accept the attribute as argument.
@@ -1556,7 +1558,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * The child element bi-predicate must accept an integer for the child element's order of appearance and the child element as arguments.
      * The child element attribute predicate must accept the attribute as argument.
@@ -1625,7 +1627,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * If the child element attribute value is null, any value will be accepted.
      *
@@ -1655,7 +1657,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the children length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the children's length.
      * <p/>
      * If the child element attribute value is null, any value will be accepted.
      *
@@ -1688,7 +1690,7 @@ implements
     /**
      * Returns the last grand child element within the specified ancestor element and matching the specified grand child element condition, or null if the grand child element doesn't exist.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param pred the grand child element condition bi-predicate.
@@ -1710,9 +1712,9 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param end the ending parent element index. (exclusive)
@@ -1736,9 +1738,9 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      *
      * @param ancestor the ancestor element.
      * @param end the ending parent element index. (exclusive)
@@ -1799,7 +1801,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      *
      * @param ancestor the ancestor element.
      * @param end the ending parent element index. (exclusive)
@@ -1823,7 +1825,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      *
      * @param ancestor the ancestor element.
      * @param end the ending parent element index. (exclusive)
@@ -1847,7 +1849,7 @@ implements
     /**
      * Returns the last grand child element within the specified ancestor element and matching the specified element and attribute conditions, or null if the grand child element doesn't exist.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      * The grand child element attribute bi-predicate must accept the attribute as argument.
      *
      * @param ancestor the ancestor element.
@@ -1872,9 +1874,9 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      * The grand child element attribute predicate must accept the attribute as argument.
      *
      * @param ancestor the ancestor element.
@@ -1901,9 +1903,9 @@ implements
      * <p/>
      * This implementation starts looking backwards for child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
-     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance and the grand child element as arguments.
+     * The grand child element bi-predicate must accept an integer for the grand child element's order of appearance within the parent element and the grand child element as arguments.
      * The grand child element attribute predicate must accept the attribute as argument.
      *
      * @param ancestor the ancestor element.
@@ -1973,7 +1975,7 @@ implements
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
      * If the grand child element attribute value is null, any value will be accepted.
      *
@@ -1999,11 +2001,11 @@ implements
     }
 
     /**
-     * Returns the last grand child element within the specified ancestor element, starting from and ending it the specified parent element indexes, and matching the grand child element name, attribute name, and value, or null if the grand child element doesn't exist.
+     * Returns the last grand child element within the specified ancestor element, starting from and ending in the specified parent element indexes, and matching the grand child element name, attribute name, and value, or null if the grand child element doesn't exist.
      * <p/>
      * This implementation starts looking backwards for grand child elements from the parent element located before the ending index.
      * In other words, the ending index is exclusive.
-     * If the ending index is negative, it will be wrapped <b>once</b> around the parents length.
+     * If the ending index is negative, it will be wrapped <b>once</b> around the parents' length.
      * <p/>
      * If the grand child element attribute value is null, any value will be accepted.
      *
@@ -2068,10 +2070,7 @@ implements
     public static
     DocumentBuilder newDocumentBuilder() {
         if (BUILDER_FACTORY == null)
-            synchronized (BUILDER_FACTORY) {
-                if (BUILDER_FACTORY == null)
-                    BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-            }
+            BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
         try {
             return BUILDER_FACTORY.newDocumentBuilder();
@@ -2093,10 +2092,7 @@ implements
     public static
     SAXParser newParser() {
         if (PARSER_FACTORY == null)
-            synchronized (PARSER_FACTORY) {
-                if (PARSER_FACTORY == null)
-                    PARSER_FACTORY = SAXParserFactory.newInstance();
-            }
+            PARSER_FACTORY = SAXParserFactory.newInstance();
 
         try {
             return PARSER_FACTORY.newSAXParser();
@@ -2118,10 +2114,7 @@ implements
     public static
     Transformer newTransformer() {
         if (TRANSFORMER_FACTORY == null)
-            synchronized (TRANSFORMER_FACTORY) {
-                if (TRANSFORMER_FACTORY == null)
-                    TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-            }
+            TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
         try {
             return TRANSFORMER_FACTORY.newTransformer();
@@ -2134,7 +2127,7 @@ implements
     /**
      * Parses the input stream with the specified handler.
      * <p/>
-     * If the handler is a {@link Handler} type the document is returned, otherwise null.
+     * If the handler is a {@link Handler} type the document is returned; otherwise null is returned.
      *
      * @param inputStream the input stream.
      * @param handler the handler.
@@ -2189,6 +2182,37 @@ implements
     }
 
     /**
+     * Returns the element at the specified coordinates.
+     *
+     * @param coords the element coordinates.
+     *
+     * @return the element.
+     *
+     * @throws IndexOutOfBoundsException if the coordinates are outside of the document boundaries.
+     */
+    public
+    org.w3c.dom.Element at(
+        final Coordinates coords
+        ) { return null; }
+
+    /**
+     * Returns the element at the specified index or sequence of nested indexes. (coordinates)
+     * <p/>
+     * Coordinates must start from the top-most level enumerating the document child elements.
+     * In other words, the coordinates for the document element is an empty array.
+     *
+     * @param index the element index.
+     *
+     * @return the element.
+     *
+     * @throws IndexOutOfBoundsException if the coordinates are outside of the document boundaries.
+     */
+    public
+    org.w3c.dom.Element at(
+        final Number... index
+        ) { return null; }
+
+    /**
      * Returns a locator for performing simple searches on the specified element.
      *
      * @param element the locator element.
@@ -2203,23 +2227,6 @@ implements
         ) { return null; }
 
     /**
-     * Returns a locator for performing simple searches on the element at the specified index or sequence of nested indexes. (coordinates)
-     * <p/>
-     * Coordinates must start from the top-most level enumerating the document child elements.
-     * In other words, the coordinates for the document element is an empty array.
-     *
-     * @param coords the element coordinates.
-     *
-     * @return the locator.
-     *
-     * @throws IndexOutOfBoundsException if the coordinates are outside of the document boundaries.
-     */
-    public
-    Locator at(
-        final Number... coords
-        ) { return null; }
-
-    /**
      * Returns an intermediary search type for performing simple searches starting from the specified element.
      *
      * @param element the starting element.
@@ -2229,15 +2236,12 @@ implements
      * @throws IllegalArgumentException if the element does not belong to the XML document.
      */
     public
-    Search from(
+    Locator from(
         final Node element
         ) { return null; }
 
     /**
-     * Returns an intermediary search type for performing simple searches starting from the element at the specified index or sequence of nested indexes. (coordinates)
-     * <p/>
-     * Coordinates must start from the top-most level enumerating the document child elements.
-     * In other words, the coordinates for the document element is an empty array.
+     * Returns an intermediary search type for performing simple searches starting from the element at the specified coordinates.
      *
      * @param coords the starting element coordinates.
      *
@@ -2247,7 +2251,24 @@ implements
      */
     public
     Locator from(
-        final Number... coords
+        final Coordinates coords
+        ) { return null; }
+
+    /**
+     * Returns an intermediary search type for performing simple searches starting from the element at the specified index or sequence of nested indexes. (coordinates)
+     * <p/>
+     * Coordinates must start from the top-most level enumerating the document child elements.
+     * In other words, the coordinates for the document element is an empty array.
+     *
+     * @param index the starting element index.
+     *
+     * @return the search type.
+     *
+     * @throws IndexOutOfBoundsException if the coordinates are outside of the document boundaries.
+     */
+    public
+    Locator from(
+        final Number... index
         ) { return null; }
 
     /**
@@ -2265,10 +2286,7 @@ implements
         ) { return null; }
 
     /**
-     * Returns an intermediary search type for performing simple searches ending in the element at the specified index or sequence of nested indexes. (coordinates)
-     * <p/>
-     * Coordinates must start from the top-most level enumerating the document child elements.
-     * In other words, the coordinates for the document element is an empty array.
+     * Returns an intermediary search type for performing simple searches ending in the element at the specified coordinates.
      *
      * @param coords the ending coordinates.
      *
@@ -2278,16 +2296,33 @@ implements
      */
     public
     Locator until(
-        final Number... coords
+        final Coordinates coords
+        ) { return null; }
+
+    /**
+     * Returns an intermediary search type for performing simple searches ending in the element at the specified index or sequence of nested indexes. (coordinates)
+     * <p/>
+     * Coordinates must start from the top-most level enumerating the document child elements.
+     * In other words, the coordinates for the document element is an empty array.
+     *
+     * @param index the ending element index.
+     *
+     * @return the search type.
+     *
+     * @throws IndexOutOfBoundsException if the coordinates are outside of the document boundaries.
+     */
+    public
+    Locator until(
+        final Number... index
         ) { return null; }
 
     /**
      * Writes the XML document to the specified output stream using the indentation amount.
      *
      * @param outputStream the output stream.
-     * @param indent indentation amount.
+     * @param indent the indentation amount.
      *
-     * @throws NullPointerException if the output stream is null or a transformer cannot be instantiated due to a serious configuration error.
+     * @throws NullPointerException if the output stream is null or the transformer cannot be instantiated due to a serious configuration error.
      * @throws TransformerFactoryConfigurationError in case of {@link ServiceConfigurationError service configuration error} or if the implementation is not available or cannot be instantiated.
      * @throws TransformerException if a transformation error occurs.
      * @throws IllegalStateException if the handler is null or is not a {@link DocumentHandler} type.
@@ -2324,7 +2359,7 @@ implements
      *
      * @return the document as character sequence.
      *
-     * @throws NullPointerException if a transformer cannot be instantiated due to a serious configuration error.
+     * @throws NullPointerException if the transformer cannot be instantiated due to a serious configuration error.
      * @throws IllegalStateException if a transformation error occurs.
      *
      * @see #write(OutputStream)
@@ -2356,10 +2391,12 @@ implements
 
     /**
      * Returns the document object wrapped by this instance.
+     * <p/>
+     * If the document was not parsed using a {@link Handler} type, null will be returned.
      *
-     * @return the wrapped document object.
+     * @return the wrapped document object, or null if not applicable.
      *
-     * @throws IllegalStateException if the handler is null or is not a {@link DocumentHandler} type.
+     * @throws IllegalStateException if the handler is null.
      *
      * @see #getDocument()
      */
@@ -2396,26 +2433,46 @@ implements
      * @throws NullPointerException if the output stream is null or a transformer cannot be instantiated due to a serious configuration error.
      * @throws TransformerFactoryConfigurationError in case of {@link ServiceConfigurationError service configuration error} or if the implementation is not available or cannot be instantiated.
      * @throws TransformerException if a transformation error occurs.
+     * @throws IllegalStateException if the handler is null or is not a {@link DocumentHandler} type.
      *
      * @see #write(OutputStream, byte)
      */
     @Override
-    public void write(final OutputStream outputStream) throws TransformerException
-    {
+    public void write(final OutputStream outputStream) throws TransformerException {
         write(outputStream, (byte) 0);
     }
 
+    /**
+     * Unwraps all the elements within the XML document.
+     */
     @Override
     public void unwrap() {}
 
+    /**
+     * Unwraps all the elements within the XML document and return the document.
+     *
+     * @return the unwrapped XML document.
+     */
     @Override
     public XML unwrapped() {
         return this;
     }
 
+    /**
+     * Wraps all the elements within the XML document using the specified rewrap flag.
+     *
+     * @param rewrap the rewrap flag.
+     */
     @Override
     public void wrap(final boolean rewrap) {}
 
+    /**
+     * Wraps all the elements within the XML document using the specified rewrap flag and returns the document.
+     *
+     * @param rewrap the rewrap flag.
+     *
+     * @return the unwrapped XML document.
+     */
     @Override
     public XML wrapped(final boolean rewrap) {
         return this;
@@ -2449,34 +2506,31 @@ implements
     }
 
     /**
-     * {@code Coordinates} represents element coordinates in XML documents.
+     * {@code Coordinates} represents element coordinates in XML documents as a sequence of element indexes marking the path to the element.
      * <p/>
-     * Coordinates must start from the top-most level enumerating the document child elements.
-     * In other words, the coordinates for the document element is an empty array.
+     * An element index is a zero-based order of that element within its parent.
+     * Coordinates must start from the top-most level.
+     * The coordinates for the document element is an empty array.
      *
      * @since 1.8
      * @author Alireza Kamran
      */
-    public static
+    public
     class Coordinates
     implements
         Comparable<Object>,
         Null.List<Integer>,
         ObjectWrapper
     {
-        public static
-        Coordinates at(
-            final Node element
-            ) {
-            return null;
-        }
-
-        public static
-        Coordinates of(
-            final int... coords
-            ) {
-            return null;
-        }
+        /**
+         * Creates an element coordinates with the specified index.
+         *
+         * @param index the element index.
+         */
+        public
+        Coordinates(
+            final Number... index
+            ) {}
 
         public
         int compareTo(
@@ -2494,7 +2548,7 @@ implements
 
         public
         int compareTo(
-            final int... coords
+            final Number... coords
             ) {
             return 0;
         }
@@ -2515,7 +2569,7 @@ implements
 
         public
         boolean equals(
-            final int... coords
+            final Number... coords
             ) {
             return false;
         }
@@ -2536,7 +2590,7 @@ implements
 
         public
         boolean isAfter(
-            final int... coords
+            final Number... coords
             ) {
             return false;
         }
@@ -2557,7 +2611,7 @@ implements
 
         public
         boolean isBefore(
-            final int... coords
+            final Number... coords
             ) {
             return false;
         }
@@ -2578,7 +2632,7 @@ implements
 
         public
         boolean isInside(
-            final int... coords
+            final Number... coords
             ) {
             return false;
         }
@@ -2599,7 +2653,7 @@ implements
 
         public
         boolean isOutside(
-            final int... coords
+            final Number... coords
             ) {
             return false;
         }
@@ -2817,7 +2871,7 @@ implements
              * Starts the document.
              * <p/>
              * If the document is null, a new one is created.
-             * If the document is not empty, an {@code IllegalStateException} is thrown.
+             * If the document is closed or is not empty, an {@code IllegalStateException} is thrown.
              *
              * @throws IllegalStateException if the document is closed or non-empty.
              *
@@ -3009,7 +3063,7 @@ implements
          *
          * @return the conventional XML element.
          *
-         * @throws IllegalArgumentException if the target is not an element or document type.
+         * @throws IllegalArgumentException if the target is null or is not an element or document type.
          */
         static
         XMLElement of(
@@ -3180,7 +3234,7 @@ implements
         Node findChild(
                 final int start,
                 final BiPredicate<Integer, Node> pred
-        ) {
+            ) {
             return XML.findChild(this, start, pred);
         }
 
@@ -4094,8 +4148,8 @@ implements
          */
         default
         Node findLastGrandChild(
-            int start,
-            int end,
+            final int start,
+            final int end,
             final BiPredicate<Integer, Node> pred
             ) {
             return XML.findLastGrandChild(this, end, start, pred);
@@ -4190,7 +4244,7 @@ implements
          */
         default
         Node findLastGrandChild(
-            int end,
+            final int end,
             final BiPredicate<Integer, Node> pred,
             final Predicate<Node> attrPred
             ) {
@@ -4213,8 +4267,8 @@ implements
          */
         default
         Node findLastGrandChild(
-            int end,
-            int start,
+            final int end,
+            final int start,
             final BiPredicate<Integer, Node> pred,
             final Predicate<Node> attrPred
             ) {
@@ -4385,19 +4439,7 @@ implements
              */
             interface Schematic
             extends XML.Schematic
-            {
-                /**
-                 * Returns true if the attribute is required in the schema; otherwise returns false.
-                 * <p/>
-                 * This implementation return false.
-                 *
-                 * @return true if the attribute is required, and false otherwise.
-                 */
-                @Override
-                default boolean isRequired() {
-                    return false;
-                }
-            }
+            {}
         }
 
         /**
@@ -4637,13 +4679,13 @@ implements
         /**
          * {@code Schematic} classifies XML elements containing schema information.
          * <p/>
-         * By design, each schematic element type defines an optional array of supported elements as class types and an occurrence character indicator, specified by the {@code occurrence()} method, that defines the element's allowed number of occurrences within its containing element.
-         * The accepted values for the occurrence character indicator are: null, *, ?, and +.
-         * The null value indicates that the element is uniquely required.
-         * <p/>
-         * Each schematic element type also defines a sorted array of supported text values (ascending) and attribute values when available.
-         * In such cases, the {@code defaultValue()} method returns the default text value.
-         * If there is no default value declared for the element type, this method can return null.
+         * By convention, each schematic element type may define an optional array of supported elements and attributes as class types and an occurrence character indicator, specified by the {@code occurrence()} method, that defines the element's allowed number of occurrences within its containing element.
+         * The accepted values for the occurrence character indicator are: null, {@link Constant.XML.Occurrence#ZeroOrMore}, {@link Constant.XML.Occurrence#ZeroOrOne}, {@link Constant.XML.Occurrence#OneOrMore}, {@link Constant.XML.Occurrence#OnlyOne}, and {@link Constant.XML.Occurrence#ZeroOrOneOrTwo}.
+         * The null value indicates that the element occurrence is complex or is undefined, and requires a portion of the document to be parsed and available for further analysis.
+         * In such cases, the {@code validator()} method can perform this analysis.
+         * Alternatively, the largest available indicator can be used to bypass the occurrence criterion.
+         *
+         * @see XML.Schematic
          *
          * @since 1.8
          * @author Alireza Kamran
@@ -4653,20 +4695,35 @@ implements
         {
             /**
              * Returns the schematic element's occurrence indicator string defined in the schema file.
+             * <p/>
+             * This implementation returns null.
              *
-             * @return the occurrence string.
+             * @return the occurrence character.
              */
-            String occurrence();
+            default
+            Character occurrence() {
+                return null;
+            }
 
             /**
-             * Returns true if the element is required in the schema; otherwise returns false.
+             * Returns the array of supported attributes for the schematic element.
+             * <p/>
+             * If there are no attributes defined for the element, null can be returned.
              *
-             * @return true if the element is required, and false otherwise.
+             * @return the array of supported attributes.
              */
-            @Override
-            default boolean isRequired() {
-                return occurrence().isEmpty();
-            }
+            Class<? extends Attr>[]
+            attributes();
+
+            /**
+             * Returns the array of supported inner elements for the schematic element.
+             * <p/>
+             * If there are no inner elements defined for the element, null can be returned.
+             *
+             * @return the array of supported attributes.
+             */
+            Class<? extends org.w3c.dom.Element>[]
+            elements();
         }
     }
 
@@ -5307,7 +5364,9 @@ implements
         public
         Locator at(
             final Node element
-            ) { return null; }
+            ) {
+            return this;
+        }
 
         /**
          * Sets the locator element at the specified coordinates and returns this locator.
@@ -5322,7 +5381,9 @@ implements
         public
         Locator at(
             final Coordinates coords
-            ) { return null; }
+            ) {
+            return this;
+        }
 
         /**
          * Sets the locator element at the specified index and returns this locator.
@@ -5340,7 +5401,9 @@ implements
         public
         Locator at(
             final Number... index
-            ) { return null; }
+            ) {
+            return this;
+        }
 
         /**
          * Advances the locator to the absolute first element and returns this locator.
@@ -5620,7 +5683,7 @@ implements
          */
         @Override
         public Locator until(final Node end) {
-            return null;
+            return this;
         }
 
         /**
@@ -5634,7 +5697,7 @@ implements
          */
         @Override
         public Locator until(final Coordinates end) {
-            return null;
+            return this;
         }
 
         /**
@@ -5651,7 +5714,7 @@ implements
          */
         @Override
         public Locator until(final Number... end) {
-            return null;
+            return this;
         }
 
         @Override
@@ -5752,7 +5815,7 @@ implements
          * @param minDepth the min depth. (inclusive)
          * @param maxDepth the max depth. (inclusive)
          *
-         * @thrown IllegalArgumentException if the min and max depth values are invalid.
+         * @throws IllegalArgumentException if the min and max depth values are invalid.
          *
          * @see Search#setBreadth(int, int)
          */
@@ -6074,10 +6137,14 @@ implements
     /**
      * {@code Schematic} is the base interface for all schematic element and attribute types.
      * <p/>
-     * Each schematic data type also defines a sorted array of supported values when available.
-     * In such cases, the {@code defaultValue()} method returns the default value.
+     * By convention, each schematic data type may define a sorted array of supported values when available. (ascending)
+     * In such cases, the {@code values()} method returns the array of supported values and the {@code defaultValue()} method returns the default value.
+     * If there is no default value declared for the schematic data type, this method can return null.
+     * The {@code hasDefaultValue()} method will indicate whether or not there is a default value declared for the data type.
      * <p/>
      * Each schematic data type also defines a required/optional boolean flag specified by the {@code isRequired()} method.
+     * <p/>
+     * Finally, the {@code validator()} method returns a function which is in charge of validating the data type <b>after</b> it is parsed and added to the document.
      *
      * @since 1.8
      * @author Alireza Kamran
@@ -6092,18 +6159,6 @@ implements
         Function<Node, Validation> TrueValidator = data -> () -> true;
 
         /**
-         * Returns the default value for the data type when available.
-         * <p/>
-         * This implementation returns null.
-         *
-         * @return the default value.
-         */
-        default
-        String defaultValue() {
-            return null;
-        }
-
-        /**
          * Returns true if there is a default value available; otherwise returns false.
          *
          * @return true if the default value is available, and false otherwise.
@@ -6114,6 +6169,27 @@ implements
         }
 
         /**
+         * Returns a function for validating the values of the schematic data type.
+         * <p/>
+         * This implementation returns the {@link #TrueValidator}.
+         *
+         * @return the validator function.
+         */
+        default
+        Function<Node, Validation> validator() {
+            return TrueValidator;
+        }
+
+        /**
+         * Returns the default value for the data type when available.
+         * <p/>
+         * If the schematic data type doesn't have a default value, null can be returned.
+         *
+         * @return the default value.
+         */
+        String defaultValue();
+
+        /**
          * Returns true if the data type is required in the schema; otherwise returns false.
          *
          * @return true if the data type is required, and false otherwise.
@@ -6121,15 +6197,11 @@ implements
         boolean isRequired();
 
         /**
-         * Returns a function for validating the values of the schematic data type.
-         * <p/>
-         * This implementation returns the {@link #TrueValidator}.
+         * Returns the sorted array of supported values for the schematic data type.
          *
-         * @return the validator function.
+         * @return the supported values array.
          */
-        default Function<Node, Validation> validator() {
-            return TrueValidator;
-        }
+        String[] values();
 
         /**
          * {@code PerName} classifies schematic data types that are differently represented per names, such as entity, element, or attribute names.
@@ -6141,18 +6213,30 @@ implements
         {
             /**
              * Restricts context of the schematic data type to the specified name in the schema and returns its class type if found; otherwise returns null.
+             * <p/>
+             * This implementation returns null.
              *
              * @param name the name.
              *
              * @return the appropriate schematic class type, or null if not found.
              */
+            static
             Class<? extends Schematic> per(
                 String name
-            );
+                ) {
+                return null;
+            }
+
+            /**
+             * Returns the array of names that define this schematic data type as supported inner node.
+             *
+             * @return the array of supporting names.
+             */
+            String[] names();
         }
 
         /**
-         * {@code PerType} classifies schematic data types that are differently represented per class types.
+         * {@code PerType} classifies schematic data types that are differently represented per class types, such as containing element types.
          *
          * @since 1.8
          * @author Alireza Kamran
@@ -6161,14 +6245,26 @@ implements
         {
             /**
              * Restricts the context of the schematic data type to the specified class type in the schema and returns its class type if found; otherwise returns null.
+             * <p/>
+             * This implementation returns null.
              *
              * @param type the class type.
              *
              * @return the appropriate schematic class type, or null if not found.
              */
+            static
             Class<? extends Schematic> per(
                 Class<?> type
-            );
+                ) {
+                return null;
+            }
+
+            /**
+             * Returns the array of class types that define this schematic data type as supported inner node.
+             *
+             * @return the array of supporting class types.
+             */
+            Class<? extends Schematic>[] types();
         }
     }
 
@@ -6210,7 +6306,7 @@ implements
         /**
          * Sets the search breadth to the specified min and max element depths.
          * <p/>
-         * The search breadth is defined as the minimum and maximum element depth value where search algorithm will traverse over.
+         * The search breadth is defined as the difference between the maximum and minimum element depth values where search algorithm will traverse across.
          * Whether any of the depth values are inclusive or exclusive is a matter of implementation.
          *
          * @param minDepth the min depth.
@@ -6293,7 +6389,7 @@ implements
         Node Skip = new Null.XMLNode() {};
 
         /**
-         * Performs a breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a breadth-first traversal on the specified source element, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6324,7 +6420,7 @@ implements
         }
 
         /**
-         * Performs a breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a breadth-first traversal on the specified queue of elements, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6368,7 +6464,7 @@ implements
         }
 
         /**
-         * Performs a depth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a depth-first traversal on the specified source element, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6413,7 +6509,7 @@ implements
         }
 
         /**
-         * Performs a reverse breadth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a reverse breadth-first traversal on the specified source element, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6444,7 +6540,7 @@ implements
         }
 
         /**
-         * Performs a reverse breadth-first traversal on the specified queue of elements and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a reverse breadth-first traversal on the specified queue of elements, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6488,7 +6584,7 @@ implements
         }
 
         /**
-         * Performs a reverse depth-first traversal on the specified source element and applying the specified filter, and returns the result of the first filter function call.
+         * Performs a reverse depth-first traversal on the specified source element, applying the specified filter, and returns the result of the first filter function call.
          * <p/>
          * If a filter function call returns null, the traversal stops and null is returned.
          * If a filter function call returns a sub-type of {@link Traversal.Stop}, the sub-type will be returned.
@@ -6535,7 +6631,7 @@ implements
         /**
          * {@code Stop} represents the traversal stop flag as a wrapped XML element.
          * <p/>
-         * By design, when an instance of this class is returned by a traversal filter function, the traversal will stop and return the instance.
+         * By design, when an instance of this class is returned by a traversal filter function, the traversal will stop and returns the instance.
          *
          * @since 1.8
          * @author Alireza Kamran
@@ -6549,9 +6645,9 @@ implements
             Node element;
 
             /**
-             * Creates a stop flag at the specified element.
+             * Creates a stop flag with the specified wrapped element.
              *
-             * @param element the element.
+             * @param element the wrapped element.
              */
             public
             Stop(
@@ -6561,9 +6657,9 @@ implements
             }
 
             /**
-             * Returns the stop element.
+             * Returns the wrapped element.
              *
-             * @return the stop element.
+             * @return the wrapped element.
              */
             @Override
             public Node object() {

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import music.system.data.Clockable;
 import music.system.data.Delta;
@@ -792,7 +793,7 @@ implements
         final Accidental accidental,
         final Number adjustment
         ) {
-        this(symbol, (Byte) Octave.orderOf(octave), pitch, accidental, adjustment);
+        this(symbol, Octave.orderOf(octave), pitch, accidental, adjustment);
     }
 
     /**
@@ -861,7 +862,7 @@ implements
         final Pitch pitch,
         final Number adjustment
         ) {
-        this(symbol, octave, pitch, (Accidental) null, adjustment);
+        this(symbol, octave, pitch, null, adjustment);
     }
 
     /**
@@ -884,7 +885,7 @@ implements
         final Pitch pitch,
         final Number adjustment
         ) {
-        this(symbol, (Byte) Octave.orderOf(octave), pitch, adjustment);
+        this(symbol, Octave.orderOf(octave), pitch, adjustment);
     }
 
     /**
@@ -928,7 +929,7 @@ implements
         final Octave octave,
         final Pitch pitch
         ) {
-        this(symbol, (Byte) Octave.orderOf(octave), pitch);
+        this(symbol, Octave.orderOf(octave), pitch);
     }
 
     /**
@@ -1542,12 +1543,7 @@ implements
         if (octave == null)
             return null;
 
-        return new BinaryLocator<Note>(null, Singleton.Order, new Comparator<Note>() {
-                                                                  @Override
-                                                                  public int compare(Note n, final Note singleton) {
-                                                                      return ((Singleton) singleton).diff(octave.shortValue(), pitch, accidental);
-                                                                  }
-                                                              }).element(null);
+        return new BinaryLocator<Note>(null, Singleton.Order, (Note n, final Note singleton) -> ((Singleton) singleton).diff(octave.shortValue(), pitch, accidental)).element(null);
     }
 
     /**
@@ -1570,12 +1566,7 @@ implements
         if (octave == null)
             return null;
 
-        return new BinaryLocator<Note>(null, Singleton.Order, new Comparator<Note>() {
-                                                                  @Override
-                                                                  public int compare(Note n, final Note singleton) {
-                                                                      return ((Singleton) singleton).diff(octave.getOrder(), pitch, accidental);
-                                                                  }
-                                                              }).element(null);
+        return new BinaryLocator<Note>(null, Singleton.Order, (Note n, final Note singleton) -> ((Singleton) singleton).diff(octave.getOrder(), pitch, accidental)).element(null);
     }
 
     /**
@@ -1733,12 +1724,7 @@ implements
     Note tune(
         final String symbol
         ) {
-        return new BinaryLocator<Note>(null, Singleton.Order, new Comparator<Note>() {
-                                                                  @Override
-                                                                  public int compare(Note n, final Note singleton) {
-                                                                      return ((Singleton) singleton).symbol.compareTo(symbol);
-                                                                  }
-                                                              }).element(null);
+        return new BinaryLocator<Note>(null, Singleton.Order, (Note n, final Note singleton) -> singleton.symbol.compareTo(symbol)).element(null);
     }
 
     /**
@@ -2341,7 +2327,7 @@ implements
                 if (adj > 1200) {
                     final int octaves = adj / 1200;
                     if (octave != null)
-                        octave = (byte) (octave.byteValue() + octaves);
+                        octave = (byte) (octave + octaves);
                     adj -= octaves * 1200;
                 }
 
@@ -2513,7 +2499,7 @@ implements
     public boolean is(final system.Type<? super NoteType> type) {
         if (type instanceof Note) {
             final Note note = (Note) type;
-            return note.octave == octave &&
+            return note.octave.equals(octave) &&
                    note.pitch.order == pitch.order &&
                    note.accidental == accidental &&
                    note.adjustment == adjustment;
@@ -3059,16 +3045,13 @@ implements
             if (this == Natural)
                 return pitch != null;
 
-            switch (pitch) {
+            switch (pitch)
+            {
             case B:
-                return this == Flat;
-
-            case C:
-                return this == Sharp;
-
             case E:
                 return this == Flat;
 
+            case C:
             case F:
                 return this == Sharp;
             }
@@ -3736,7 +3719,7 @@ implements
         @Override
         public boolean removeAll(final Collection<?> notes) {
             final int size = size();
-            notes.forEach((final Object note) -> remove(note));
+            notes.forEach((Consumer<Object>) this::remove);
             return size > size();
         }
 
@@ -3791,6 +3774,7 @@ implements
          *
          * @return the array of notes.
          */
+        @SuppressWarnings("unchecked")
         @Override
         public <T> T[] toArray(T[] array) {
             if (array == null)
@@ -4339,7 +4323,7 @@ implements
          */
         @Override
         public boolean supports(final Accidental accidental) {
-            switch(this) {
+            switch (this) {
             case B:
                 return accidental != Sharp;
 
@@ -4470,7 +4454,6 @@ implements
         Unit
     {
         /** The full step. */
-        public static final
         Step Full = new Step() {
             @Override
             public Short getOrder() {
@@ -4484,7 +4467,6 @@ implements
         };
 
         /** The half step. */
-        public static final
         Step Half = new Step() {
             @Override
             public Short getOrder() {
@@ -4498,7 +4480,6 @@ implements
         };
 
         /** The quarter step. */
-        public static final
         Step Quarter = new Step() {
             @Override
             public Short getOrder() {
@@ -4512,9 +4493,8 @@ implements
         };
 
         /** The eighth step. */
-        public static final
         Step Eighth = new Step() {
-            Interval interval = new Interval((short) 25);
+            final Interval interval = new Interval((short) 25);
 
             @Override
             public Short getOrder() {
@@ -4528,9 +4508,8 @@ implements
         };
 
         /** The tenor step. */
-        public static final
         Step Tenor = new Step() {
-            Interval interval = new Interval((short) 10);
+            final Interval interval = new Interval((short) 10);
 
             @Override
             public Short getOrder() {
@@ -5086,7 +5065,7 @@ implements
             final Accidental accidental,
             final Number adjustment
             ) {
-            this(symbol, (Byte) Octave.orderOf(octave), pitch, accidental, adjustment);
+            this(symbol, Octave.orderOf(octave), pitch, accidental, adjustment);
         }
 
         /**

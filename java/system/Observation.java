@@ -4,8 +4,8 @@ import static system.Constant.TaskConfigurationErrCode;
 import static system.Constant.TaskInstantiationErrCode;
 import static system.Constant.TaskNotFound;
 import static system.Constant.TaskNotFoundErrCode;
-import static system.Constant.Observation.SystemTaskPkg;
 import static system.Constant.Observation.SystemCmd;
+import static system.Constant.Observation.SystemTaskPkg;
 import static system.Constant.Observation.TaskCmd;
 
 import java.util.Arrays;
@@ -30,7 +30,9 @@ interface Observation
      * @param args the command arguments.
      */
     static
-    void execute(final String... args) {
+    void execute(
+        final String... args
+        ) {
         configure(args)
         .apply(args)
         .run();
@@ -57,7 +59,7 @@ interface Observation
     /**
      * Configures the Java application system with the specified parameters and returns the appropriate task based on application parameters.
      * <p/>
-     * This implementation returns the output of {@link #system} method if there are no command-line parameters available; otherwise it returns the {@link Static#Imagination} system task agent.
+     * This implementation returns the {@link Static#Systematization} task agent (the output of {@link #system} method) if there are no command-line parameters available; otherwise it returns the {@link Static#Imagination} task agent.
      *
      * @param params command-line parameters.
      *
@@ -83,7 +85,7 @@ interface Observation
      * <p/>
      * If the system task cannot be properly instantiated, the system task will exit with the {@link Constant#TaskInstantiationErrCode} error code.
      * If the system task cannot be properly configured, the system task will exit with the {@link Constant#TaskConfigurationErrCode} error code.
-     * If the task is not found or the configuration step returns in a null task, the system task will exit with the {@link Constant#TaskNotFoundErrCode} error code.
+     * If the task is not found or the configuration step returns a null task, the system task will exit with the {@link Constant#TaskNotFoundErrCode} error code.
      *
      * @param args command-line arguments.
      *
@@ -95,14 +97,13 @@ interface Observation
         ) {
         return () -> {
             if (args.length > 2 && args[1].equalsIgnoreCase(TaskCmd)) {
-                final String[] inputs
-                = args.length > 3
-                ? Arrays.copyOfRange(args, 3, args.length)
-                : null;
+                final String[] inputs = args.length > 3
+                                        ? Arrays.copyOfRange(args, 3, args.length)
+                                        : null;
 
                 Agent<String, Task> config = null;
                 try {
-                    config = ((Agent<String, Task>) Class.forName(args[2].startsWith(SystemTaskPkg) ? "" : SystemTaskPkg + className(args[2])).newInstance());
+                    config = (Agent<String, Task>) Class.forName(args[2].startsWith(SystemTaskPkg) ? "" : SystemTaskPkg + className(args[2])).newInstance();
                 }
                 catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                     e.printStackTrace();
@@ -172,34 +173,25 @@ interface Observation
         System
     {
         /** System-specific tasks. */
-        Systematization
-        ((final String[] args) -> Observation::system),
+        Systematization((final String[] args) -> Observation::system),
 
         /** Application data-intensive tasks. */
-        Imagination
-        ((final String[] args)
-        -> args.length > 0 && args[0].equalsIgnoreCase(SystemCmd)
-        ? Systematization
-        : () -> {}),
+        Imagination((final String[] args) -> args.length > 0 && args[0].equalsIgnoreCase(SystemCmd)
+                                             ? Systematization
+                                             : () -> {}),
 
         /** Application and system migration tasks. */
-        Migration
-        ((String[] args)
-        -> () -> {}),
+        Migration((String[] args) -> () -> {}),
 
         /** Application audio-intensive tasks. */
-        Sonification
-        ((final String[] args)
-        -> () -> {}),
+        Sonification((final String[] args) -> () -> {}),
 
         /** Application video-intensive tasks. */
-        Visualization
-        ((final String[] args)
-        -> () -> {});
+        Visualization((final String[] args) -> () -> {});
 
         /** The system parameters. */
         private static
-        String[] params;
+        String[] params = new String[] {};
 
         // find out what operating system is running
         // validate application name and init file
@@ -287,6 +279,8 @@ interface Observation
 
         /**
          * Returns the system parameters.
+         *
+         * @return the system parameters.
          */
         @Override
         public String[] getParameters() {

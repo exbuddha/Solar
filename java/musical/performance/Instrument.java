@@ -332,7 +332,6 @@ implements
         @Retention(RUNTIME)
         @Target(TYPE)
         @Repeatable(Instances.class)
-        public
         @interface Instance
         {
             /** The similar part type. */
@@ -355,7 +354,6 @@ implements
          */
         @Retention(RUNTIME)
         @Target(TYPE)
-        public
         @interface Instances
         {
             /** The repeating annotated values. */
@@ -443,10 +441,9 @@ implements
          *
          * @param code the color code.
          */
-        private
         Color(
-            final short code
-            ) {
+                final short code
+        ) {
             this.code = code;
         }
 
@@ -462,20 +459,14 @@ implements
 
         @Override
         public Iterable<? extends Short> decompose() {
-            return new Iterable<Short>()
+            return (Iterable<Short>) () -> new Iterator<Short>()
             {
                 @Override
-                public Iterator<Short> iterator() {
-                    return new Iterator<Short>()
-                    {
-                        @Override
-                        public boolean hasNext() { return false; }
+                public boolean hasNext() { return false; }
 
-                        @Override
-                        public Short next() { return null; }
-                    };
-                }
-             };
+                @Override
+                public Short next() { return null; }
+            };
         }
 
         /**
@@ -513,7 +504,6 @@ implements
     public
     interface Colored
     {
-        public
         Color getColor();
     }
 
@@ -600,7 +590,6 @@ implements
          *
          * @return the part order.
          */
-        public
         T getOrder();
 
         /**
@@ -611,7 +600,6 @@ implements
          * @since 1.8
          * @author Alireza Kamran
          */
-        public
         interface PerMany<T>
         extends system.data.Ordered.PerMany
         {
@@ -621,10 +609,9 @@ implements
              * @param containingUnitClass the containing unit class.
              * @return the unit order or null if order does not exist.
              */
-            public
             T getOrder(
-                Class<? extends Unit> containingUnitClass
-                );
+                    Class<? extends Unit> containingUnitClass
+            );
         }
     }
 
@@ -649,7 +636,6 @@ implements
          *
          * @return the instrument.
          */
-        public
         Instrument getInstrument();
 
         /**
@@ -664,7 +650,6 @@ implements
          */
         @Retention(RUNTIME)
         @Target(CONSTRUCTOR)
-        public
         @interface Categorized
         {
             /** Constructor parameter pseudo names. */
@@ -691,7 +676,6 @@ implements
         @Retention(RUNTIME)
         @Target(TYPE)
         @Repeatable(Connections.class)
-        public
         @interface Connection
         {
             /** The connection ID. */
@@ -723,7 +707,6 @@ implements
             @Retention(RUNTIME)
             @Target(TYPE)
             @Repeatable(Definitions.class)
-            public
             @interface Definition
             {
                 /** The connection definition ID. */
@@ -750,7 +733,6 @@ implements
              */
             @Retention(RUNTIME)
             @Target(TYPE)
-            public
             @interface Definitions
             {
                 /** The repeating annotated values. */
@@ -766,7 +748,6 @@ implements
          */
         @Retention(RUNTIME)
         @Target(TYPE)
-        public
         @interface Connections
         {
             /** The repeating annotated values. */
@@ -781,7 +762,7 @@ implements
          * @since 1.8
          * @author Alireza Kamran
          */
-        public static abstract
+        abstract
         class Parameter
         implements Predicate<Map.Entry<Object, Part>>
         {
@@ -839,7 +820,7 @@ implements
 
             /** Predicate that filters the sixth part parameter value in part creation order. */
             public static
-            Parameter Last = new Index(i -> i == null);
+            Parameter Last = new Index(Objects::isNull);
 
             /** The part parameter order predicate function. */
             protected final
