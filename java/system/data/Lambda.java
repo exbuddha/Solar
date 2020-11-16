@@ -1229,8 +1229,6 @@ class Lambda
 
     /**
      * {@code BinaryFinder} is an implementation of a finder that iterates over a sorted array in a binary search manner.
-     * <p/>
-     * Note that the sort order of the array can be null at creation time but must be set prior to starting the search process; otherwise a {@code NullPointerException} will be thrown.
      *
      * @param <T> the item and array type.
      *
@@ -1243,11 +1241,6 @@ class Lambda
     class BinaryFinder<T>
     extends Finder<T>
     {
-        // this class required defining an extra index pointer: k
-        // functional interfaces were also declared to use this new variable
-        // nextMatchShifted to works with two indexes j (the last iteration index) and k
-        // the general premise is that iteration must continue until the newly iterated index is not equal to j or k (the iteration index before the last one)
-
         /** The array sort order. */
         protected final
         Boolean ascending;
@@ -1380,11 +1373,13 @@ class Lambda
          * {@inheritDoc}
          *
          * @return true if next match exists, or false otherwise.
+         *
+         * @throws NullPointerException if the sort order is null, the comparator is null, or an argument is null and the comparator does not permit null arguments.
          */
         @Override
         protected boolean nextMatchExists() {
             i = (j + k) / 2;
-            while (!found && i >= start && i < end && j != k /* this check might require some extra work */) {
+            while (!found && i >= start && i < end && j != k) {
                 final int result = comp.get();
                 if (result == 0)
                     found = true;
@@ -1475,8 +1470,6 @@ class Lambda
 
     /**
      * {@code BinaryLocator} is an implementation of a locator that iterates over a sorted array in a binary search manner.
-     * <p/>
-     * Note that the sort order of the array can be null at creation time but must be set prior to starting the search process; otherwise a {@code NullPointerException} will be thrown.
      *
      * @param <T> the item and array type.
      *
@@ -1590,7 +1583,7 @@ class Lambda
          * @return true if the item is found, and false otherwise.
          *
          * @throws NoSuchElementException if the iteration has no more elements.
-         * @throws NullPointerException if the comparator is null, or an argument is null and the comparator does not permit null arguments.
+         * @throws NullPointerException if the sort order is null, the comparator is null, or an argument is null and the comparator does not permit null arguments.
          * @throws ClassCastException if the arguments' types prevent them from being compared by the comparator.
          */
         @Override
@@ -1910,6 +1903,7 @@ class Lambda
         /** The item. */
         protected
         T item;
+
         /** The iteration lower bound. (inclusive) */
         protected
         int start;

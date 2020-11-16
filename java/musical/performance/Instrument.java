@@ -442,8 +442,8 @@ implements
          * @param code the color code.
          */
         Color(
-                final short code
-        ) {
+            final short code
+            ) {
             this.code = code;
         }
 
@@ -610,8 +610,8 @@ implements
              * @return the unit order or null if order does not exist.
              */
             T getOrder(
-                    Class<? extends Unit> containingUnitClass
-            );
+                Class<? extends Unit> containingUnitClass
+                );
         }
     }
 

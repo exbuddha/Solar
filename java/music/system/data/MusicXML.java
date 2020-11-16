@@ -2186,7 +2186,7 @@ extends XML
             .map(HALIGN).to(HAlign.class)
             .map(HAND).to(Hand.class)
             .map(HEIGHT).to(Height.class)
-            .map(music.system.data.Constant.MusicXML.ID).to(ID.class)
+            .map(Constant.MusicXML.ID).to(ID.class)
             .map(IMPLICIT).to(Implicit.class)
             .map(JUSTIFY).to(Justify.class)
             .map(LAST_BEAT).to(LastBeat.class)
@@ -2283,7 +2283,7 @@ extends XML
             .map(XLINK_SHOW).to(XlinkShow.class)
             .map(XLINK_TITLE).to(XlinkTitle.class)
             .map(XLINK_TYPE).to(XlinkType.class)
-            .map(XMLNS_XLINK).to(XmlnsXlink.class)
+            .map(Constant.MusicXML.Entity.XMLNS_XLINK).to(XmlnsXlink.class)
             .map(XML_LANG).to(XmlLang.class)
             .map(XML_SPACE).to(XmlSpace.class);
 
@@ -11828,7 +11828,7 @@ extends XML
 
                 @Override
                 default java.lang.String defaultValue() {
-                    return system.data.Constant.XML.Entity.XMLNS;
+                    return system.data.Constant.XML.Entity.XMLNS_XLINK;
                 }
 
                 @Override
