@@ -1245,7 +1245,7 @@ class Lambda
         protected final
         Boolean ascending;
 
-        /** The iteration index before the last one. */
+        /** The iteration index end bound. */
         protected
         int k;
 
@@ -1367,6 +1367,11 @@ class Lambda
                             k = i;
                     };
                 }
+        }
+
+        @Override
+        public boolean elementFound() {
+            return found;
         }
 
         /**
@@ -1573,8 +1578,8 @@ class Lambda
             ) {
             if (ascending != null)
                 comp = ascending
-                       ? () -> comparator.compare(item, array[getIndex()])
-                       : () -> comparator.compare(array[getIndex()], item);
+                       ? () -> comparator.compare(item, array[i])
+                       : () -> comparator.compare(array[i], item);
         }
 
         /**
@@ -1706,6 +1711,9 @@ class Lambda
 
     /**
      * {@code Finder} classifies a specialized iterator over an array for finding elements within the array, using a {@link Comparator#compare(Object, Object)} method, and providing the position or the array element.
+     * <p/>
+     * Finders are not concurrent objects.
+     * If the underlying array changes while the finder is iterating through the elements, the result can be undetermined.
      *
      * @param <T> the array type.
      *
@@ -1760,7 +1768,7 @@ class Lambda
         @Override
         public T element() {
             found();
-            return array[getIndex()];
+            return array[i];
         }
 
         /**
@@ -1780,16 +1788,6 @@ class Lambda
             catch (NoSuchElementException e) {
                 return fallback;
             }
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @return true if the finder element is found, and false otherwise.
-         */
-        @Override
-        public boolean elementFound() {
-            return false;
         }
 
         /**
@@ -1835,7 +1833,7 @@ class Lambda
         @Override
         public Integer index() {
             found();
-            return getIndex();
+            return i;
         }
 
         /**
@@ -2083,6 +2081,9 @@ class Lambda
 
     /**
      * {@code Locator} classifies a specialized iterator over an array for locating elements within the array, using a {@link Comparator#compare(Object, Object)} method, and providing the position or the array element.
+     * <p/>
+     * Locators are not concurrent objects.
+     * If the underlying array changes while the locator is iterating through the elements, the result can be undetermined.
      *
      * @param <T> the array type.
      *
@@ -2136,7 +2137,7 @@ class Lambda
         public T element() {
             found();
             if (found)
-                return array[getIndex()];
+                return array[i];
 
             throw new NoSuchElementException();
         }
@@ -2153,7 +2154,7 @@ class Lambda
         @Override
         public T element(final T fallback) {
             found();
-            return found ? array[getIndex()] : fallback;
+            return found ? array[i] : fallback;
         }
 
         /**
@@ -2208,7 +2209,7 @@ class Lambda
         public Integer index() {
             found();
             if (found)
-                return getIndex();
+                return i;
 
             throw new NoSuchElementException();
         }
@@ -2225,7 +2226,7 @@ class Lambda
         @Override
         public Integer index(final Integer fallback) {
             found();
-            return found ? getIndex() : fallback;
+            return found ? i : fallback;
         }
 
         /**
@@ -2552,6 +2553,10 @@ class Lambda
         protected
         int step;
 
+        /** The "element found" flag. */
+        protected
+        boolean found = false;
+
         /** The "last match shifted" supplier. */
         protected
         BooleanSupplier lastMatchShifted;
@@ -2675,6 +2680,16 @@ class Lambda
             final Comparator<? super T> comparator
             ) {
             this(item, array, 1, comparator);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @return true if the finder element is found, and false otherwise.
+         */
+        @Override
+        public boolean elementFound() {
+            return found;
         }
 
         /**

@@ -82,7 +82,7 @@ extends XML
      */
     public
     MusicXML() {
-        super(new Handler.Standard((org.w3c.dom.Document) Element.of(newDocumentBuilder().newDocument())));
+        super(new Handler.Standard(newDocumentBuilder().newDocument()));
     }
 
     /**

@@ -131,7 +131,7 @@ implements
      */
     public
     XML() {
-        this(new DocumentHandler.Standard((XMLDocument) Element.of(newDocumentBuilder().newDocument())));
+        this(new DocumentHandler.Standard(newDocumentBuilder().newDocument()));
     }
 
     /**
